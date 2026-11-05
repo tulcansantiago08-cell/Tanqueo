@@ -7,5 +7,11 @@
             android:exported="true"
             tools:ignore="ExportedReceiver"
             xmlns:tools="http://schemas.android.com/tools" />
+        <!-- Solo debug: lleva la app a un estado para una demo o una captura. -->
+        <receiver
+            android:name=".debug.DemoReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver"
+            xmlns:tools="http://schemas.android.com/tools" />
     </application>
 </manifest>
