@@ -89,4 +89,7 @@
     <string name="settings_notifications_on">Activas</string>
     <string name="settings_notifications_off">Apagadas</string>
     <string name="settings_notifications_enable">Activar</string>
+
+    <!-- Tile -->
+    <string name="tile_month_spend">%1$s este mes</string>
 </resources>
