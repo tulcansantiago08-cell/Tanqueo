@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.wear.protolayout.expression)
     implementation(libs.kotlinx.coroutines.guava)
 
+    // Complicación
+    implementation(libs.wear.complications.data.source)
+
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
