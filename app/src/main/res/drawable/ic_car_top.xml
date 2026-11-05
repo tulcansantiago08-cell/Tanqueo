@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Carro genérico visto desde arriba, dibujado a mano, sin marcas reales. El frente mira a la derecha. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="180dp"
     android:height="100dp"
     android:viewportWidth="180"
@@ -12,24 +13,53 @@
         android:translateX="40"
         android:translateY="-40">
         <!-- Llantas -->
-        <path android:fillColor="#8A8A94" android:pathData="M8,36 L14,36 L14,58 L8,58 Z M86,36 L92,36 L92,58 L86,58 Z M8,122 L14,122 L14,146 L8,146 Z M86,122 L92,122 L92,146 L86,146 Z" />
+        <path android:fillColor="#5C5C66" android:pathData="M8,36 L14,36 L14,58 L8,58 Z M86,36 L92,36 L92,58 L86,58 Z M8,122 L14,122 L14,146 L8,146 Z M86,122 L92,122 L92,146 L86,146 Z" />
         <!-- Espejos -->
-        <path android:fillColor="#FFFFFF" android:pathData="M14,66 L3,62 C1,61 1,68 3,69 L14,73 Z M86,66 L97,62 C99,61 99,68 97,69 L86,73 Z" />
-        <!-- Carrocería -->
-        <path android:fillColor="#FFFFFF" android:pathData="M50,5 C68,5 79,10 83,24 C86,36 88,50 88,64 L88,134 C88,152 84,166 74,172 C66,176 34,176 26,172 C16,166 12,152 12,134 L12,64 C12,50 14,36 17,24 C21,10 32,5 50,5 Z" />
+        <path android:fillColor="#B9B9C2" android:pathData="M14,66 L3,62 C1,61 1,68 3,69 L14,73 Z M86,66 L97,62 C99,61 99,68 97,69 L86,73 Z" />
+        <!-- Carrocería: gris claro, más brillante en el centro -->
+        <path android:pathData="M50,5 C68,5 79,10 83,24 C86,36 88,50 88,64 L88,134 C88,152 84,166 74,172 C66,176 34,176 26,172 C16,166 12,152 12,134 L12,64 C12,50 14,36 17,24 C21,10 32,5 50,5 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:type="linear"
+                    android:startX="12"
+                    android:startY="90"
+                    android:endX="88"
+                    android:endY="90">
+                    <item android:color="#FFA3A3AE" android:offset="0" />
+                    <item android:color="#FFF0F0F4" android:offset="0.48" />
+                    <item android:color="#FF90909C" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
         <!-- Capó -->
-        <path android:strokeColor="#B4B4BE" android:strokeWidth="1.6" android:strokeLineCap="round" android:pathData="M32,14 C28,28 26,40 26,52 M68,14 C72,28 74,40 74,52" />
+        <path android:strokeColor="#8E8E9A" android:strokeWidth="1.2" android:strokeLineCap="round" android:pathData="M32,14 C28,28 26,40 26,52 M68,14 C72,28 74,40 74,52" />
+        <!-- Reflejo del capó -->
+        <path android:fillColor="#73FFFFFF" android:pathData="M34,18 C38,13 44,11 50,11 C46,20 43,34 42,52 L31,53 C31,41 32,29 34,18 Z" />
         <!-- Farolas -->
-        <path android:fillColor="#3A3A44" android:pathData="M22,20 C25,13 31,10 37,9 C32,14 28,20 25,27 Z M78,20 C75,13 69,10 63,9 C68,14 72,20 75,27 Z" />
+        <path android:fillColor="#2A2A33" android:pathData="M22,20 C25,13 31,10 37,9 C32,14 28,20 25,27 Z M78,20 C75,13 69,10 63,9 C68,14 72,20 75,27 Z" />
         <!-- Vidrio panorámico -->
-        <path android:fillColor="#15151C" android:pathData="M23,66 C36,56 64,56 77,66 L70,90 C60,85 40,85 30,90 Z" />
+        <path android:pathData="M23,66 C36,56 64,56 77,66 L70,90 C60,85 40,85 30,90 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:type="linear"
+                    android:startX="30"
+                    android:startY="58"
+                    android:endX="66"
+                    android:endY="90">
+                    <item android:color="#FF3A3A50" android:offset="0" />
+                    <item android:color="#FF101016" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
         <!-- Vidrios laterales -->
-        <path android:fillColor="#15151C" android:pathData="M19,72 L26,94 L26,130 L19,148 Z M81,72 L74,94 L74,130 L81,148 Z" />
+        <path android:fillColor="#16161E" android:pathData="M19,72 L26,94 L26,130 L19,148 Z M81,72 L74,94 L74,130 L81,148 Z" />
         <!-- Techo -->
-        <path android:fillColor="#E9E9EE" android:pathData="M36,92 C44,90 56,90 64,92 C67,92 69,94 69,97 L69,128 C69,131 67,133 64,133 C56,135 44,135 36,133 C33,133 31,131 31,128 L31,97 C31,94 33,92 36,92 Z" />
+        <path android:fillColor="#D6D6DD" android:pathData="M36,92 C44,90 56,90 64,92 C67,92 69,94 69,97 L69,128 C69,131 67,133 64,133 C56,135 44,135 36,133 C33,133 31,131 31,128 L31,97 C31,94 33,92 36,92 Z" />
+        <!-- Reflejo del techo -->
+        <path android:fillColor="#99FFFFFF" android:pathData="M36,92 C39,91 43,91 47,91 L41,134 C39,134 37,133 36,133 C33,133 31,131 31,128 L31,97 C31,94 33,92 36,92 Z" />
         <!-- Vidrio trasero -->
-        <path android:fillColor="#15151C" android:pathData="M30,139 C40,143 60,143 70,139 L75,156 C62,163 38,163 25,156 Z" />
+        <path android:fillColor="#16161E" android:pathData="M30,139 C40,143 60,143 70,139 L75,156 C62,163 38,163 25,156 Z" />
         <!-- Luces traseras -->
-        <path android:fillColor="#3A3A44" android:pathData="M18,160 C20,166 24,170 30,172 L26,165 L20,156 Z M82,160 C80,166 76,170 70,172 L74,165 L80,156 Z" />
+        <path android:fillColor="#2A2A33" android:pathData="M18,160 C20,166 24,170 30,172 L26,165 L20,156 Z M82,160 C80,166 76,170 70,172 L74,165 L80,156 Z" />
     </group>
 </vector>

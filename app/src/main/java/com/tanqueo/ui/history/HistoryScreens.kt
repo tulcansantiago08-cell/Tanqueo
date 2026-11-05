@@ -166,7 +166,7 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
         item {
             // Sin diálogo: el primer toque pide confirmar y el segundo borra.
             GlassPillButton(
-                modifier = Modifier.edgeAware(this),
+                modifier = Modifier.edgeAware(this).fillMaxWidth(),
                 text = stringResource(if (confirming) R.string.action_delete_confirm else R.string.action_delete),
                 icon = R.drawable.ic_delete,
                 onClick = { if (confirming) viewModel.delete() else confirming = true },

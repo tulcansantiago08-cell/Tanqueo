@@ -1,5 +1,6 @@
 package com.tanqueo.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,19 +18,19 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
 import com.tanqueo.R
 import com.tanqueo.ui.theme.TanqueoColors
 
-/** Un dato editable: la corona, el bisel o los botones − y + cambian el valor grande. */
+/** Un dato editable: la corona, el bisel o los dos botones cambian el número enorme. */
 data class ValueCardModel(
     val label: String,
     val value: String,
@@ -40,6 +42,8 @@ data class ValueCardModel(
     val secondaryHint: String? = null,
     val onSecondaryHintClick: (() -> Unit)? = null,
     val showSteppers: Boolean = true,
+    @param:DrawableRes val decreaseIcon: Int = R.drawable.ic_remove,
+    @param:DrawableRes val increaseIcon: Int = R.drawable.ic_add,
 )
 
 /** Hora arriba, una tarjeta por dato en un carrusel vertical y el botón principal abajo. */
@@ -47,7 +51,7 @@ data class ValueCardModel(
 fun ValueCardsScreen(
     pagerState: PagerState,
     cards: List<ValueCardModel>,
-    bottomAction: @Composable () -> Unit,
+    bottomAction: (@Composable () -> Unit)?,
 ) {
     val screen = rememberScreenSize()
     Column(
@@ -65,17 +69,22 @@ fun ValueCardsScreen(
                 .fillMaxWidth()
                 .weight(1f),
             pageSpacing = 8.dp,
+            // En una pantalla tan pequeña, medio recorrido de tarjeta es demasiado para el dedo.
+            flingBehavior = PagerDefaults.flingBehavior(state = pagerState, snapPositionalThreshold = 0.2f),
         ) { page ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = screen.sideMargin * 0.6f, vertical = 3.dp),
+                    .padding(horizontal = screen.sideMargin * 0.5f, vertical = 3.dp),
             ) {
                 ValueCard(cards[page], position = page + 1, total = cards.size)
             }
         }
-        Box(Modifier.padding(top = 2.dp, bottom = screen.dp(if (screen.isRound) 0.035f else 0.015f))) {
-            bottomAction()
+        val bottomPadding = screen.dp(if (screen.isRound) 0.05f else 0.025f)
+        if (bottomAction != null) {
+            Box(Modifier.padding(top = 3.dp, bottom = bottomPadding)) { bottomAction() }
+        } else {
+            Box(Modifier.padding(bottom = bottomPadding))
         }
     }
 }
@@ -87,9 +96,8 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 4.dp, vertical = 5.dp),
+                .padding(top = screen.dp(0.03f)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
                 text = if (total > 1) {
@@ -101,53 +109,63 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                 fontSize = screen.sp(11f),
                 lineHeight = screen.sp(13f),
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp),
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center,
             ) {
-                if (model.showSteppers) {
-                    RoundIconButton(
-                        icon = R.drawable.ic_remove,
-                        contentDescription = stringResource(R.string.action_decrease, model.label),
-                        size = screen.dp(0.16f),
-                        touchSize = screen.dp(0.19f),
-                        onClick = { model.onSteps(-1) },
-                    )
-                }
                 BasicText(
                     text = model.value,
                     style = TextStyle(
                         color = TanqueoColors.White,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         textAlign = TextAlign.Center,
+                        letterSpacing = (-0.5).sp,
                     ),
                     maxLines = 1,
                     autoSize = TextAutoSize.StepBased(
-                        minFontSize = 12.sp,
-                        maxFontSize = screen.sp(26f),
+                        minFontSize = 14.sp,
+                        maxFontSize = screen.sp(40f),
                         stepSize = 1.sp,
                     ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 1.dp),
+                    modifier = Modifier.fillMaxWidth(),
                 )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 if (model.showSteppers) {
                     RoundIconButton(
-                        icon = R.drawable.ic_add,
+                        icon = model.decreaseIcon,
+                        contentDescription = stringResource(R.string.action_decrease, model.label),
+                        size = screen.dp(0.2f),
+                        onClick = { model.onSteps(-1) },
+                    )
+                }
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    model.hint?.let { HintChip(it, model.onHintClick) }
+                    model.secondaryHint?.let { HintChip(it, model.onSecondaryHintClick) }
+                }
+                if (model.showSteppers) {
+                    RoundIconButton(
+                        icon = model.increaseIcon,
                         contentDescription = stringResource(R.string.action_increase, model.label),
-                        size = screen.dp(0.16f),
-                        touchSize = screen.dp(0.19f),
+                        size = screen.dp(0.2f),
                         onClick = { model.onSteps(1) },
                     )
                 }
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                model.hint?.let { HintChip(it, model.onHintClick) }
-                model.secondaryHint?.let { HintChip(it, model.onSecondaryHintClick) }
             }
         }
     }
@@ -164,10 +182,9 @@ private fun HintChip(text: String, onClick: (() -> Unit)?) {
         maxLines = 1,
         modifier = if (onClick != null) {
             Modifier
-                .clip(RoundedCornerShape(50))
                 .glass(RoundedCornerShape(50))
                 .clickable(role = Role.Button, onClick = onClick)
-                .padding(horizontal = 8.dp, vertical = 3.dp)
+                .padding(horizontal = 7.dp, vertical = 4.dp)
         } else {
             Modifier
         },

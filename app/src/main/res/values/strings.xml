@@ -16,7 +16,18 @@
     <!-- Inicio -->
     <string name="action_add_fill_up">+ Tanqueo</string>
     <string name="action_history">Historial</string>
-    <string name="action_summary">Resumen</string>
+    <string name="home_title_vehicle">Mi vehículo</string>
+    <string name="home_title_range">Autonomía</string>
+    <string name="home_title_month">Este mes</string>
+    <string name="home_last_fill_up_date">Último · %1$s</string>
+    <string name="home_last_fill_up_detail">%1$s gal · %2$s</string>
+    <string name="home_fuel_range">Combustible restante</string>
+    <string name="home_odometer">Kilometraje</string>
+    <string name="home_empty">Registra tu primer tanqueo</string>
+    <string name="range_km_number">≈ %1$s</string>
+    <string name="saved_confirmation">Guardado</string>
+    <string name="action_view_summary">Ver resumen del mes</string>
+    <string name="action_view_history">Ver historial</string>
     <string name="action_update_km">Actualizar km</string>
     <string name="action_settings">Ajustes</string>
     <string name="car_illustration">Carro visto desde arriba</string>

@@ -6,7 +6,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
 
 /**
@@ -34,15 +36,22 @@ class RotaryAccumulator(private val pixelsPerStep: Float = DEFAULT_PIXELS_PER_ST
     }
 }
 
-/** Entrega a [onSteps] los pasos de la corona o el bisel mientras esta pantalla está activa. */
+/**
+ * Entrega a [onSteps] los pasos de la corona o el bisel mientras esta pantalla está activa, con una
+ * vibración corta en cada uno.
+ */
 @Composable
 fun Modifier.rotarySteps(onSteps: (Int) -> Unit): Modifier {
     val accumulator = remember { RotaryAccumulator() }
     val focusRequester = remember { FocusRequester() }
+    val haptics = LocalHapticFeedback.current
     return this
         .onRotaryScrollEvent { event ->
             val steps = accumulator.add(event.verticalScrollPixels)
-            if (steps != 0) onSteps(steps)
+            if (steps != 0) {
+                haptics.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                onSteps(steps)
+            }
             true
         }
         .focusRequester(focusRequester)

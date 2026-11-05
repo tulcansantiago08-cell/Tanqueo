@@ -6,7 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,11 +23,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.Text
 import com.tanqueo.ui.theme.TanqueoColors
 
 val GlassCardShape = RoundedCornerShape(26.dp)
+private val PillShape = RoundedCornerShape(50)
+
+/** Tamaño mínimo de toque de cualquier botón de la app. */
+val MinTouchSize = 48.dp
 
 /** Vidrio oscuro: gris translúcido con un borde fino de 1 dp más claro. */
 fun Modifier.glass(shape: Shape = GlassCardShape): Modifier = this
@@ -43,6 +48,7 @@ fun GlassCard(
 ) {
     Box(
         modifier = modifier
+            .fadeInOnAppear()
             .glass()
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         content = content,
@@ -50,8 +56,8 @@ fun GlassCard(
 }
 
 /**
- * Botón circular con ícono. [touchSize] puede ser mayor que [size] para que sea fácil de tocar.
- * [accent] lo pinta de violeta; úsalo solo para la acción principal de la pantalla.
+ * Botón circular con ícono. El círculo que se ve mide [size], pero el área de toque nunca baja de
+ * [MinTouchSize]. [accent] lo pinta de violeta: solo para la acción principal.
  */
 @Composable
 fun RoundIconButton(
@@ -60,12 +66,11 @@ fun RoundIconButton(
     size: Dp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    touchSize: Dp = size,
     accent: Boolean = false,
 ) {
     Box(
         modifier = modifier
-            .size(touchSize)
+            .size(max(size, MinTouchSize))
             .clip(CircleShape)
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
@@ -83,13 +88,16 @@ fun RoundIconButton(
                 painter = painterResource(icon),
                 contentDescription = contentDescription,
                 tint = TanqueoColors.White,
-                modifier = Modifier.size(size * 0.56f),
+                modifier = Modifier.size(size * 0.6f),
             )
         }
     }
 }
 
-/** Botón ancho de la acción principal de la pantalla, en violeta. */
+/**
+ * Botón píldora de la acción principal: violeta y con resplandor. Si se ve más bajo de 48 dp, Compose
+ * extiende su área de toque hasta ese mínimo.
+ */
 @Composable
 fun PrimaryPillButton(
     text: String,
@@ -100,24 +108,25 @@ fun PrimaryPillButton(
     val screen = rememberScreenSize()
     Box(
         modifier = modifier
-            .heightIn(min = screen.dp(0.2f))
-            .clip(RoundedCornerShape(50))
+            .then(if (enabled) Modifier.pillGlow(screen.dp(0.05f)) else Modifier)
+            .heightIn(min = screen.dp(0.19f))
+            .clip(PillShape)
             .background(TanqueoColors.Accent.copy(alpha = if (enabled) 1f else 0.4f))
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = 18.dp),
+            .padding(horizontal = screen.dp(0.11f)),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
             color = TanqueoColors.White,
-            fontSize = screen.sp(14f),
-            fontWeight = FontWeight.SemiBold,
+            fontSize = screen.sp(15f),
+            fontWeight = FontWeight.Bold,
             maxLines = 1,
         )
     }
 }
 
-/** Botón ancho secundario, de vidrio. */
+/** Botón píldora secundario, de vidrio. */
 @Composable
 fun GlassPillButton(
     text: String,
@@ -128,25 +137,30 @@ fun GlassPillButton(
     val screen = rememberScreenSize()
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = screen.dp(0.24f))
-            .glass(RoundedCornerShape(50))
+            .heightIn(min = screen.dp(0.19f))
+            .glass(PillShape)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = 14.dp),
+            .padding(horizontal = screen.dp(0.08f), vertical = 2.dp),
         contentAlignment = Alignment.Center,
     ) {
-        androidx.compose.foundation.layout.Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             if (icon != null) {
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = null,
                     tint = TanqueoColors.White,
                     modifier = Modifier
-                        .size(screen.dp(0.1f))
-                        .padding(end = 4.dp),
+                        .padding(end = 5.dp)
+                        .size(screen.dp(0.1f)),
                 )
             }
-            Text(text = text, color = TanqueoColors.White, fontSize = screen.sp(13f), maxLines = 2)
+            Text(
+                text = text,
+                color = TanqueoColors.White,
+                fontSize = screen.sp(13f),
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+            )
         }
     }
 }

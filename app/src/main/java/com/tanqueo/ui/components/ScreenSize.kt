@@ -19,6 +19,12 @@ data class ScreenSize(val sideDp: Int, val isRound: Boolean) {
     /** Margen lateral: en pantallas redondas hay menos ancho arriba y abajo. */
     val sideMargin: Dp get() = dp(if (isRound) 0.07f else 0.04f)
 
+    /** Separación superior del encabezado: en lo redondo baja para que no lo corte el círculo. */
+    val headerTopPadding: Dp get() = dp(if (isRound) 0.07f else 0.02f)
+
+    /** Dónde empieza el contenido debajo del encabezado. */
+    val contentTop: Dp get() = dp(if (isRound) 0.215f else 0.175f)
+
     private companion object {
         const val DESIGN_SIDE_DP = 180f
     }

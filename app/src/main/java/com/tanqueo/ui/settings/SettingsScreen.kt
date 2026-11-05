@@ -67,6 +67,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     )
 
     ScreenScaffold {
-        ValueCardsScreen(pagerState = pagerState, cards = cards, bottomAction = {})
+        ValueCardsScreen(pagerState = pagerState, cards = cards, bottomAction = null)
     }
 }
