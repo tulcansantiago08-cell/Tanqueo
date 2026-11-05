@@ -16,6 +16,7 @@ import com.tanqueo.domain.format.Formats
 import com.tanqueo.domain.model.TankSettings
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
+import com.tanqueo.ui.components.rememberNotificationAccess
 
 private val CAPACITY_STEPS = listOf(1, 10) // en décimas de galón
 private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
@@ -24,7 +25,8 @@ private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val loaded by viewModel.settings.collectAsStateWithLifecycle()
     val settings = loaded ?: TankSettings()
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = { 4 })
+    val notifications = rememberNotificationAccess()
     var capacityStep by rememberSaveable { mutableIntStateOf(1) }
     var kmStep by rememberSaveable { mutableIntStateOf(0) }
 
@@ -51,6 +53,16 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                 settings.reminderDaysThreshold,
             ),
             onSteps = viewModel::adjustDaysThreshold,
+        ),
+        ValueCardModel(
+            label = stringResource(R.string.settings_notifications),
+            value = stringResource(
+                if (notifications.enabled) R.string.settings_notifications_on else R.string.settings_notifications_off,
+            ),
+            onSteps = {},
+            showSteppers = false,
+            hint = if (notifications.enabled) null else stringResource(R.string.settings_notifications_enable),
+            onHintClick = notifications.request,
         ),
     )
 

@@ -4,6 +4,7 @@
 
     <!-- Estimación -->
     <string name="range_km">≈ %1$s km</string>
+    <string name="range_full">%1$s · %2$s</string>
     <string name="range_insufficient">Registra otro tanqueo con km para estimar</string>
     <string name="range_days_less_than_one">menos de 1 día</string>
     <plurals name="range_days">
@@ -80,4 +81,12 @@
     <string name="settings_capacity">Capacidad del tanque</string>
     <string name="settings_km_threshold">Avisar bajo</string>
     <string name="settings_days_threshold">Avisar con menos de</string>
+
+    <!-- Aviso de tanquear -->
+    <string name="reminder_channel">Aviso de tanquear</string>
+    <string name="reminder_title">Hora de tanquear</string>
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_notifications_on">Activas</string>
+    <string name="settings_notifications_off">Apagadas</string>
+    <string name="settings_notifications_enable">Activar</string>
 </resources>

@@ -27,6 +27,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.tanqueo.R
 import com.tanqueo.domain.calc.RangeEstimate
+import com.tanqueo.ui.components.RequestNotificationPermissionOnce
 import com.tanqueo.ui.components.RoundIconButton
 import com.tanqueo.ui.components.ScreenSize
 import com.tanqueo.ui.components.TimeHeader
@@ -59,6 +60,7 @@ private const val MAIN_BUTTON_TOP = 0.76f
 @Composable
 fun HomeScreen(actions: HomeActions, viewModel: HomeViewModel = hiltViewModel()) {
     val estimate by viewModel.estimate.collectAsStateWithLifecycle()
+    RequestNotificationPermissionOnce()
     HomeContent(estimate, actions)
 }
 

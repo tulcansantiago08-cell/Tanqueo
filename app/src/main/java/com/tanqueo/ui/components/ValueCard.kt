@@ -39,6 +39,7 @@ data class ValueCardModel(
     /** Segunda acción pequeña, por ejemplo quitar el kilometraje. */
     val secondaryHint: String? = null,
     val onSecondaryHintClick: (() -> Unit)? = null,
+    val showSteppers: Boolean = true,
 )
 
 /** Hora arriba, una tarjeta por dato en un carrusel vertical y el botón principal abajo. */
@@ -105,13 +106,15 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RoundIconButton(
-                    icon = R.drawable.ic_remove,
-                    contentDescription = stringResource(R.string.action_decrease, model.label),
-                    size = screen.dp(0.16f),
-                    touchSize = screen.dp(0.19f),
-                    onClick = { model.onSteps(-1) },
-                )
+                if (model.showSteppers) {
+                    RoundIconButton(
+                        icon = R.drawable.ic_remove,
+                        contentDescription = stringResource(R.string.action_decrease, model.label),
+                        size = screen.dp(0.16f),
+                        touchSize = screen.dp(0.19f),
+                        onClick = { model.onSteps(-1) },
+                    )
+                }
                 BasicText(
                     text = model.value,
                     style = TextStyle(
@@ -129,13 +132,15 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                         .weight(1f)
                         .padding(horizontal = 1.dp),
                 )
-                RoundIconButton(
-                    icon = R.drawable.ic_add,
-                    contentDescription = stringResource(R.string.action_increase, model.label),
-                    size = screen.dp(0.16f),
-                    touchSize = screen.dp(0.19f),
-                    onClick = { model.onSteps(1) },
-                )
+                if (model.showSteppers) {
+                    RoundIconButton(
+                        icon = R.drawable.ic_add,
+                        contentDescription = stringResource(R.string.action_increase, model.label),
+                        size = screen.dp(0.16f),
+                        touchSize = screen.dp(0.19f),
+                        onClick = { model.onSteps(1) },
+                    )
+                }
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
