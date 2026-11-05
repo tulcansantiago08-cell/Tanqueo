@@ -45,7 +45,7 @@
     <string name="fill_full">Lleno</string>
     <string name="fill_partial">Parcial</string>
     <string name="value_empty">—</string>
-    <string name="hint_step">paso %1$s</string>
+    <string name="hint_step">± %1$s</string>
     <string name="hint_odometer_recommended">recomendado</string>
     <string name="action_clear">Quitar</string>
     <string name="action_save">Guardar</string>
@@ -103,4 +103,9 @@
 
     <!-- Tile -->
     <string name="tile_month_spend">%1$s este mes</string>
+
+    <!-- Complicación -->
+    <string name="complication_label">Autonomía de Tanqueo</string>
+    <string name="complication_description">Autonomía: %1$s kilómetros</string>
+    <string name="complication_no_data">Sin datos de autonomía</string>
 </resources>

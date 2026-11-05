@@ -139,7 +139,8 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                    .padding(horizontal = screen.dp(0.05f))
+                    .padding(bottom = screen.dp(0.04f)),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (model.showSteppers) {
@@ -147,6 +148,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                         icon = model.decreaseIcon,
                         contentDescription = stringResource(R.string.action_decrease, model.label),
                         size = screen.dp(0.2f),
+                        compact = true,
                         onClick = { model.onSteps(-1) },
                     )
                 }
@@ -163,6 +165,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                         icon = model.increaseIcon,
                         contentDescription = stringResource(R.string.action_increase, model.label),
                         size = screen.dp(0.2f),
+                        compact = true,
                         onClick = { model.onSteps(1) },
                     )
                 }
@@ -180,6 +183,7 @@ private fun HintChip(text: String, onClick: (() -> Unit)?) {
         fontSize = screen.sp(10f),
         lineHeight = screen.sp(12f),
         maxLines = 1,
+        softWrap = false,
         modifier = if (onClick != null) {
             Modifier
                 .glass(RoundedCornerShape(50))

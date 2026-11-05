@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -67,10 +69,17 @@ fun RoundIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     accent: Boolean = false,
+    /**
+     * Si es verdadero ocupa solo lo que se ve y el área de toque sobresale sin empujar a sus vecinos.
+     * Sirve donde el espacio es muy justo.
+     */
+    compact: Boolean = false,
 ) {
+    val touch = max(size, MinTouchSize)
     Box(
         modifier = modifier
-            .size(max(size, MinTouchSize))
+            .then(if (compact) Modifier.size(size).wrapContentSize(unbounded = true) else Modifier)
+            .requiredSize(touch)
             .clip(CircleShape)
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,

@@ -22,9 +22,12 @@ import com.tanqueo.domain.calc.RangeLevel
 import com.tanqueo.ui.theme.TanqueoColors
 import com.tanqueo.ui.theme.alertColor
 
-/** El medidor abre abajo: ahí se apoya el botón. Los ángulos cuentan desde las 3 en punto. */
-private const val START_ANGLE = 130f
-private const val FULL_SWEEP = 280f
+/**
+ * El medidor abre abajo: ahí se apoya el botón, sin taparle el arranque, que es lo único que se ve
+ * cuando queda poca autonomía. Los ángulos cuentan desde las 3 en punto.
+ */
+private const val START_ANGLE = 150f
+private const val FULL_SWEEP = 240f
 
 /** Pulso para llamar la atención cuando queda poca autonomía. Normal: siempre 1. */
 @Composable
@@ -33,7 +36,7 @@ fun rememberAlertPulse(level: RangeLevel): Float {
     val transition = rememberInfiniteTransition(label = "pulso")
     val pulse by transition.animateFloat(
         initialValue = 1f,
-        targetValue = 0.45f,
+        targetValue = 0.6f,
         animationSpec = infiniteRepeatable(tween(850, easing = LinearEasing), RepeatMode.Reverse),
         label = "pulso",
     )
