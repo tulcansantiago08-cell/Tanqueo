@@ -1,0 +1,77 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "77357379286f2947405debd14f3b4484",
+    "entities": [
+      {
+        "tableName": "fill_ups",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `at_epoch_millis` INTEGER NOT NULL, `gallons` REAL NOT NULL, `paid_cop` INTEGER NOT NULL, `fuel_type` TEXT NOT NULL, `is_full` INTEGER NOT NULL, `odometer_km` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "atEpochMillis",
+            "columnName": "at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gallons",
+            "columnName": "gallons",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paidCop",
+            "columnName": "paid_cop",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fuelType",
+            "columnName": "fuel_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFull",
+            "columnName": "is_full",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "odometerKm",
+            "columnName": "odometer_km",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_fill_ups_at_epoch_millis",
+            "unique": false,
+            "columnNames": [
+              "at_epoch_millis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_fill_ups_at_epoch_millis` ON `${TABLE_NAME}` (`at_epoch_millis`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '77357379286f2947405debd14f3b4484')"
+    ]
+  }
+}
