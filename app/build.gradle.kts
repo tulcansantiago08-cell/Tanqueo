@@ -1,8 +1,21 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+// Sin este archivo (no se versiona) la app compila y funciona igual, con el lector local en vez de la IA.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
 }
 
 android {
@@ -17,6 +30,9 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
+
+        // Token de depuración de App Check registrado en Firebase (solo se usa en debug).
+        buildConfigField("String", "APP_CHECK_DEBUG_TOKEN", "\"${localProperties.getProperty("APP_CHECK_DEBUG_TOKEN", "")}\"")
     }
 
     compileOptions {
@@ -25,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
@@ -62,6 +79,13 @@ dependencies {
 
     // Complicación
     implementation(libs.wear.complications.data.source)
+
+    // IA con Gemini (Firebase AI Logic)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
+    releaseImplementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
+    implementation(libs.kotlinx.serialization.json)
 
     // Hilt
     implementation(libs.hilt.android)

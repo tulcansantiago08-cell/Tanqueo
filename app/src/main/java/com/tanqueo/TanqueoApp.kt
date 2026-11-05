@@ -23,6 +23,7 @@ class TanqueoApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        installAppCheck(this)
         appScope.launch {
             startupTasks.forEach { it.run() }
             RefuelReminderWorker.schedule(this@TanqueoApp)

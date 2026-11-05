@@ -3,9 +3,12 @@ package com.tanqueo.ui
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.repository.CachedTip
 import com.tanqueo.domain.repository.FillUpRepository
+import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
+import com.tanqueo.domain.voice.DictatedFillUp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -58,6 +61,30 @@ class FakeSettingsRepository(
 
     override suspend fun setOdometerUpdate(update: OdometerUpdate) {
         odometerUpdate.value = update
+    }
+
+    var tip: CachedTip? = null
+    override suspend fun cachedTip(): CachedTip? = tip
+    override suspend fun setCachedTip(tip: CachedTip) {
+        this.tip = tip
+    }
+}
+
+class FakeFuelAssistant(
+    var dictation: DictatedFillUp? = null,
+    var tip: String? = null,
+) : FuelAssistant {
+    var tipCalls = 0
+    val heard = mutableListOf<String>()
+
+    override suspend fun interpretFillUp(spokenText: String): DictatedFillUp? {
+        heard += spokenText
+        return dictation
+    }
+
+    override suspend fun writeTip(monthFacts: String): String? {
+        tipCalls++
+        return tip
     }
 }
 

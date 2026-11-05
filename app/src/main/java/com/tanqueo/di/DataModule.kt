@@ -5,11 +5,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.tanqueo.data.ai.GeminiFuelAssistant
 import com.tanqueo.data.local.FillUpDao
 import com.tanqueo.data.local.RoomFillUpRepository
 import com.tanqueo.data.local.TanqueoDatabase
 import com.tanqueo.data.settings.DataStoreSettingsRepository
 import com.tanqueo.domain.repository.FillUpRepository
+import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
 import com.tanqueo.tile.WatchSurfacesRefresher
@@ -33,6 +35,9 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: DataStoreSettingsRepository): SettingsRepository
+
+    @Binds
+    abstract fun bindFuelAssistant(impl: GeminiFuelAssistant): FuelAssistant
 
     @Binds
     abstract fun bindSurfaceRefresher(impl: WatchSurfacesRefresher): SurfaceRefresher

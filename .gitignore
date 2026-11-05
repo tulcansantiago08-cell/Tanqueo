@@ -10,3 +10,6 @@ build/
 .cxx
 local.properties
 .kotlin/
+
+# Configuración de Firebase (cada desarrollador descarga la suya)
+app/google-services.json
