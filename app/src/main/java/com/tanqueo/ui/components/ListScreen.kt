@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
@@ -31,9 +32,11 @@ fun ListScreen(content: TransformingLazyColumnScope.() -> Unit) {
             TimeHeader()
             TransformingLazyColumn(
                 state = listState,
+                // Sin recortar, las tarjetas pasarían por encima de la hora al desplazarse.
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .clipToBounds(),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 contentPadding = PaddingValues(
                     start = screen.sideMargin,
