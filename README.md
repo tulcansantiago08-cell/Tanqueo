@@ -14,6 +14,10 @@ Proyecto académico.
 | ![Registrar](docs/screenshots/cuadrado-registrar.png) | ![Tile](docs/screenshots/cuadrado-tile.png) | ![Complicación](docs/screenshots/cuadrado-complicacion.png) |
 | ![Registrar en redondo](docs/screenshots/redondo-registrar.png) | ![Tile en redondo](docs/screenshots/redondo-tile.png) | ![Complicación en redondo](docs/screenshots/redondo-complicacion.png) |
 
+| Dictado: revisar | ¿Cuánto me alcanza? | Consejo del mes |
+|---|---|---|
+| ![Dictado](docs/screenshots/redondo-dictado.png) | ![Calculadora](docs/screenshots/redondo-calculadora.png) | ![Consejo](docs/screenshots/redondo-consejo.png) |
+
 | Poca autonomía | Sin tanqueos | Al guardar |
 |---|---|---|
 | ![Alerta](docs/screenshots/redondo-alerta.png) | ![Estado vacío](docs/screenshots/redondo-vacio.png) | ![Confirmación](docs/screenshots/redondo-guardado.png) |
@@ -27,12 +31,36 @@ Proyecto académico.
 - **Registrar.** Una tarjeta por dato: galones, valor pagado en COP, combustible (Corriente, Extra, Diésel), tanque lleno o parcial y kilometraje. El número enorme cambia con la corona, el bisel o los botones; desliza hacia arriba para pasar de tarjeta. Tocar el chip `±` cambia el tamaño del paso. La fecha y la hora son automáticas.
   - Parte de tu último tanqueo: con los mismos galones y combustible y el valor calculado con el último precio, se puede guardar en pocos toques. El valor sigue a los galones hasta que lo editas.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
+  - **Por voz o teclado:** el micrófono abre la entrada del sistema. Dices "10 galones, 165 mil, corriente, lleno", la app llena las tarjetas y **tú revisas antes de guardar**.
+- **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Eliges el dinero y el precio del galón, y ves los km y galones al instante. Los km usan el rendimiento real de tu vehículo; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
+- **Consejo del mes** (en el resumen). Calculado con tus datos reales; si hay IA, ella lo redacta.
 - **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales.
 - **Aviso de tanquear.** Un trabajo diario de WorkManager revisa la estimación y notifica cuando quedan menos de 50 km o menos de 1 día.
 - **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
 - **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
 - **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
+
+## Inteligencia artificial
+
+La app usa **Gemini por Firebase AI Logic**. La IA **solo interpreta y redacta**; las cifras salen siempre de los cálculos locales.
+
+| Función | Con IA | Sin IA o sin internet |
+|---|---|---|
+| Dictado | Entiende frases sueltas | Un lector local entiende frases simples, también con números en palabras |
+| Consejo del mes | Lo redacta en una frase | Se muestra el consejo calculado en el reloj |
+
+Controles para que no invente datos:
+
+- **Dictado:** lo que no se dijo queda como estaba, los valores imposibles se descartan y nada se guarda sin tu confirmación.
+- **Consejo:** se rechaza si trae una cifra que no esté en los datos que recibió.
+- **Sin espera larga:** si no responde en 12 s, la app sigue sin ella.
+
+**Privacidad:** el texto dictado se envía a Google para interpretarlo, y para el consejo se envían solo agregados (gasto, precios promedio y rendimiento), sin fechas exactas ni kilometraje. No se envía nada más.
+
+### Precios de referencia
+
+"¿Cuánto me alcanza?" incluye los precios de referencia de **noviembre de 2026** publicados por la CREG (Circular 371 de 2026), en `domain/budget/ReferencePrices.kt`. El precio real varía según la estación y estos valores se actualizan a mano. No hay precio de referencia publicado para la Extra: esa se calcula con tu propio último precio.
 
 ## Diseño
 
@@ -122,6 +150,7 @@ flowchart LR
     subgraph Data["data"]
         DB[(Room<br/>tanqueos)]
         DS[(DataStore<br/>ajustes y km manual)]
+        AI[Gemini<br/>Firebase AI Logic]
     end
     VM --> UC
     T --> UC
@@ -130,12 +159,13 @@ flowchart LR
     UC --> R
     R -.implementa.-> DB
     R -.implementa.-> DS
+    R -.implementa.-> AI
 ```
 
 ```
 app/src/main/java/com/tanqueo
-├── domain      modelos, cálculos puros, formatos e interfaces (sin Android)
-├── data        Room y DataStore
+├── domain      modelos, cálculos puros, lector de dictado, calculadora y consejo (sin Android)
+├── data        Room, DataStore y Gemini
 ├── di          módulos de Hilt
 ├── ui          tema, componentes de vidrio y una carpeta por pantalla
 ├── reminder    worker diario y notificación
@@ -144,7 +174,7 @@ app/src/main/java/com/tanqueo
 app/src/debug   datos de ejemplo y receptores de demo (no llegan a release)
 ```
 
-**Tecnología:** Kotlin, Jetpack Compose for Wear OS (Material 3), `SwipeDismissableNavHost`, Hilt, Room, DataStore, WorkManager, Tiles con ProtoLayout y complicaciones. Textos en `strings.xml`. Pesos colombianos con punto de miles (`$ 164.700`) y fechas en español (`MIÉ 4`).
+**Tecnología:** Kotlin, Jetpack Compose for Wear OS (Material 3), `SwipeDismissableNavHost`, Hilt, Room, DataStore, WorkManager, Tiles con ProtoLayout, complicaciones y Firebase AI Logic con App Check. Textos en `strings.xml`. Pesos colombianos con punto de miles (`$ 164.700`) y fechas en español (`MIÉ 4`).
 
 **Formatos de reloj:** todas las medidas son proporcionales al lado corto de la pantalla (`ScreenSize`), con ajustes para que en los relojes redondos nada toque el borde del círculo. Revisado en emuladores de 180 dp (cuadrado) y 227 dp (redondo).
 
@@ -167,13 +197,22 @@ adb shell am start -n com.tanqueo/.MainActivity
 
 En la variante **debug** se cargan una sola vez seis tanqueos de ejemplo con kilometraje, con fechas relativas al día de hoy. La variante release empieza vacía.
 
+### Activar la IA (opcional)
+
+Sin este paso la app compila y funciona con el lector local.
+
+1. En [Firebase console](https://console.firebase.google.com), abre tu proyecto y registra una app Android con el paquete `com.tanqueo`. Descarga `google-services.json` en `app/` (no se versiona).
+2. En **AI Logic**, activa el proveedor **Gemini Developer API**, si el proyecto no lo tiene ya.
+3. En **App Check**, registra la app y agrega como token de depuración el valor de `APP_CHECK_DEBUG_TOKEN` de tu `local.properties` (no se versiona). Puedes generar uno con `uuidgen`.
+4. Vuelve a instalar con `./gradlew installDebug`.
+
 ### Tests
 
 ```bash
 ./gradlew testDebugUnitTest
 ```
 
-Cubren rendimiento, km por día, autonomía (pocos datos, tanqueos parciales, kilometraje actualizado a mano), % de tanque, niveles de alerta, resumen del mes, reglas del aviso, formatos, entrada con la corona, contraste de la paleta, complicación, ViewModels y el repositorio de Room.
+Cubren rendimiento, km por día, autonomía (pocos datos, tanqueos parciales, kilometraje actualizado a mano), % de tanque, niveles de alerta, resumen del mes, reglas del aviso, formatos, entrada con la corona, contraste de la paleta, complicación, lector de dictado, calculadora, consejo y su filtro de cifras, ViewModels y el repositorio de Room.
 
 ### Probar la tile
 
