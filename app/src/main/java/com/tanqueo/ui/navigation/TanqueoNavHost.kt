@@ -11,6 +11,7 @@ import com.tanqueo.ui.history.FillUpDetailViewModel
 import com.tanqueo.ui.history.HistoryScreen
 import com.tanqueo.ui.home.HomeActions
 import com.tanqueo.ui.home.HomeScreen
+import com.tanqueo.ui.odometer.UpdateKmScreen
 import com.tanqueo.ui.register.RegisterScreen
 import com.tanqueo.ui.summary.SummaryScreen
 
@@ -37,7 +38,7 @@ fun TanqueoNavHost(navController: NavHostController) {
                     onAddFillUp = { go(Routes.REGISTER) },
                     onHistory = { go(Routes.HISTORY) },
                     onSummary = { go(Routes.SUMMARY) },
-                    onUpdateKm = {},
+                    onUpdateKm = { go(Routes.UPDATE_KM) },
                     onSettings = {},
                 ),
             )
@@ -55,5 +56,8 @@ fun TanqueoNavHost(navController: NavHostController) {
             FillUpDetailScreen(onDeleted = { navController.popBackStack() })
         }
         composable(Routes.SUMMARY) { SummaryScreen() }
+        composable(Routes.UPDATE_KM) {
+            UpdateKmScreen(onSaved = { navController.popBackStack() })
+        }
     }
 }
