@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.wear.compose.foundation)
     implementation(libs.wear.compose.navigation)
     implementation(libs.wear.tooling.preview)
+    implementation(libs.wear.input)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Tile

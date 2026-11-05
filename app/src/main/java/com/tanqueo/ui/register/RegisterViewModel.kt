@@ -10,6 +10,7 @@ import com.tanqueo.domain.model.FuelType
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
+import com.tanqueo.domain.usecase.InterpretDictation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
@@ -20,6 +21,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+/** En qué va el dictado por voz. */
+enum class DictationStatus { IDLE, INTERPRETING, REVIEW, NOT_UNDERSTOOD, UNAVAILABLE }
 
 data class RegisterUiState(
     val isLoading: Boolean = true,
@@ -34,6 +38,7 @@ data class RegisterUiState(
     val suggestedOdometerKm: Int = 0,
     val hasOdometerHistory: Boolean = false,
     val isSaved: Boolean = false,
+    val dictation: DictationStatus = DictationStatus.IDLE,
 ) {
     val canSave: Boolean get() = !isLoading && gallons > 0 && paidCop > 0
 }
@@ -44,6 +49,7 @@ class RegisterViewModel @Inject constructor(
     private val settings: SettingsRepository,
     private val surfaces: SurfaceRefresher,
     private val clock: Clock,
+    private val interpretDictation: InterpretDictation,
 ) : ViewModel() {
     private val _state = MutableStateFlow(RegisterUiState())
     val state: StateFlow<RegisterUiState> = _state.asStateFlow()
@@ -109,6 +115,36 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun clearOdometer() = _state.update { it.copy(odometerKm = null) }
+
+    /** Llena las tarjetas con lo dictado. No guarda: el usuario revisa primero. */
+    fun onDictated(spokenText: String?) {
+        if (spokenText.isNullOrBlank() || _state.value.isLoading) return
+        _state.update { it.copy(dictation = DictationStatus.INTERPRETING) }
+        viewModelScope.launch {
+            val dictated = interpretDictation(spokenText, _state.value.minOdometerKm)
+            if (dictated.isEmpty) {
+                _state.update { it.copy(dictation = DictationStatus.NOT_UNDERSTOOD) }
+                return@launch
+            }
+            if (dictated.paidCop != null) paidEdited = true
+            _state.update { current ->
+                val gallons = dictated.gallons ?: current.gallons
+                val fuel = dictated.fuelType ?: current.fuelType
+                current.copy(
+                    gallons = gallons,
+                    fuelType = fuel,
+                    paidCop = dictated.paidCop ?: paidFor(gallons, fuel, current.paidCop),
+                    isFull = dictated.isFull ?: current.isFull,
+                    odometerKm = dictated.odometerKm ?: current.odometerKm,
+                    dictation = DictationStatus.REVIEW,
+                )
+            }
+        }
+    }
+
+    fun onDictationUnavailable() = _state.update { it.copy(dictation = DictationStatus.UNAVAILABLE) }
+
+    fun closeDictation() = _state.update { it.copy(dictation = DictationStatus.IDLE) }
 
     fun save() {
         val current = _state.value

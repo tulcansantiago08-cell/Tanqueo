@@ -6,6 +6,8 @@ import com.tanqueo.domain.full
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
 import com.tanqueo.domain.partial
+import com.tanqueo.domain.usecase.InterpretDictation
+import com.tanqueo.ui.register.DictationStatus
 import com.tanqueo.ui.register.RegisterViewModel
 import java.time.Clock
 import java.time.ZoneOffset
@@ -23,9 +25,10 @@ class RegisterViewModelTest {
     private val now = dayN(13.0)
     private val clock = Clock.fixed(now, ZoneOffset.UTC)
     private val refresher = CountingRefresher()
+    private val assistant = FakeFuelAssistant()
 
     private fun viewModel(fillUps: FakeFillUpRepository) =
-        RegisterViewModel(fillUps, FakeSettingsRepository(), refresher, clock)
+        RegisterViewModel(fillUps, FakeSettingsRepository(), refresher, clock, InterpretDictation(assistant))
 
     private val history = listOf(full(0, 1000, 10.0), full(10, 1400, 10.0)) // $16.000/galón
 
@@ -110,6 +113,53 @@ class RegisterViewModelTest {
         assertEquals(1520, saved.odometerKm)
         assertEquals(1, refresher.count)
         assertTrue(vm.state.value.isSaved)
+    }
+
+    @Test fun `lo dictado llena las tarjetas sin guardar`() = runTest {
+        val repo = FakeFillUpRepository(history)
+        val vm = viewModel(repo)
+        vm.onDictated("12 galones, 200 mil, extra, parcial, 1500 km")
+        val state = vm.state.value
+        assertEquals(DictationStatus.REVIEW, state.dictation)
+        assertEquals(12.0, state.gallons, 0.0)
+        assertEquals(200_000L, state.paidCop)
+        assertEquals(FuelType.EXTRA, state.fuelType)
+        assertFalse(state.isFull)
+        assertEquals(1500, state.odometerKm)
+        assertEquals(2, repo.items.value.size)
+    }
+
+    @Test fun `dictar solo los galones recalcula el valor y no inventa km`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        vm.onDictated("15 galones")
+        assertEquals(240_000L, vm.state.value.paidCop)
+        assertNull(vm.state.value.odometerKm)
+    }
+
+    @Test fun `el valor dictado no lo pisan los galones despues`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        vm.onDictated("200 mil pesos")
+        vm.adjustGallons(5)
+        assertEquals(200_000L, vm.state.value.paidCop)
+    }
+
+    @Test fun `una frase sin datos pide repetir y deja todo igual`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        vm.onDictated("hola qué tal")
+        assertEquals(DictationStatus.NOT_UNDERSTOOD, vm.state.value.dictation)
+        assertEquals(160_000L, vm.state.value.paidCop)
+    }
+
+    @Test fun `cancelar el dictado no cambia nada`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        vm.onDictated(null)
+        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+    }
+
+    @Test fun `un km dictado menor al ultimo se descarta`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        vm.onDictated("10 galones 900 km")
+        assertNull(vm.state.value.odometerKm)
     }
 
     @Test fun `tocar guardar dos veces crea un solo tanqueo`() = runTest {

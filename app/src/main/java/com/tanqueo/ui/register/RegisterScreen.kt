@@ -16,7 +16,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.ScreenScaffold
 import com.tanqueo.R
 import com.tanqueo.domain.format.Formats
-import com.tanqueo.ui.components.PrimaryPillButton
 import com.tanqueo.ui.components.SavedConfirmation
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
@@ -101,21 +100,42 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         ),
     )
 
+    val startDictation = rememberDictationLauncher(viewModel::onDictated, viewModel::onDictationUnavailable)
+    val saveOrComplete = {
+        if (state.canSave) {
+            viewModel.save()
+        } else {
+            // Falta el valor (primer tanqueo, sin precios de referencia): se lleva ahí.
+            viewModel.closeDictation()
+            scope.launch { pagerState.animateScrollToPage(PAID_PAGE) }
+        }
+        Unit
+    }
+
+    if (state.dictation != DictationStatus.IDLE) {
+        DictationPanel(
+            state = state,
+            onEdit = viewModel::closeDictation,
+            onSave = saveOrComplete,
+            onRetry = {
+                viewModel.closeDictation()
+                startDictation()
+            },
+        )
+        return
+    }
+
     ScreenScaffold {
         ValueCardsScreen(
             pagerState = pagerState,
             cards = cards,
             bottomAction = {
-                PrimaryPillButton(
-                    text = stringResource(R.string.action_save),
-                    onClick = {
-                        if (state.canSave) {
-                            viewModel.save()
-                        } else {
-                            // Falta el valor (primer tanqueo, sin precios de referencia): se lleva ahí.
-                            scope.launch { pagerState.animateScrollToPage(PAID_PAGE) }
-                        }
-                    },
+                ActionRow(
+                    secondaryIcon = R.drawable.ic_mic,
+                    secondaryDescription = stringResource(R.string.action_dictate),
+                    onSecondary = startDictation,
+                    primaryText = stringResource(R.string.action_save),
+                    onPrimary = saveOrComplete,
                 )
             },
         )

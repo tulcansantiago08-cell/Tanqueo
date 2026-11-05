@@ -23,6 +23,13 @@ class LocalFillUpParserTest {
         assertEquals(FuelType.EXTRA, result.fuelType)
     }
 
+    @Test fun `frase larga dictada en palabras`() {
+        assertEquals(
+            DictatedFillUp(12.0, 180_000, FuelType.CORRIENTE, true, 42_000),
+            LocalFillUpParser.parse("Doce galones ciento ochenta mil pesos corriente lleno cuarenta y dos mil km"),
+        )
+    }
+
     @Test fun `decimales y medios galones`() {
         assertEquals(10.5, LocalFillUpParser.parse("10,5 galones").gallons!!, 0.0)
         assertEquals(10.5, LocalFillUpParser.parse("10.5 galones").gallons!!, 0.0)

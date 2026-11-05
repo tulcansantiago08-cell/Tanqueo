@@ -108,4 +108,35 @@
     <string name="complication_label">Autonomía de Tanqueo</string>
     <string name="complication_description">Autonomía: %1$s kilómetros</string>
     <string name="complication_no_data">Sin datos de autonomía</string>
+
+    <!-- Dictado por voz -->
+    <string name="action_dictate">Dictar el tanqueo</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_complete">Completar</string>
+    <string name="action_retry">Repetir</string>
+    <string name="action_use_crown">Usar corona</string>
+    <string name="dictation_prompt">Di los galones, el valor y el combustible</string>
+    <string name="dictation_interpreting">Entendiendo…</string>
+    <string name="dictation_review">Entendí esto. ¿Está bien?</string>
+    <string name="dictation_review_detail">%1$s gal · %2$s · %3$s</string>
+    <string name="dictation_no_km">Sin kilometraje</string>
+    <string name="dictation_not_understood">No entendí. Prueba con: 10 galones, 165 mil, corriente, lleno.</string>
+    <string name="dictation_unavailable">Este reloj no tiene dictado. Registra con la corona.</string>
+
+    <!-- ¿Cuánto me alcanza? -->
+    <string name="action_budget">¿Cuánto me alcanza?</string>
+    <string name="budget_money">Tengo</string>
+    <string name="budget_reference_price">Galón %1$s</string>
+    <string name="budget_own_price">Tu galón</string>
+    <string name="budget_own_place">Tu último</string>
+    <string name="budget_result">≈ %1$s km · %2$s gal</string>
+    <string name="budget_result_full">≈ %1$s km · tanque lleno</string>
+
+    <!-- Consejo -->
+    <string name="tip_title">Consejo</string>
+    <string name="tip_premium">La Extra te cuesta %1$s más por galón que la Corriente.</string>
+    <string name="tip_spending_up">Llevas %1$d %% más gasto que el mes pasado a esta fecha.</string>
+    <string name="tip_spending_down">Llevas %1$d %% menos gasto que el mes pasado a esta fecha.</string>
+    <string name="tip_efficiency_drop">Tu rendimiento bajó %1$d %% en el último tramo. Revisa las llantas.</string>
+    <string name="tip_keep_logging">Registra tus tanqueos con km para recibir consejos.</string>
 </resources>

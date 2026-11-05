@@ -113,6 +113,7 @@ fun PrimaryPillButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    horizontalPadding: Dp? = null,
 ) {
     val screen = rememberScreenSize()
     Box(
@@ -122,7 +123,7 @@ fun PrimaryPillButton(
             .clip(PillShape)
             .background(TanqueoColors.Accent.copy(alpha = if (enabled) 1f else 0.4f))
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = screen.dp(if (screen.isRound) 0.09f else 0.11f)),
+            .padding(horizontal = horizontalPadding ?: screen.dp(if (screen.isRound) 0.09f else 0.11f)),
         contentAlignment = Alignment.Center,
     ) {
         Text(
