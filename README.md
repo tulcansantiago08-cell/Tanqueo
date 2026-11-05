@@ -4,30 +4,48 @@ App para **smartwatch Wear OS** que registra cada vez que le pones gasolina a tu
 
 Proyecto académico.
 
-| Inicio | Registrar | Resumen |
+| Mi vehículo | Autonomía | Este mes |
 |---|---|---|
-| ![Inicio](docs/screenshots/inicio.png) | ![Registrar](docs/screenshots/registrar.png) | ![Resumen](docs/screenshots/resumen.png) |
+| ![Mi vehículo](docs/screenshots/cuadrado-1-vehiculo.png) | ![Autonomía](docs/screenshots/cuadrado-2-autonomia.png) | ![Este mes](docs/screenshots/cuadrado-3-este-mes.png) |
+| ![Mi vehículo en redondo](docs/screenshots/redondo-1-vehiculo.png) | ![Autonomía en redondo](docs/screenshots/redondo-2-autonomia.png) | ![Este mes en redondo](docs/screenshots/redondo-3-este-mes.png) |
 
-| Historial | Tile | Inicio en reloj redondo |
+| Registrar | Tile | Complicación en una carátula |
 |---|---|---|
-| ![Historial](docs/screenshots/historial.png) | ![Tile](docs/screenshots/tile.png) | ![Inicio redondo](docs/screenshots/redondo-inicio.png) |
+| ![Registrar](docs/screenshots/cuadrado-registrar.png) | ![Tile](docs/screenshots/cuadrado-tile.png) | ![Complicación](docs/screenshots/cuadrado-complicacion.png) |
+| ![Registrar en redondo](docs/screenshots/redondo-registrar.png) | ![Tile en redondo](docs/screenshots/redondo-tile.png) | ![Complicación en redondo](docs/screenshots/redondo-complicacion.png) |
 
-| Registrar en redondo | Resumen en redondo | Tile en redondo |
+| Poca autonomía | Sin tanqueos | Al guardar |
 |---|---|---|
-| ![Registrar redondo](docs/screenshots/redondo-registrar.png) | ![Resumen redondo](docs/screenshots/redondo-resumen.png) | ![Tile redonda](docs/screenshots/redondo-tile.png) |
+| ![Alerta](docs/screenshots/redondo-alerta.png) | ![Estado vacío](docs/screenshots/redondo-vacio.png) | ![Confirmación](docs/screenshots/redondo-guardado.png) |
 
 ## Funciones
 
-- **Inicio.** Hora y fecha en español, un carro visto desde arriba (vector propio, sin marcas reales), los km y días restantes y botones circulares de vidrio: **+ Tanqueo** (violeta), Historial, Resumen, Actualizar km y Ajustes.
-- **Registrar.** Una tarjeta por dato: galones, valor pagado en COP, combustible (Corriente, Extra, Diésel), tanque lleno o parcial y kilometraje. El valor grande cambia con la corona, el bisel o los botones − y +; desliza hacia arriba para pasar a la siguiente tarjeta. Tocar *paso* cambia el tamaño del ajuste. La fecha y la hora son automáticas.
+- **Inicio de 3 páginas** que se deslizan en horizontal (también con la corona o el bisel), con puntos de página abajo:
+  1. **Mi vehículo:** carro visto desde arriba (vector propio, sin marcas reales), autonomía y odómetro, y botones de vidrio para Actualizar km, Historial y Ajustes.
+  2. **Autonomía:** anillo tipo medidor que se llena según el % de tanque estimado, con los km, los días y el botón **+ Tanqueo**.
+  3. **Este mes:** gasto del mes, último tanqueo y **Ver historial**. Tocar el gasto abre el resumen completo: rendimiento, precio promedio por galón, número de tanqueos y días desde el último.
+- **Registrar.** Una tarjeta por dato: galones, valor pagado en COP, combustible (Corriente, Extra, Diésel), tanque lleno o parcial y kilometraje. El número enorme cambia con la corona, el bisel o los botones; desliza hacia arriba para pasar de tarjeta. Tocar el chip `±` cambia el tamaño del paso. La fecha y la hora son automáticas.
   - Parte de tu último tanqueo: con los mismos galones y combustible y el valor calculado con el último precio, se puede guardar en pocos toques. El valor sigue a los galones hasta que lo editas.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
-- **Resumen del mes.** Gasto del mes, rendimiento en km/galón, precio promedio por galón, número de tanqueos y días desde el último.
 - **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales.
 - **Aviso de tanquear.** Un trabajo diario de WorkManager revisa la estimación y notifica cuando quedan menos de 50 km o menos de 1 día.
 - **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
-- **Tile.** Km y días restantes, gasto del mes y un botón **+ Tanqueo** que abre directamente el registro.
+- **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
+- **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
+
+## Diseño
+
+Inspirado en el estilo de las imágenes de `docs/referencias`, sin copiar logos, marcas ni diseños exactos.
+
+- **Fondo negro puro** para que el reloj se vea elegante y ahorre batería en OLED.
+- **Vidrio oscuro:** gris translúcido, borde de 1 dp más claro y esquinas muy redondeadas.
+- **Un solo acento,** violeta `#7C5CFF`, con resplandor detrás del anillo, el botón principal y el carro. El degradado violeta → azul (`#4AC0FC`) aparece solo en el anillo.
+- **Números grandes y gruesos,** etiquetas pequeñas en gris `#9A9AA5` y poca información por pantalla. Íconos [Material Symbols Rounded](https://fonts.google.com/icons) (Apache 2.0).
+- **Animaciones:** el anillo se llena, los números cuentan hasta su valor y las tarjetas aparecen con un fundido. Al guardar se dibuja un check violeta antes de volver.
+- **Vibración** corta al girar la corona y al guardar.
+- **Alerta:** con menos de 50 km el anillo y la cifra pasan a ámbar, y con menos de 20 km a rojo, con un pulso suave. Estos niveles son fijos y no dependen de los umbrales del aviso.
+- **Accesibilidad:** botones con área de toque de al menos 48 dp, aunque el círculo visible sea menor, y contraste de la paleta comprobado con tests. El blanco sobre violeta da 4,3:1, suficiente para texto grande; por eso esos botones van en negrita.
 
 ## Cómo se calcula la estimación
 
@@ -93,7 +111,7 @@ MVVM en un solo módulo, por capas. La UI solo conoce el dominio; los datos se i
 flowchart LR
     subgraph Superficies
         S[Pantallas Compose] --> VM[ViewModels]
-        T[Tile]
+        T[Tile y complicación]
         W[Worker diario]
     end
     subgraph Domain["domain"]
@@ -121,13 +139,14 @@ app/src/main/java/com/tanqueo
 ├── di          módulos de Hilt
 ├── ui          tema, componentes de vidrio y una carpeta por pantalla
 ├── reminder    worker diario y notificación
-└── tile        servicio y diseño de la tile
-app/src/debug   datos de ejemplo y receptor para forzar el aviso (no llegan a release)
+├── tile        servicio y diseño de la tile
+└── complication  datos de la complicación para las carátulas
+app/src/debug   datos de ejemplo y receptores de demo (no llegan a release)
 ```
 
-**Tecnología:** Kotlin, Jetpack Compose for Wear OS (Material 3), `SwipeDismissableNavHost`, Hilt, Room, DataStore, WorkManager y Tiles con ProtoLayout. Textos en `strings.xml`. Pesos colombianos con punto de miles (`$164.700`) y fechas en español (`mié 4 nov`).
+**Tecnología:** Kotlin, Jetpack Compose for Wear OS (Material 3), `SwipeDismissableNavHost`, Hilt, Room, DataStore, WorkManager, Tiles con ProtoLayout y complicaciones. Textos en `strings.xml`. Pesos colombianos con punto de miles (`$ 164.700`) y fechas en español (`MIÉ 4`).
 
-**Formatos de reloj:** todas las medidas son proporcionales al lado corto de la pantalla (`ScreenSize`). En Inicio, los botones laterales siguen el borde del círculo en relojes redondos y se abren hacia las esquinas en los cuadrados. Revisado en emuladores de 180 dp (cuadrado) y 227 dp (redondo).
+**Formatos de reloj:** todas las medidas son proporcionales al lado corto de la pantalla (`ScreenSize`), con ajustes para que en los relojes redondos nada toque el borde del círculo. Revisado en emuladores de 180 dp (cuadrado) y 227 dp (redondo).
 
 ## Cómo ejecutarla
 
@@ -154,7 +173,7 @@ En la variante **debug** se cargan una sola vez seis tanqueos de ejemplo con kil
 ./gradlew testDebugUnitTest
 ```
 
-Cubren rendimiento, km por día, autonomía (pocos datos, tanqueos parciales, kilometraje actualizado a mano), resumen del mes, reglas del aviso, formatos, entrada con la corona, ViewModels y el repositorio de Room.
+Cubren rendimiento, km por día, autonomía (pocos datos, tanqueos parciales, kilometraje actualizado a mano), % de tanque, niveles de alerta, resumen del mes, reglas del aviso, formatos, entrada con la corona, contraste de la paleta, complicación, ViewModels y el repositorio de Room.
 
 ### Probar la tile
 
@@ -182,6 +201,23 @@ adb shell am broadcast -n com.tanqueo/.debug.ForceReminderReceiver --ei umbral_k
 ```
 
 El permiso de notificaciones se pide al abrir la app por primera vez y se puede activar luego desde Ajustes.
+
+### Probar la complicación
+
+Mantén presionada la carátula → lápiz → desliza hasta **Complicaciones** → toca una ranura → elige **Autonomía de Tanqueo**.
+
+### Ver los estados especiales (solo debug)
+
+```bash
+# Alerta ámbar con 40 km, o roja con 12
+adb shell am broadcast -n com.tanqueo/.debug.DemoReceiver --ei km_restantes 40
+
+# Estado vacío
+adb shell am broadcast -n com.tanqueo/.debug.DemoReceiver --ez vaciar true
+
+# Volver a los datos de ejemplo
+adb shell pm clear com.tanqueo
+```
 
 ### Probar la corona o el bisel
 
