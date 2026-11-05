@@ -270,12 +270,13 @@ private fun RangeRingContent(
             )
         }
         estimate.daysRemaining?.let { days ->
-            Text(
+            // Limitado al interior del anillo: "menos de 1 día" no debe tocar el arco.
+            BasicText(
                 text = rangeDaysText(days),
-                color = TanqueoColors.Secondary,
-                fontSize = screen.sp(11f),
-                lineHeight = screen.sp(13f),
+                style = TextStyle(color = TanqueoColors.Secondary, textAlign = TextAlign.Center),
                 maxLines = 1,
+                autoSize = TextAutoSize.StepBased(8.sp, screen.sp(11f), 0.5.sp),
+                modifier = Modifier.width(screen.dp(0.38f)),
             )
         }
     }
