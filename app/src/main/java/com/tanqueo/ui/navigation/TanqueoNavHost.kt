@@ -12,6 +12,7 @@ import com.tanqueo.ui.history.HistoryScreen
 import com.tanqueo.ui.home.HomeActions
 import com.tanqueo.ui.home.HomeScreen
 import com.tanqueo.ui.register.RegisterScreen
+import com.tanqueo.ui.summary.SummaryScreen
 
 object Routes {
     const val HOME = "inicio"
@@ -35,7 +36,7 @@ fun TanqueoNavHost(navController: NavHostController) {
                 HomeActions(
                     onAddFillUp = { go(Routes.REGISTER) },
                     onHistory = { go(Routes.HISTORY) },
-                    onSummary = {},
+                    onSummary = { go(Routes.SUMMARY) },
                     onUpdateKm = {},
                     onSettings = {},
                 ),
@@ -53,5 +54,6 @@ fun TanqueoNavHost(navController: NavHostController) {
         ) {
             FillUpDetailScreen(onDeleted = { navController.popBackStack() })
         }
+        composable(Routes.SUMMARY) { SummaryScreen() }
     }
 }
