@@ -1,15 +1,13 @@
 package com.tanqueo.reminder
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import com.tanqueo.MainActivity
 import com.tanqueo.R
 import com.tanqueo.domain.calc.RangeEstimate
@@ -19,10 +17,11 @@ import javax.inject.Inject
 
 class RefuelNotifier @Inject constructor(@param:ApplicationContext private val context: Context) {
 
+    @SuppressLint("MissingPermission") // Se revisa con areNotificationsEnabled().
     fun notify(estimate: RangeEstimate.Available) {
-        val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
-        if (!granted) return
+        // Sirve en todas las versiones: por debajo de API 33 el permiso POST_NOTIFICATIONS no existe.
+        val notifications = NotificationManagerCompat.from(context)
+        if (!notifications.areNotificationsEnabled()) return
 
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(
@@ -43,12 +42,11 @@ class RefuelNotifier @Inject constructor(@param:ApplicationContext private val c
             .setContentIntent(openApp(register = false))
             .addAction(R.drawable.ic_add, context.getString(R.string.action_add_fill_up), openApp(register = true))
             .build()
-        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+        notifications.notify(NOTIFICATION_ID, notification)
     }
 
     private fun openApp(register: Boolean): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         if (register) intent.putExtra(MainActivity.EXTRA_DESTINATION, MainActivity.DESTINATION_REGISTER)
         return PendingIntent.getActivity(
             context,

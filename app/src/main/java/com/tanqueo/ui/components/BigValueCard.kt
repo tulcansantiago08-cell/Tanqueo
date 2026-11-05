@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
@@ -40,6 +41,8 @@ fun BigValueCard(
                 color = TanqueoColors.Secondary,
                 fontSize = screen.sp(11f),
                 lineHeight = screen.sp(13f),
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
             BasicText(

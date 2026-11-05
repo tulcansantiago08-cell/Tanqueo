@@ -1,6 +1,7 @@
 package com.tanqueo.ui.components
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
@@ -19,7 +20,11 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 
 private fun Context.notificationsEnabled() = NotificationManagerCompat.from(this).areNotificationsEnabled()
 
-/** Pide el permiso de notificaciones al abrir la app si todavía no se ha concedido. */
+/**
+ * Pide el permiso de notificaciones al abrir la app si todavía no se ha concedido. Por debajo de
+ * API 33 las notificaciones ya están activas y no se llega a pedir.
+ */
+@SuppressLint("InlinedApi")
 @Composable
 fun RequestNotificationPermissionOnce() {
     val context = LocalContext.current
@@ -39,6 +44,7 @@ data class NotificationAccess(val enabled: Boolean, val request: () -> Unit)
  * Estado del permiso, revisado al volver a la pantalla. El primer intento muestra el diálogo del
  * sistema; si ya no sirve (el usuario lo negó), el siguiente abre los ajustes de la app.
  */
+@SuppressLint("InlinedApi")
 @Composable
 fun rememberNotificationAccess(): NotificationAccess {
     val context = LocalContext.current

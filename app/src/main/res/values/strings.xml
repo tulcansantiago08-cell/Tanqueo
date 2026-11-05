@@ -64,7 +64,7 @@
     <!-- Resumen -->
     <string name="summary_month_spend">Gasto del mes</string>
     <string name="summary_efficiency">Rendimiento</string>
-    <string name="summary_average_price">Precio promedio por galón</string>
+    <string name="summary_average_price">Promedio por galón</string>
     <string name="summary_count">Tanqueos del mes</string>
     <string name="summary_days_since">Último tanqueo</string>
     <string name="summary_today">hoy</string>

@@ -25,6 +25,7 @@ import com.tanqueo.domain.model.FillUp
 import com.tanqueo.ui.components.BigValueCard
 import com.tanqueo.ui.components.GlassCard
 import com.tanqueo.ui.components.GlassPillButton
+import com.tanqueo.ui.components.edgeAware
 import com.tanqueo.ui.components.ListScreen
 import com.tanqueo.ui.components.labelRes
 import com.tanqueo.ui.components.rememberScreenSize
@@ -41,7 +42,7 @@ fun HistoryScreen(onOpen: (Long) -> Unit, viewModel: HistoryViewModel = hiltView
         }
         items(list.orEmpty().size) { index ->
             val fillUp = list.orEmpty()[index]
-            FillUpRow(fillUp, onClick = { onOpen(fillUp.id) })
+            FillUpRow(fillUp, modifier = Modifier.edgeAware(this), onClick = { onOpen(fillUp.id) })
         }
     }
 }
@@ -61,10 +62,10 @@ private fun EmptyHistory() {
 }
 
 @Composable
-private fun FillUpRow(fillUp: FillUp, onClick: () -> Unit) {
+private fun FillUpRow(fillUp: FillUp, modifier: Modifier, onClick: () -> Unit) {
     val screen = rememberScreenSize()
     val date = fillUp.at.atZone(ZoneId.systemDefault())
-    GlassCard(Modifier.fillMaxWidth(), onClick = onClick) {
+    GlassCard(modifier.fillMaxWidth(), onClick = onClick) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,6 +117,7 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
         val date = item.at.atZone(ZoneId.systemDefault())
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(
                     R.string.detail_date,
                     Formats.shortDate(date.toLocalDate()),
@@ -126,6 +128,7 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
         }
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.card_gallons),
                 value = Formats.oneDecimal(item.gallons),
                 unit = stringResource(R.string.unit_gal),
@@ -133,24 +136,28 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
         }
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.detail_price_per_gallon),
                 value = Formats.cop(item.paidCop / item.gallons),
             )
         }
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.card_fuel),
                 value = stringResource(item.fuelType.labelRes),
             )
         }
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.card_fill_kind),
                 value = stringResource(if (item.isFull) R.string.fill_full else R.string.fill_partial),
             )
         }
         item {
             BigValueCard(
+                modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.card_odometer),
                 value = item.odometerKm?.let { Formats.integer(it) } ?: stringResource(R.string.value_empty),
                 unit = item.odometerKm?.let { stringResource(R.string.unit_km) },
@@ -159,6 +166,7 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
         item {
             // Sin diálogo: el primer toque pide confirmar y el segundo borra.
             GlassPillButton(
+                modifier = Modifier.edgeAware(this),
                 text = stringResource(if (confirming) R.string.action_delete_confirm else R.string.action_delete),
                 icon = R.drawable.ic_delete,
                 onClick = { if (confirming) viewModel.delete() else confirming = true },
