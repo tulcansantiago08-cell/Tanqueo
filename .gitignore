@@ -13,3 +13,6 @@ local.properties
 
 # Configuración de Firebase (cada desarrollador descarga la suya)
 app/google-services.json
+
+# Referencias de diseño con marcas de terceros: solo locales
+docs/referencias/

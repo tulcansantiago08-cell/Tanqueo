@@ -64,7 +64,7 @@ Controles para que no invente datos:
 
 ## Diseño
 
-Inspirado en el estilo de las imágenes de `docs/referencias`, sin copiar logos, marcas ni diseños exactos.
+Inspirado en aplicaciones modernas para relojes, sin copiar logos, marcas ni diseños exactos.
 
 - **Fondo negro puro** para que el reloj se vea elegante y ahorre batería en OLED.
 - **Vidrio oscuro:** gris translúcido, borde de 1 dp más claro y esquinas muy redondeadas.
