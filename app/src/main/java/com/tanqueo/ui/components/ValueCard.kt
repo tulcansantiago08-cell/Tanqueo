@@ -80,11 +80,11 @@ fun ValueCardsScreen(
                 ValueCard(cards[page], position = page + 1, total = cards.size)
             }
         }
-        val bottomPadding = screen.dp(if (screen.isRound) 0.05f else 0.025f)
         if (bottomAction != null) {
-            Box(Modifier.padding(top = 3.dp, bottom = bottomPadding)) { bottomAction() }
+            Box(Modifier.padding(top = 3.dp, bottom = screen.bottomRowPadding)) { bottomAction() }
         } else {
-            Box(Modifier.padding(bottom = bottomPadding))
+            // Sin botón, en lo redondo la tarjeta igual debe terminar antes de que el círculo la corte.
+            Box(Modifier.padding(bottom = screen.dp(if (screen.isRound) 0.235f else 0.025f)))
         }
     }
 }

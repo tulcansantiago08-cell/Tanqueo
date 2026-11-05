@@ -92,14 +92,15 @@ fun ActionRow(
         RoundIconButton(
             icon = secondaryIcon,
             contentDescription = secondaryDescription,
-            size = screen.dp(if (screen.isRound) 0.165f else 0.19f),
+            size = screen.bottomRowHeight,
             compact = true,
             onClick = onSecondary,
         )
         PrimaryPillButton(
             text = primaryText,
             onClick = onPrimary,
-            horizontalPadding = screen.dp(if (screen.isRound) 0.06f else 0.09f),
+            horizontalPadding = screen.dp(if (screen.isRound) 0.05f else 0.09f),
+            minHeight = screen.bottomRowHeight,
         )
     }
 }
@@ -138,8 +139,8 @@ fun DictationPanel(
             }
             Box(
                 Modifier
-                    .padding(top = 3.dp, bottom = screen.dp(if (screen.isRound) 0.05f else 0.025f))
-                    .size(width = screen.dp(0.9f), height = screen.dp(0.19f)),
+                    .padding(top = 3.dp, bottom = screen.bottomRowPadding)
+                    .size(width = screen.dp(0.9f), height = screen.bottomRowHeight),
                 contentAlignment = Alignment.Center,
             ) {
                 when (state.dictation) {
@@ -151,7 +152,11 @@ fun DictationPanel(
                         primaryText = stringResource(if (state.canSave) R.string.action_save else R.string.action_complete),
                         onPrimary = onSave,
                     )
-                    DictationStatus.UNAVAILABLE -> PrimaryPillButton(stringResource(R.string.action_use_crown), onEdit)
+                    DictationStatus.UNAVAILABLE -> PrimaryPillButton(
+                        text = stringResource(R.string.action_use_crown),
+                        onClick = onEdit,
+                        minHeight = screen.bottomRowHeight,
+                    )
                     else -> ActionRow(
                         secondaryIcon = R.drawable.ic_edit,
                         secondaryDescription = stringResource(R.string.action_use_crown),
@@ -220,18 +225,22 @@ private fun ReviewContent(state: RegisterUiState) {
             autoSize = TextAutoSize.StepBased(14.sp, screen.sp(30f), 1.sp),
             modifier = Modifier.fillMaxWidth(),
         )
-        Text(
+        // Se achica antes que perder un dato: "Parcial" cambia el cálculo.
+        BasicText(
             text = stringResource(
                 R.string.dictation_review_detail,
                 Formats.oneDecimal(state.gallons),
                 stringResource(state.fuelType.labelRes),
                 tank,
             ),
-            color = TanqueoColors.White,
-            fontSize = screen.sp(12f),
-            lineHeight = screen.sp(14f),
-            fontWeight = FontWeight.SemiBold,
+            style = TextStyle(
+                color = TanqueoColors.White,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+            ),
             maxLines = 1,
+            autoSize = TextAutoSize.StepBased(8.sp, screen.sp(12f), 0.5.sp),
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
             text = state.odometerKm?.let { stringResource(R.string.value_km, Formats.integer(it)) }

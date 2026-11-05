@@ -1,20 +1,26 @@
 package com.tanqueo.ui.budget
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.Text
 import com.tanqueo.R
 import com.tanqueo.domain.budget.FuelBudget
 import com.tanqueo.domain.budget.ReferencePrices
@@ -78,14 +84,18 @@ private fun BudgetResult(result: FuelBudget?) {
             Formats.oneDecimal(result.gallons),
         )
     }
-    Text(
-        text = text,
-        color = TanqueoColors.White,
-        fontSize = screen.sp(15f),
-        lineHeight = screen.sp(18f),
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center,
-        maxLines = 1,
-        modifier = Modifier.heightIn(min = screen.dp(0.12f)),
-    )
+    // Ancho limitado: abajo el círculo es más angosto y el resultado no se debe cortar.
+    Box(Modifier.heightIn(min = screen.bottomRowHeight), contentAlignment = Alignment.Center) {
+        BasicText(
+            text = text,
+            style = TextStyle(
+                color = TanqueoColors.White,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            ),
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(10.sp, screen.sp(15f), 0.5.sp),
+            modifier = Modifier.width(screen.dp(if (screen.isRound) 0.6f else 0.9f)),
+        )
+    }
 }

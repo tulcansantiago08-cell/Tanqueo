@@ -25,6 +25,12 @@ data class ScreenSize(val sideDp: Int, val isRound: Boolean) {
     /** Dónde empieza el contenido debajo del encabezado. */
     val contentTop: Dp get() = dp(if (isRound) 0.215f else 0.175f)
 
+    /** Altura de la fila inferior de las pantallas de tarjetas: en lo redondo debe caber en la curva. */
+    val bottomRowHeight: Dp get() = dp(if (isRound) 0.15f else 0.19f)
+
+    /** Separación bajo la fila inferior. */
+    val bottomRowPadding: Dp get() = dp(if (isRound) 0.075f else 0.025f)
+
     private companion object {
         const val DESIGN_SIDE_DP = 180f
     }

@@ -1,5 +1,6 @@
 package com.tanqueo.ui.register
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -113,6 +114,8 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
     }
 
     if (state.dictation != DictationStatus.IDLE) {
+        // Atrás vuelve a las tarjetas con lo dictado, sin perderlo ni salir de Registrar.
+        BackHandler(onBack = viewModel::closeDictation)
         DictationPanel(
             state = state,
             onEdit = viewModel::closeDictation,

@@ -114,12 +114,13 @@ fun PrimaryPillButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     horizontalPadding: Dp? = null,
+    minHeight: Dp? = null,
 ) {
     val screen = rememberScreenSize()
     Box(
         modifier = modifier
             .then(if (enabled) Modifier.pillGlow(screen.dp(0.05f)) else Modifier)
-            .heightIn(min = screen.dp(0.19f))
+            .heightIn(min = minHeight ?: screen.dp(0.19f))
             .clip(PillShape)
             .background(TanqueoColors.Accent.copy(alpha = if (enabled) 1f else 0.4f))
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
