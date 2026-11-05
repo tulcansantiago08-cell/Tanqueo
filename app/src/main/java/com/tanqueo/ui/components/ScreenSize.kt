@@ -1,0 +1,36 @@
+package com.tanqueo.ui.components
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/** Medidas proporcionales al lado corto, para verse igual en relojes redondos y cuadrados. */
+data class ScreenSize(val sideDp: Int, val isRound: Boolean) {
+    /** Fracción del lado corto, en dp. */
+    fun dp(fraction: Float): Dp = (sideDp * fraction).dp
+
+    /** Tamaño de texto de diseño (pensado para 180 dp) escalado a esta pantalla. */
+    fun sp(designSp: Float): TextUnit = (designSp * sideDp / DESIGN_SIDE_DP).sp
+
+    /** Margen lateral: en pantallas redondas hay menos ancho arriba y abajo. */
+    val sideMargin: Dp get() = dp(if (isRound) 0.07f else 0.04f)
+
+    private companion object {
+        const val DESIGN_SIDE_DP = 180f
+    }
+}
+
+@Composable
+fun rememberScreenSize(): ScreenSize {
+    val configuration = LocalConfiguration.current
+    return remember(configuration) {
+        ScreenSize(
+            sideDp = minOf(configuration.screenWidthDp, configuration.screenHeightDp),
+            isRound = configuration.isScreenRound,
+        )
+    }
+}

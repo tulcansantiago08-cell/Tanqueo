@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tanqueo</string>
+
+    <!-- Estimación -->
+    <string name="range_km">≈ %1$s km</string>
+    <string name="range_insufficient">Registra otro tanqueo con km para estimar</string>
+    <string name="range_days_less_than_one">menos de 1 día</string>
+    <plurals name="range_days">
+        <item quantity="one">cerca de %1$d día</item>
+        <item quantity="many">unos %1$d días</item>
+        <item quantity="other">unos %1$d días</item>
+    </plurals>
+
+    <!-- Inicio -->
+    <string name="action_add_fill_up">+ Tanqueo</string>
+    <string name="action_history">Historial</string>
+    <string name="action_summary">Resumen</string>
+    <string name="action_update_km">Actualizar km</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="car_illustration">Carro visto desde arriba</string>
 </resources>
