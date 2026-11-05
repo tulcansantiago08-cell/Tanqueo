@@ -91,7 +91,11 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
-                text = stringResource(R.string.card_label_position, model.label, position, total),
+                text = if (total > 1) {
+                    stringResource(R.string.card_label_position, model.label, position, total)
+                } else {
+                    model.label
+                },
                 color = TanqueoColors.Secondary,
                 fontSize = screen.sp(11f),
                 lineHeight = screen.sp(13f),

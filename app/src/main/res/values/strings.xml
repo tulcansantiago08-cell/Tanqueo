@@ -39,4 +39,45 @@
     <string name="action_save">Guardar</string>
     <string name="action_decrease">Bajar %1$s</string>
     <string name="action_increase">Subir %1$s</string>
+
+    <!-- Unidades -->
+    <string name="unit_gal">gal</string>
+    <string name="unit_km">km</string>
+    <string name="unit_km_per_gallon">km/gal</string>
+    <string name="value_gallons">%1$s gal</string>
+    <string name="value_km">%1$s km</string>
+    <plurals name="value_days">
+        <item quantity="one">%1$d día</item>
+        <item quantity="many">%1$d días</item>
+        <item quantity="other">%1$d días</item>
+    </plurals>
+
+    <!-- Historial -->
+    <string name="history_empty">Aún no hay tanqueos</string>
+    <string name="history_row_detail">%1$s gal · %2$s</string>
+    <string name="detail_date">%1$s · %2$s</string>
+    <string name="detail_price_per_gallon">Precio por galón</string>
+    <string name="action_delete">Borrar</string>
+    <string name="action_delete_confirm">¿Borrar? Toca otra vez</string>
+
+    <!-- Resumen -->
+    <string name="summary_month_spend">Gasto del mes</string>
+    <string name="summary_efficiency">Rendimiento</string>
+    <string name="summary_average_price">Precio promedio por galón</string>
+    <string name="summary_count">Tanqueos del mes</string>
+    <string name="summary_days_since">Último tanqueo</string>
+    <string name="summary_today">hoy</string>
+    <plurals name="summary_days_ago">
+        <item quantity="one">hace %1$d día</item>
+        <item quantity="many">hace %1$d días</item>
+        <item quantity="other">hace %1$d días</item>
+    </plurals>
+
+    <!-- Actualizar km -->
+    <string name="update_km_title">Kilometraje actual</string>
+
+    <!-- Ajustes -->
+    <string name="settings_capacity">Capacidad del tanque</string>
+    <string name="settings_km_threshold">Avisar bajo</string>
+    <string name="settings_days_threshold">Avisar con menos de</string>
 </resources>
