@@ -17,6 +17,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import com.tanqueo.R
 import com.tanqueo.domain.format.Formats
 import com.tanqueo.ui.components.PrimaryPillButton
+import com.tanqueo.ui.components.SavedConfirmation
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
 import com.tanqueo.ui.components.labelRes
@@ -44,10 +45,11 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
     }
 
     LaunchedEffect(state.isSaved) {
-        if (state.isSaved) {
-            haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-            onSaved()
-        }
+        if (state.isSaved) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
+    if (state.isSaved) {
+        ScreenScaffold { SavedConfirmation(onFinished = onSaved) }
+        return
     }
 
     val stepLabel = R.string.hint_step
@@ -70,11 +72,15 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
             label = stringResource(R.string.card_fuel),
             value = stringResource(state.fuelType.labelRes),
             onSteps = viewModel::adjustFuel,
+            decreaseIcon = R.drawable.ic_chevron_left,
+            increaseIcon = R.drawable.ic_chevron_right,
         ),
         ValueCardModel(
             label = stringResource(R.string.card_fill_kind),
             value = stringResource(if (state.isFull) R.string.fill_full else R.string.fill_partial),
             onSteps = { viewModel.toggleFull() },
+            decreaseIcon = R.drawable.ic_chevron_left,
+            increaseIcon = R.drawable.ic_chevron_right,
         ),
         ValueCardModel(
             label = stringResource(R.string.card_odometer),

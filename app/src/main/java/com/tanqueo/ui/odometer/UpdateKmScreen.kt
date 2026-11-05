@@ -16,6 +16,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import com.tanqueo.R
 import com.tanqueo.domain.format.Formats
 import com.tanqueo.ui.components.PrimaryPillButton
+import com.tanqueo.ui.components.SavedConfirmation
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
 
@@ -29,10 +30,11 @@ fun UpdateKmScreen(onSaved: () -> Unit, viewModel: UpdateKmViewModel = hiltViewM
     var step by rememberSaveable { mutableIntStateOf(1) }
 
     LaunchedEffect(state.isSaved) {
-        if (state.isSaved) {
-            haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-            onSaved()
-        }
+        if (state.isSaved) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
+    if (state.isSaved) {
+        ScreenScaffold { SavedConfirmation(onFinished = onSaved) }
+        return
     }
 
     ScreenScaffold {
