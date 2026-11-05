@@ -65,7 +65,7 @@ private fun PageColumn(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(PaddingValues(top = screen.contentTop, bottom = screen.dp(0.07f))),
+            .padding(PaddingValues(top = screen.contentTop, bottom = screen.dp(if (screen.isRound) 0.1f else 0.07f))),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
         content = content,
@@ -340,7 +340,7 @@ fun MonthPage(dashboard: Dashboard, isCurrent: Boolean, actions: HomeActions) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = screen.dp(0.03f)),
+                        .padding(horizontal = 10.dp, vertical = screen.dp(if (screen.isRound) 0.02f else 0.03f)),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(

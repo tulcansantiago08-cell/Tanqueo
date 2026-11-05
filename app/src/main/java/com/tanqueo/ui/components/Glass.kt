@@ -122,7 +122,7 @@ fun PrimaryPillButton(
             .clip(PillShape)
             .background(TanqueoColors.Accent.copy(alpha = if (enabled) 1f else 0.4f))
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = screen.dp(0.11f)),
+            .padding(horizontal = screen.dp(if (screen.isRound) 0.09f else 0.11f)),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -149,7 +149,7 @@ fun GlassPillButton(
             .heightIn(min = screen.dp(0.19f))
             .glass(PillShape)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = screen.dp(0.08f), vertical = 2.dp),
+            .padding(horizontal = screen.dp(if (screen.isRound) 0.05f else 0.08f), vertical = 2.dp),
         contentAlignment = Alignment.Center,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

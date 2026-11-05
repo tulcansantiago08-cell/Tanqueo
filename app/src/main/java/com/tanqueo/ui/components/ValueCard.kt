@@ -96,7 +96,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = screen.dp(0.03f)),
+                .padding(top = screen.dp(if (screen.isRound) 0.02f else 0.03f)),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -130,7 +130,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                     maxLines = 1,
                     autoSize = TextAutoSize.StepBased(
                         minFontSize = 14.sp,
-                        maxFontSize = screen.sp(40f),
+                        maxFontSize = screen.sp(if (screen.isRound) 36f else 40f),
                         stepSize = 1.sp,
                     ),
                     modifier = Modifier.fillMaxWidth(),
@@ -140,14 +140,14 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = screen.dp(0.05f))
-                    .padding(bottom = screen.dp(0.04f)),
+                    .padding(bottom = screen.dp(if (screen.isRound) 0.015f else 0.04f)),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (model.showSteppers) {
                     RoundIconButton(
                         icon = model.decreaseIcon,
                         contentDescription = stringResource(R.string.action_decrease, model.label),
-                        size = screen.dp(0.2f),
+                        size = screen.dp(if (screen.isRound) 0.17f else 0.2f),
                         compact = true,
                         onClick = { model.onSteps(-1) },
                     )
@@ -164,7 +164,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                     RoundIconButton(
                         icon = model.increaseIcon,
                         contentDescription = stringResource(R.string.action_increase, model.label),
-                        size = screen.dp(0.2f),
+                        size = screen.dp(if (screen.isRound) 0.17f else 0.2f),
                         compact = true,
                         onClick = { model.onSteps(1) },
                     )
