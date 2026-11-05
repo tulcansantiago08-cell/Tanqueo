@@ -13,6 +13,7 @@ import com.tanqueo.ui.home.HomeActions
 import com.tanqueo.ui.home.HomeScreen
 import com.tanqueo.ui.odometer.UpdateKmScreen
 import com.tanqueo.ui.register.RegisterScreen
+import com.tanqueo.ui.settings.SettingsScreen
 import com.tanqueo.ui.summary.SummaryScreen
 
 object Routes {
@@ -39,7 +40,7 @@ fun TanqueoNavHost(navController: NavHostController) {
                     onHistory = { go(Routes.HISTORY) },
                     onSummary = { go(Routes.SUMMARY) },
                     onUpdateKm = { go(Routes.UPDATE_KM) },
-                    onSettings = {},
+                    onSettings = { go(Routes.SETTINGS) },
                 ),
             )
         }
@@ -59,5 +60,6 @@ fun TanqueoNavHost(navController: NavHostController) {
         composable(Routes.UPDATE_KM) {
             UpdateKmScreen(onSaved = { navController.popBackStack() })
         }
+        composable(Routes.SETTINGS) { SettingsScreen() }
     }
 }
