@@ -31,6 +31,7 @@ data class HomeActions(
     val onSummary: () -> Unit,
     val onUpdateKm: () -> Unit,
     val onSettings: () -> Unit,
+    val onBudget: () -> Unit,
 )
 
 private const val PAGE_COUNT = 3

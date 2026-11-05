@@ -366,11 +366,23 @@ fun MonthPage(dashboard: Dashboard, isCurrent: Boolean, actions: HomeActions) {
                 }
             }
         }
-        GlassPillButton(
-            text = stringResource(R.string.action_view_history),
-            icon = R.drawable.ic_history,
-            onClick = actions.onHistory,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(screen.dp(0.03f)),
+        ) {
+            RoundIconButton(
+                icon = R.drawable.ic_calculate,
+                contentDescription = stringResource(R.string.action_budget),
+                size = screen.dp(if (screen.isRound) 0.165f else 0.19f),
+                compact = true,
+                onClick = actions.onBudget,
+            )
+            GlassPillButton(
+                text = stringResource(R.string.action_view_history),
+                icon = null,
+                onClick = actions.onHistory,
+            )
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import com.tanqueo.ui.budget.BudgetScreen
 import com.tanqueo.ui.history.FillUpDetailScreen
 import com.tanqueo.ui.history.FillUpDetailViewModel
 import com.tanqueo.ui.history.HistoryScreen
@@ -24,6 +25,7 @@ object Routes {
     const val SUMMARY = "resumen"
     const val UPDATE_KM = "actualizar_km"
     const val SETTINGS = "ajustes"
+    const val BUDGET = "cuanto_me_alcanza"
 
     fun detail(id: Long) = "historial/$id"
 }
@@ -41,6 +43,7 @@ fun TanqueoNavHost(navController: NavHostController) {
                     onSummary = { go(Routes.SUMMARY) },
                     onUpdateKm = { go(Routes.UPDATE_KM) },
                     onSettings = { go(Routes.SETTINGS) },
+                    onBudget = { go(Routes.BUDGET) },
                 ),
             )
         }
@@ -61,5 +64,6 @@ fun TanqueoNavHost(navController: NavHostController) {
             UpdateKmScreen(onSaved = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS) { SettingsScreen() }
+        composable(Routes.BUDGET) { BudgetScreen() }
     }
 }
