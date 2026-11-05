@@ -19,6 +19,8 @@ sealed interface RangeEstimate {
         val kmSinceLastFillUp: Double,
         /** True si los km recorridos parten de un "Actualizar km" y no solo del promedio diario. */
         val usesManualOdometer: Boolean,
+        /** Parte del tanque que queda ahora, de 0 a 1. Es lo que llena el anillo. */
+        val tankFraction: Double,
     ) : RangeEstimate
 }
 
@@ -123,7 +125,18 @@ object RangeEstimator {
             gallonsInTank = gallons,
             kmSinceLastFillUp = kmSince,
             usesManualOdometer = realKm != null,
+            tankFraction = (kmRemaining / (capacityGallons * kmPerGallon)).coerceIn(0.0, 1.0),
         )
+    }
+
+    /** La lectura de odómetro más reciente, de un tanqueo o de "Actualizar km". Nunca se estima. */
+    fun latestOdometer(fillUps: List<FillUp>, odometerUpdate: OdometerUpdate?): Int? {
+        val lastWithKm = fillUps.chronological().lastOrNull { it.odometerKm != null }
+        return when {
+            lastWithKm == null -> odometerUpdate?.km
+            odometerUpdate != null && !odometerUpdate.at.isBefore(lastWithKm.at) -> odometerUpdate.km
+            else -> lastWithKm.odometerKm
+        }
     }
 
     /** Solo vale una lectura posterior al último tanqueo y que no retroceda frente a su odómetro. */

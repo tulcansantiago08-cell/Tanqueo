@@ -18,6 +18,7 @@ class ReminderPolicyTest {
         gallonsInTank = 5.0,
         kmSinceLastFillUp = 0.0,
         usesManualOdometer = false,
+        tankFraction = 0.5,
     )
 
     @Test fun `sin estimacion no avisa`() {

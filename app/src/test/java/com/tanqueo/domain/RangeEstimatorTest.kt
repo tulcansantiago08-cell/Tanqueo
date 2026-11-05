@@ -186,6 +186,23 @@ class RangeEstimatorTest {
         assertEquals(40.0, result.kmSinceLastFillUp, delta)
     }
 
+    @Test fun `el porcentaje de tanque baja con los km recorridos`() {
+        val list = listOf(full(0, 1000), full(10, 1400)) // 40 km/gal, 40 km/día, 480 km en 12 gal
+        assertEquals(1.0, available(RangeEstimator.estimate(list, 12.0, null, dayN(10.0))).tankFraction, delta)
+        assertEquals(0.75, available(RangeEstimator.estimate(list, 12.0, null, dayN(13.0))).tankFraction, delta)
+        assertEquals(0.0, available(RangeEstimator.estimate(list, 12.0, null, dayN(100.0))).tankFraction, delta)
+    }
+
+    @Test fun `el odometro actual es la lectura mas reciente, nunca una estimacion`() {
+        assertNull(RangeEstimator.latestOdometer(emptyList(), null))
+        assertNull(RangeEstimator.latestOdometer(listOf(full(0, null)), null))
+        val list = listOf(full(0, 1000), full(10, 1400), full(12, null))
+        assertEquals(1400, RangeEstimator.latestOdometer(list, null))
+        assertEquals(1400, RangeEstimator.latestOdometer(list, OdometerUpdate(1200, dayN(5.0))))
+        assertEquals(1500, RangeEstimator.latestOdometer(list, OdometerUpdate(1500, dayN(11.0))))
+        assertEquals(1500, RangeEstimator.latestOdometer(emptyList(), OdometerUpdate(1500, dayN(11.0))))
+    }
+
     @Test fun `la autonomia nunca es negativa`() {
         val list = listOf(full(0, 1000), full(10, 1400))
         val result = available(RangeEstimator.estimate(list, 12.0, null, dayN(100.0)))

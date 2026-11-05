@@ -22,10 +22,11 @@ object Formats {
         decimalSeparator = ','
     }
     private val dateFormatter = DateTimeFormatter.ofPattern("EEE d MMM", spanish)
+    private val headerDateFormatter = DateTimeFormatter.ofPattern("EEE d", spanish)
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", spanish)
 
-    /** Pesos colombianos sin decimales: $164.700 */
-    fun cop(value: Long): String = "$" + DecimalFormat("#,##0", symbols).format(value)
+    /** Pesos colombianos sin decimales: $ 164.700, con espacio que no se parte de línea. */
+    fun cop(value: Long): String = "$\u00A0" + DecimalFormat("#,##0", symbols).format(value)
 
     fun cop(value: Double): String = cop(Math.round(value))
 
@@ -42,6 +43,10 @@ object Formats {
 
     /** Fecha corta: mié 4 nov (sin los puntos de abreviatura que agregan algunas versiones de CLDR) */
     fun shortDate(date: LocalDate): String = dateFormatter.format(date).replace(".", "").replace(",", "")
+
+    /** Fecha del encabezado: MIÉ 4 */
+    fun headerDate(date: LocalDate): String =
+        headerDateFormatter.format(date).replace(".", "").replace(",", "").uppercase(spanish)
 
     fun days(days: Double): DaysDisplay =
         if (days < 1.0) DaysDisplay.LessThanOne else DaysDisplay.About(days.roundToInt())

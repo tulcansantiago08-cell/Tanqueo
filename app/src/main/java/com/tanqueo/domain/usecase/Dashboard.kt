@@ -23,6 +23,9 @@ data class Dashboard(
     val month: MonthSummary,
     val kmPerGallon: Double?,
     val settings: TankSettings,
+    /** Null si todavía no hay ningún tanqueo. */
+    val lastFillUp: FillUp?,
+    val latestOdometerKm: Int?,
 )
 
 class ObserveDashboard @Inject constructor(
@@ -53,6 +56,8 @@ class ObserveDashboard @Inject constructor(
             month = MonthSummaryCalculator.calculate(list, now, clock.zone),
             kmPerGallon = RangeEstimator.kmPerGallon(list),
             settings = config,
+            lastFillUp = list.maxWithOrNull(compareBy({ it.at }, { it.id })),
+            latestOdometerKm = RangeEstimator.latestOdometer(list, update),
         )
     }
 }

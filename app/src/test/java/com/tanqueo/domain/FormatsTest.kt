@@ -9,10 +9,10 @@ import org.junit.Test
 
 class FormatsTest {
     @Test fun `pesos colombianos con punto de miles y sin decimales`() {
-        assertEquals("$164.700", Formats.cop(164_700L))
-        assertEquals("$1.250.000", Formats.cop(1_250_000L))
-        assertEquals("$0", Formats.cop(0L))
-        assertEquals("$16.151", Formats.cop(16_150.6))
+        assertEquals("$\u00A0164.700", Formats.cop(164_700L))
+        assertEquals("$\u00A01.250.000", Formats.cop(1_250_000L))
+        assertEquals("$\u00A00", Formats.cop(0L))
+        assertEquals("$\u00A016.151", Formats.cop(16_150.6))
     }
 
     @Test fun `decimales con coma`() {
@@ -33,6 +33,11 @@ class FormatsTest {
     @Test fun `fecha corta en espanol`() {
         assertEquals("mié 4 nov", Formats.shortDate(LocalDate.of(2026, 11, 4)))
         assertEquals("lun 2 mar", Formats.shortDate(LocalDate.of(2026, 3, 2)))
+    }
+
+    @Test fun `fecha del encabezado en mayusculas y con tilde`() {
+        assertEquals("MIÉ 4", Formats.headerDate(LocalDate.of(2026, 11, 4)))
+        assertEquals("LUN 2", Formats.headerDate(LocalDate.of(2026, 3, 2)))
     }
 
     @Test fun `dias sin mostrar nunca cero`() {
