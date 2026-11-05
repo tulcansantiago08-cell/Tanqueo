@@ -11,6 +11,8 @@ import com.tanqueo.data.local.TanqueoDatabase
 import com.tanqueo.data.settings.DataStoreSettingsRepository
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
+import com.tanqueo.domain.repository.SurfaceRefresher
+import com.tanqueo.tile.TileRefresher
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -31,6 +33,9 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: DataStoreSettingsRepository): SettingsRepository
+
+    @Binds
+    abstract fun bindSurfaceRefresher(impl: TileRefresher): SurfaceRefresher
 
     companion object {
         @Provides

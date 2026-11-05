@@ -19,4 +19,24 @@
     <string name="action_update_km">Actualizar km</string>
     <string name="action_settings">Ajustes</string>
     <string name="car_illustration">Carro visto desde arriba</string>
+
+    <!-- Registrar -->
+    <string name="card_label_position">%1$s · %2$d/%3$d</string>
+    <string name="card_gallons">Galones</string>
+    <string name="card_paid">Valor pagado</string>
+    <string name="card_fuel">Combustible</string>
+    <string name="card_fill_kind">Tanque</string>
+    <string name="card_odometer">Kilometraje</string>
+    <string name="fuel_corriente">Corriente</string>
+    <string name="fuel_extra">Extra</string>
+    <string name="fuel_diesel">Diésel</string>
+    <string name="fill_full">Lleno</string>
+    <string name="fill_partial">Parcial</string>
+    <string name="value_empty">—</string>
+    <string name="hint_step">paso %1$s</string>
+    <string name="hint_odometer_recommended">recomendado</string>
+    <string name="action_clear">Quitar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_decrease">Bajar %1$s</string>
+    <string name="action_increase">Subir %1$s</string>
 </resources>

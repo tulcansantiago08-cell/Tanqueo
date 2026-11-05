@@ -6,9 +6,11 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.tanqueo.ui.home.HomeActions
 import com.tanqueo.ui.home.HomeScreen
+import com.tanqueo.ui.register.RegisterScreen
 
 object Routes {
     const val HOME = "inicio"
+    const val REGISTER = "registrar"
 }
 
 @Composable
@@ -17,13 +19,16 @@ fun TanqueoNavHost(navController: NavHostController) {
         composable(Routes.HOME) {
             HomeScreen(
                 HomeActions(
-                    onAddFillUp = {},
+                    onAddFillUp = { navController.navigate(Routes.REGISTER) { launchSingleTop = true } },
                     onHistory = {},
                     onSummary = {},
                     onUpdateKm = {},
                     onSettings = {},
                 ),
             )
+        }
+        composable(Routes.REGISTER) {
+            RegisterScreen(onSaved = { navController.popBackStack(Routes.HOME, inclusive = false) })
         }
     }
 }

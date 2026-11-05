@@ -47,8 +47,8 @@ data class HomeActions(
 // del círculo; en las pantallas cuadradas se abren un poco hacia las esquinas.
 private const val CAR_TOP = 0.285f
 private const val CAR_HEIGHT = 0.225f
-private const val KM_TOP = 0.505f
-private const val DAYS_TOP = 0.635f
+private const val KM_TOP = 0.5f
+private const val DAYS_TOP = 0.668f
 private const val SIDE_BUTTON = 0.19f
 private const val SIDE_TOUCH = 0.225f
 private const val UPPER_BUTTON_Y = 0.375f
