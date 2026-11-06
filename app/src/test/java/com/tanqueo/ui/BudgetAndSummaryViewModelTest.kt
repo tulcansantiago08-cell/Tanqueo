@@ -30,6 +30,31 @@ class BudgetAndSummaryViewModelTest {
         assertEquals(125.0, state.result!!.km!!, 0.01) // $ 50.000 ÷ 16.000 × 40
     }
 
+    @Test fun `el valor escrito da km y dias`() = runTest {
+        val vm = BudgetViewModel(FakeFillUpRepository(history), FakeSettingsRepository())
+        vm.onMoneyTyped("80.000")
+        val state = vm.state.value
+        assertEquals(80_000L, state.moneyCop)
+        assertEquals(200.0, state.result!!.km!!, 0.01) // 5 galones × 40 km/gal
+        assertEquals(5.0, state.result!!.days!!, 0.01) // 200 km ÷ 40 km/día
+    }
+
+    @Test fun `un valor no valido avisa y deja el anterior`() = runTest {
+        val vm = BudgetViewModel(FakeFillUpRepository(history), FakeSettingsRepository())
+        vm.onMoneyTyped("hola")
+        assertEquals(50_000L, vm.state.value.moneyCop)
+        assertTrue(vm.state.value.isMoneyInvalid)
+        vm.adjustMoney(1)
+        assertTrue(!vm.state.value.isMoneyInvalid)
+    }
+
+    @Test fun `cancelar el teclado no cambia nada`() = runTest {
+        val vm = BudgetViewModel(FakeFillUpRepository(history), FakeSettingsRepository())
+        vm.onMoneyTyped(null)
+        assertEquals(50_000L, vm.state.value.moneyCop)
+        assertTrue(!vm.state.value.isMoneyInvalid)
+    }
+
     @Test fun `sin historia ofrece referencias y no inventa km`() = runTest {
         val state = BudgetViewModel(FakeFillUpRepository(), FakeSettingsRepository()).state.value
         assertEquals("Promedio", state.option!!.place)

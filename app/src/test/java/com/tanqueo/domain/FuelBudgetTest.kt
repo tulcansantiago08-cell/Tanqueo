@@ -30,6 +30,29 @@ class FuelBudgetTest {
         assertTrue(result.exceedsTank)
     }
 
+    @Test fun `los dias salen de los km que se manejan a diario`() {
+        val result = FuelBudgetCalculator.calculate(100_000, 15_886.0, 42.0, 12.0, kmPerDay = 50.0)!!
+        assertEquals(5.29, result.days!!, 0.01)
+    }
+
+    @Test fun `sin promedio diario o sin rendimiento no inventa dias`() {
+        assertNull(FuelBudgetCalculator.calculate(100_000, 15_886.0, 42.0, 12.0, kmPerDay = null)!!.days)
+        assertNull(FuelBudgetCalculator.calculate(100_000, 15_886.0, 42.0, 12.0, kmPerDay = 0.0)!!.days)
+        assertNull(FuelBudgetCalculator.calculate(100_000, 15_886.0, null, 12.0, kmPerDay = 50.0)!!.days)
+    }
+
+    @Test fun `entiende el valor como lo escriba el usuario`() {
+        listOf("50000", "50.000", "$ 50.000", "50 mil", "cincuenta mil", "50000 pesos").forEach {
+            assertEquals(it, 50_000L, FuelBudgetCalculator.parseMoney(it))
+        }
+    }
+
+    @Test fun `rechaza lo que no es un valor posible`() {
+        listOf("", "hola", "50", "999", "3000000").forEach {
+            assertNull(it, FuelBudgetCalculator.parseMoney(it))
+        }
+    }
+
     @Test fun `precio invalido no da resultado`() {
         assertNull(FuelBudgetCalculator.calculate(100_000, 0.0, 42.0, 12.0))
     }

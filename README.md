@@ -32,7 +32,7 @@ Proyecto académico.
   - Parte de tu último tanqueo: con los mismos galones y combustible y el valor calculado con el último precio, se puede guardar en pocos toques. El valor sigue a los galones hasta que lo editas.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
   - **Por voz o teclado:** el micrófono abre la entrada del sistema. Dices "10 galones, 165 mil, corriente, lleno", la app llena las tarjetas y **tú revisas antes de guardar**.
-- **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Eliges el dinero y el precio del galón, y ves los km y galones al instante. Los km usan el rendimiento real de tu vehículo; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
+- **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Tocas el valor para escribirlo con el teclado del reloj (o lo cambias con la corona o los botones), eliges el precio del galón y ves al instante cuántos km y días te dura, y los galones. Los km usan el rendimiento real de tu vehículo y los días lo que manejas a diario; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
 - **Consejo del mes** (en el resumen). Calculado con tus datos reales; si hay IA, ella lo redacta.
 - **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales.

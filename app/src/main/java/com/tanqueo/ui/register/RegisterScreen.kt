@@ -21,6 +21,7 @@ import com.tanqueo.ui.components.SavedConfirmation
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
 import com.tanqueo.ui.components.labelRes
+import com.tanqueo.ui.components.rememberTextInputLauncher
 import kotlinx.coroutines.launch
 
 private val GALLON_STEPS = listOf(1, 10) // en décimas de galón
@@ -101,7 +102,11 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         ),
     )
 
-    val startDictation = rememberDictationLauncher(viewModel::onDictated, viewModel::onDictationUnavailable)
+    val startDictation = rememberTextInputLauncher(
+        prompt = stringResource(R.string.dictation_prompt),
+        onResult = viewModel::onDictated,
+        onUnavailable = viewModel::onDictationUnavailable,
+    )
     val saveOrComplete = {
         if (state.canSave) {
             viewModel.save()

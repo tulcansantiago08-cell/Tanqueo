@@ -125,12 +125,14 @@
 
     <!-- ¿Cuánto me alcanza? -->
     <string name="action_budget">¿Cuánto me alcanza?</string>
-    <string name="budget_money">Tengo</string>
+    <string name="budget_money">Valor</string>
+    <string name="budget_type_prompt">Escribe el valor en pesos</string>
+    <string name="budget_type_value">Escribir el valor</string>
+    <string name="budget_invalid_money">No válido</string>
     <string name="budget_reference_price">Galón %1$s</string>
     <string name="budget_own_price">Tu galón</string>
     <string name="budget_own_place">Tu último</string>
-    <string name="budget_result">≈ %1$s km · %2$s gal</string>
-    <string name="budget_result_full">≈ %1$s km · tanque lleno</string>
+    <string name="budget_tank_full">tanque lleno</string>
 
     <!-- Consejo -->
     <string name="tip_title">Consejo</string>

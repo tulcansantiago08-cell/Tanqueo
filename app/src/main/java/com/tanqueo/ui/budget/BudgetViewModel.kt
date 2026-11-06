@@ -28,12 +28,15 @@ data class BudgetUiState(
     val options: List<PriceOption> = emptyList(),
     val selected: Int = 0,
     val kmPerGallon: Double? = null,
+    val kmPerDay: Double? = null,
+    /** Lo último que se escribió no era un valor posible; el monto anterior sigue igual. */
+    val isMoneyInvalid: Boolean = false,
     val tankCapacityGallons: Double = TankSettings.DEFAULT_CAPACITY_GALLONS,
 ) {
     val option: PriceOption? get() = options.getOrNull(selected)
     val result: FuelBudget?
         get() = option?.let {
-            FuelBudgetCalculator.calculate(moneyCop, it.pricePerGallon, kmPerGallon, tankCapacityGallons)
+            FuelBudgetCalculator.calculate(moneyCop, it.pricePerGallon, kmPerGallon, tankCapacityGallons, kmPerDay)
         }
 }
 
@@ -55,6 +58,7 @@ class BudgetViewModel @Inject constructor(
                 it.copy(
                     options = listOfNotNull(own) + references,
                     kmPerGallon = RangeEstimator.kmPerGallon(history),
+                    kmPerDay = RangeEstimator.kmPerDay(history),
                     tankCapacityGallons = settings.settings.first().tankCapacityGallons,
                 )
             }
@@ -62,7 +66,16 @@ class BudgetViewModel @Inject constructor(
     }
 
     fun adjustMoney(steps: Int) = _state.update {
-        it.copy(moneyCop = FuelBudgetCalculator.adjustMoney(it.moneyCop, steps))
+        it.copy(moneyCop = FuelBudgetCalculator.adjustMoney(it.moneyCop, steps), isMoneyInvalid = false)
+    }
+
+    /** [text] es null si se canceló el teclado: no cambia nada. */
+    fun onMoneyTyped(text: String?) {
+        if (text.isNullOrBlank()) return
+        val money = FuelBudgetCalculator.parseMoney(text)
+        _state.update {
+            if (money == null) it.copy(isMoneyInvalid = true) else it.copy(moneyCop = money, isMoneyInvalid = false)
+        }
     }
 
     fun selectPrice(steps: Int) = _state.update {

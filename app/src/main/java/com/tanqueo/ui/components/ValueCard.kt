@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -18,6 +19,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.Text
 import com.tanqueo.R
 import com.tanqueo.ui.theme.TanqueoColors
@@ -38,6 +41,9 @@ data class ValueCardModel(
     /** Texto pequeño bajo el valor, por ejemplo el paso actual. */
     val hint: String? = null,
     val onHintClick: (() -> Unit)? = null,
+    /** Si no es null, tocar el número lo deja escribir; muestra un lápiz junto a la etiqueta. */
+    val onValueClick: (() -> Unit)? = null,
+    val valueClickLabel: String? = null,
     /** Segunda acción pequeña, por ejemplo quitar el kilometraje. */
     val secondaryHint: String? = null,
     val onSecondaryHintClick: (() -> Unit)? = null,
@@ -99,23 +105,41 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
                 .padding(top = screen.dp(if (screen.isRound) 0.02f else 0.03f)),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = if (total > 1) {
-                    stringResource(R.string.card_label_position, model.label, position, total)
-                } else {
-                    model.label
-                },
-                color = TanqueoColors.Secondary,
-                fontSize = screen.sp(11f),
-                lineHeight = screen.sp(13f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 12.dp),
-            )
+            val typeModifier = model.onValueClick?.let { onClick ->
+                Modifier.clickable(role = Role.Button, onClickLabel = model.valueClickLabel, onClick = onClick)
+            } ?: Modifier
+            Row(
+                modifier = typeModifier.padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = if (total > 1) {
+                        stringResource(R.string.card_label_position, model.label, position, total)
+                    } else {
+                        model.label
+                    },
+                    color = TanqueoColors.Secondary,
+                    fontSize = screen.sp(11f),
+                    lineHeight = screen.sp(13f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (model.onValueClick != null) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_edit),
+                        contentDescription = null,
+                        tint = TanqueoColors.Secondary,
+                        modifier = Modifier.size(screen.dp(0.05f)),
+                    )
+                }
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
+                    .then(typeModifier)
                     .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {

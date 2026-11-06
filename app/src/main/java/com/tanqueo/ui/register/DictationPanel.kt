@@ -1,10 +1,5 @@
 package com.tanqueo.ui.register
 
-import android.content.ActivityNotFoundException
-import android.app.RemoteInput
-import android.view.inputmethod.EditorInfo
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
-import androidx.wear.input.RemoteInputIntentHelper
-import androidx.wear.input.wearableExtender
 import com.tanqueo.R
 import com.tanqueo.domain.calc.RangeLevel
 import com.tanqueo.domain.format.Formats
@@ -43,37 +36,6 @@ import com.tanqueo.ui.components.labelRes
 import com.tanqueo.ui.components.rememberAlertPulse
 import com.tanqueo.ui.components.rememberScreenSize
 import com.tanqueo.ui.theme.TanqueoColors
-
-private const val DICTATION_KEY = "dictado"
-
-/**
- * Abre la entrada del sistema de Wear OS (voz o teclado) y entrega el texto, o null si se canceló.
- * Se usa RemoteInput porque el reconocedor de voz del reloj no devuelve el texto por RecognizerIntent.
- */
-@Composable
-fun rememberDictationLauncher(onResult: (String?) -> Unit, onUnavailable: () -> Unit): () -> Unit {
-    val prompt = stringResource(R.string.dictation_prompt)
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val text = result.data?.let { RemoteInput.getResultsFromIntent(it) }?.getCharSequence(DICTATION_KEY)
-        onResult(text?.toString())
-    }
-    return {
-        val input = RemoteInput.Builder(DICTATION_KEY)
-            .setLabel(prompt)
-            .wearableExtender {
-                setEmojisAllowed(false)
-                setInputActionType(EditorInfo.IME_ACTION_DONE)
-            }
-            .build()
-        val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
-        RemoteInputIntentHelper.putRemoteInputsExtra(intent, listOf(input))
-        try {
-            launcher.launch(intent)
-        } catch (_: ActivityNotFoundException) {
-            onUnavailable()
-        }
-    }
-}
 
 /** Botón circular de vidrio y botón principal violeta, en un ancho que no toca el borde del círculo. */
 @Composable
