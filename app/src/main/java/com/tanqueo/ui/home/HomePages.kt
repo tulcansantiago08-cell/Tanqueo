@@ -48,6 +48,7 @@ import com.tanqueo.ui.components.ScreenSize
 import com.tanqueo.ui.components.fadeInOnAppear
 import com.tanqueo.ui.components.labelRes
 import com.tanqueo.ui.components.rangeDaysText
+import com.tanqueo.ui.components.refuelDateText
 import com.tanqueo.ui.components.rememberAlertPulse
 import com.tanqueo.ui.components.rememberCountUp
 import com.tanqueo.ui.components.rememberScreenSize
@@ -276,6 +277,18 @@ private fun RangeRingContent(
                 style = TextStyle(color = TanqueoColors.Secondary, textAlign = TextAlign.Center),
                 maxLines = 1,
                 autoSize = TextAutoSize.StepBased(8.sp, screen.sp(11f), 0.5.sp),
+                modifier = Modifier.width(screen.dp(0.38f)),
+            )
+            BasicText(
+                text = refuelDateText(days),
+                style = TextStyle(
+                    color = TanqueoColors.White,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                ),
+                maxLines = 1,
+                softWrap = false,
+                autoSize = TextAutoSize.StepBased(8.sp, screen.sp(10f), 0.5.sp),
                 modifier = Modifier.width(screen.dp(0.38f)),
             )
         }

@@ -44,9 +44,12 @@ object Formats {
     /** Fecha corta: mié 4 nov (sin los puntos de abreviatura que agregan algunas versiones de CLDR) */
     fun shortDate(date: LocalDate): String = dateFormatter.format(date).replace(".", "").replace(",", "")
 
+    /** Día de una fecha cercana, donde el mes no cabe ni hace falta: mié 4 */
+    fun dayDate(date: LocalDate): String =
+        headerDateFormatter.format(date).replace(".", "").replace(",", "")
+
     /** Fecha del encabezado: MIÉ 4 */
-    fun headerDate(date: LocalDate): String =
-        headerDateFormatter.format(date).replace(".", "").replace(",", "").uppercase(spanish)
+    fun headerDate(date: LocalDate): String = dayDate(date).uppercase(spanish)
 
     fun days(days: Double): DaysDisplay =
         if (days < 1.0) DaysDisplay.LessThanOne else DaysDisplay.About(days.roundToInt())

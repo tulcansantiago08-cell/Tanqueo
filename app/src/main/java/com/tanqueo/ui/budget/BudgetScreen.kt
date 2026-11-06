@@ -28,6 +28,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import com.tanqueo.R
 import com.tanqueo.domain.budget.FuelBudget
 import com.tanqueo.domain.budget.ReferencePrices
+import com.tanqueo.domain.calc.RangeEstimator
 import com.tanqueo.domain.format.Formats
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
@@ -36,6 +37,7 @@ import com.tanqueo.ui.components.rangeKmText
 import com.tanqueo.ui.components.rememberTextInputLauncher
 import com.tanqueo.ui.components.rememberScreenSize
 import com.tanqueo.ui.theme.TanqueoColors
+import java.time.LocalDate
 
 private val MONEY_STEPS = listOf(1, 10) // en múltiplos de $ 1.000
 
@@ -99,10 +101,18 @@ private fun BudgetResult(result: FuelBudget?) {
         result.days == null -> rangeKmText(km)
         else -> stringResource(R.string.range_full, rangeKmText(km), rangeDaysText(result.days))
     }
-    val detail = when {
+    val amount = when {
         km == null -> null
         result.exceedsTank -> stringResource(R.string.budget_tank_full)
         else -> stringResource(R.string.value_gallons, Formats.oneDecimal(result.gallons))
+    }
+    val detail = amount?.let {
+        val days = result?.days ?: return@let it
+        stringResource(
+            R.string.budget_result_until,
+            it,
+            Formats.dayDate(RangeEstimator.refuelDate(LocalDate.now(), days)),
+        )
     }
     // Ancho limitado: abajo el círculo es más angosto y el resultado no se debe cortar.
     Column(
@@ -112,7 +122,7 @@ private fun BudgetResult(result: FuelBudget?) {
     ) {
         ResultLine(headline, TanqueoColors.White, FontWeight.Bold, screen.sp(15f), screen.dp(if (screen.isRound) 0.74f else 0.9f))
         detail?.let {
-            ResultLine(it, TanqueoColors.Secondary, FontWeight.SemiBold, screen.sp(12f), screen.dp(if (screen.isRound) 0.5f else 0.9f))
+            ResultLine(it, TanqueoColors.Secondary, FontWeight.SemiBold, screen.sp(12f), screen.dp(if (screen.isRound) 0.6f else 0.9f))
         }
     }
 }
@@ -122,6 +132,7 @@ private fun ResultLine(text: String, color: Color, weight: FontWeight, maxSize: 
     BasicText(
         text = text,
         style = TextStyle(color = color, fontWeight = weight, textAlign = TextAlign.Center),
+        softWrap = false,
         maxLines = 1,
         autoSize = TextAutoSize.StepBased(10.sp, maxSize, 0.5.sp),
         modifier = Modifier.width(width),

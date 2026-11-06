@@ -24,6 +24,9 @@
     <string name="home_fuel_range">Combustible restante</string>
     <string name="home_odometer">Kilometraje</string>
     <string name="home_empty">Registra tu primer tanqueo</string>
+    <string name="range_refuel_on">tanquea ≈ %1$s</string>
+    <string name="range_refuel_today">tanquea hoy</string>
+    <string name="budget_result_until">%1$s · hasta %2$s</string>
     <string name="range_km_number">≈ %1$s</string>
     <string name="saved_confirmation">Guardado</string>
     <string name="action_view_summary">Ver resumen del mes</string>
@@ -46,7 +49,7 @@
     <string name="fill_partial">Parcial</string>
     <string name="value_empty">—</string>
     <string name="hint_step">± %1$s</string>
-    <string name="hint_odometer_recommended">recomendado</string>
+    <string name="hint_odometer_recommended">toca + o −</string>
     <string name="action_clear">Quitar</string>
     <string name="action_save">Guardar</string>
     <string name="action_decrease">Bajar %1$s</string>

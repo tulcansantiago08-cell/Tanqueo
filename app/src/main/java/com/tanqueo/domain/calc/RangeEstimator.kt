@@ -4,6 +4,8 @@ import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
+import kotlin.math.floor
 
 /** Resultado de la estimación de autonomía. Sin datos suficientes no se inventa ninguna cifra. */
 sealed interface RangeEstimate {
@@ -40,6 +42,10 @@ object RangeEstimator {
      * porque los parciales intermedios también se consumieron en ese recorrido.
      * Devuelve el promedio de los km/galón de los últimos [MAX_SEGMENTS] tramos.
      */
+    /** Qué día se acabaría: los días completos que alcanza contados desde hoy. */
+    fun refuelDate(today: LocalDate, daysRemaining: Double): LocalDate =
+        today.plusDays(floor(daysRemaining).toLong())
+
     fun kmPerGallon(fillUps: List<FillUp>): Double? {
         val sorted = fillUps.chronological()
         val anchors = sorted.indices.filter { sorted[it].isFull && sorted[it].odometerKm != null }
