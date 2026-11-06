@@ -148,7 +148,7 @@
     <AnalogClock x="0" y="0" width="450" height="450">
       <HourHand resource="hand_hour" x="215" y="101" width="20" height="132" pivotX="0.5" pivotY="0.93939"/>
       <MinuteHand resource="hand_minute" x="217" y="37" width="16" height="196" pivotX="0.5" pivotY="0.95918"/>
-      <SecondHand resource="hand_second" x="220" y="23" width="10" height="252" pivotX="0.5" pivotY="0.80159"><Variant mode="AMBIENT" target="alpha" value="0"/><Sweep frequency="15"/></SecondHand>
+      <SecondHand resource="hand_second" x="220" y="23" width="10" height="252" pivotX="0.5" pivotY="0.80159"><Variant mode="AMBIENT" target="alpha" value="0"/><Tick duration="0.18" strength="0.6"/></SecondHand>
     </AnalogClock>
     <PartDraw name="centro" x="217" y="217" width="16" height="16">
       <Ellipse x="0" y="0" width="16" height="16"><Fill color="#ffffffff"/></Ellipse>

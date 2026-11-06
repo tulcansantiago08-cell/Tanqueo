@@ -176,7 +176,7 @@ xml = f"""<?xml version="1.0" encoding="utf-8"?>
     <AnalogClock x="0" y="0" width="{SIZE}" height="{SIZE}">
       {clock_hand("HourHand", HOUR)}
       {clock_hand("MinuteHand", MINUTE)}
-      {clock_hand("SecondHand", SECOND, '<Variant mode="AMBIENT" target="alpha" value="0"/><Sweep frequency="15"/>')}
+      {clock_hand("SecondHand", SECOND, '<Variant mode="AMBIENT" target="alpha" value="0"/><Tick duration="0.18" strength="0.6"/>')}
     </AnalogClock>
     <PartDraw name="centro" x="{CENTER - 8:g}" y="{CENTER - 8:g}" width="16" height="16">
       <Ellipse x="0" y="0" width="16" height="16"><Fill color="#ffffffff"/></Ellipse>
