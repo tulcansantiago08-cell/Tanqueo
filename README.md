@@ -1,6 +1,6 @@
 # Tanqueo
 
-App para **smartwatch Wear OS** que registra cada vez que le pones gasolina a tu vehículo, estima cuánto te dura y te avisa cuándo volver a tanquear. Funciona solo en el reloj: sin app de celular, sin cuenta y sin Firebase.
+App para **smartwatch Wear OS** que registra cada vez que le pones gasolina a tu vehículo, estima cuánto te dura y te avisa cuándo volver a tanquear. Funciona solo en el reloj: sin app de celular y sin cuenta. La IA es opcional; sin ella la app funciona igual con cálculos locales.
 
 Proyecto académico.
 
@@ -26,17 +26,17 @@ Proyecto académico.
 
 - **Inicio de 3 páginas** que se deslizan en horizontal (también con la corona o el bisel), con puntos de página abajo:
   1. **Mi vehículo:** carro visto desde arriba (vector propio, sin marcas reales), autonomía y odómetro, y botones de vidrio para Actualizar km, Historial y Ajustes.
-  2. **Autonomía:** anillo tipo medidor que se llena según el % de tanque estimado, con los km, los días y el botón **+ Tanqueo**.
+  2. **Autonomía:** anillo tipo medidor que se llena según el % de tanque estimado, con los km, los días, la fecha estimada para volver a tanquear y el botón **+ Tanqueo**.
   3. **Este mes:** gasto del mes, último tanqueo y **Ver historial**. Tocar el gasto abre el resumen completo: rendimiento, precio promedio por galón, número de tanqueos y días desde el último.
 - **Registrar.** Una tarjeta por dato: galones, valor pagado en COP, combustible (Corriente, Extra, Diésel), tanque lleno o parcial y kilometraje. El número enorme cambia con la corona, el bisel o los botones; desliza hacia arriba para pasar de tarjeta. Tocar el chip `±` cambia el tamaño del paso. La fecha y la hora son automáticas.
-  - Parte de tu último tanqueo: con los mismos galones y combustible y el valor calculado con el último precio, se puede guardar en pocos toques. Guardar siempre muestra antes un resumen, donde se ve si falta el kilometraje, y desde ahí se confirma o se corrige. El valor sigue a los galones hasta que lo editas.
+  - Parte de tu último tanqueo: con los galones de tu último tanque lleno, el mismo combustible y el valor calculado con el último precio, se puede guardar en pocos toques. Guardar siempre muestra antes un resumen, donde se ve si falta el kilometraje, y desde ahí se confirma o se corrige. El valor sigue a los galones hasta que lo editas.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
   - **Por voz o teclado:** el micrófono abre la entrada del sistema. Dices "10 galones, 165 mil, corriente, lleno", la app llena las tarjetas y **tú revisas antes de guardar**.
-- **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Tocas el valor para escribirlo con el teclado del reloj (o lo cambias con la corona o los botones), eliges el precio del galón y ves al instante cuántos km y días te dura, y los galones. Los km usan el rendimiento real de tu vehículo y los días lo que manejas a diario; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
+- **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Tocas el valor para escribirlo con el teclado del reloj (o lo cambias con la corona o los botones), eliges el precio del galón y ves al instante cuántos km y días te dura, hasta qué fecha y los galones. Los km usan el rendimiento real de tu vehículo y los días lo que manejas a diario; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
 - **Consejo del mes** (en el resumen). Calculado con tus datos reales; si hay IA, ella lo redacta.
-- **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales.
-- **Aviso de tanquear.** Un trabajo diario de WorkManager revisa la estimación y notifica cuando quedan menos de 50 km o menos de 1 día.
+- **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales. Empieza vacío: el primer toque muestra una sugerencia y se ajusta a lo que marca el carro, así una estimación nunca se guarda como lectura real.
+- **Aviso de tanquear.** Un trabajo de WorkManager revisa la estimación cada 12 horas y notifica cuando quedan menos de 50 km o menos de 1 día (se cambia en Ajustes). Si ya no hace falta, quita el aviso anterior.
 - **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
 - **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
 - **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
@@ -202,7 +202,7 @@ En la variante **debug** se cargan una sola vez seis tanqueos de ejemplo con kil
 
 Sin este paso la app compila y funciona con el lector local.
 
-1. En [Firebase console](https://console.firebase.google.com), abre tu proyecto y registra una app Android con el paquete `com.tanqueo`. Descarga `google-services.json` en `app/` (no se versiona).
+1. En [Firebase console](https://console.firebase.google.com), crea un proyecto solo para Tanqueo y registra una app Android con el paquete `com.tanqueo`. Descarga `google-services.json` en `app/` (no se versiona).
 2. En **AI Logic**, activa el proveedor **Gemini Developer API**, si el proyecto no lo tiene ya.
 3. En **App Check**, registra la app y agrega como token de depuración el valor de `APP_CHECK_DEBUG_TOKEN` de tu `local.properties` (no se versiona). Puedes generar uno con `uuidgen`.
 4. Vuelve a instalar con `./gradlew installDebug`.
