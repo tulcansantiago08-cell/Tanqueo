@@ -1,6 +1,7 @@
 package com.tanqueo.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
@@ -22,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,21 +72,33 @@ fun ValueCardsScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TimeHeader()
-        VerticalPager(
-            state = pagerState,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            pageSpacing = 8.dp,
-            // En una pantalla tan pequeña, medio recorrido de tarjeta es demasiado para el dedo.
-            flingBehavior = PagerDefaults.flingBehavior(state = pagerState, snapPositionalThreshold = 0.2f),
-        ) { page ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = screen.sideMargin * 0.5f, vertical = 3.dp),
-            ) {
-                ValueCard(cards[page], position = page + 1, total = cards.size)
+        ) {
+            VerticalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+                pageSpacing = 8.dp,
+                // En una pantalla tan pequeña, medio recorrido de tarjeta es demasiado para el dedo.
+                flingBehavior = PagerDefaults.flingBehavior(state = pagerState, snapPositionalThreshold = 0.2f),
+            ) { page ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = screen.sideMargin * 0.5f, vertical = 3.dp),
+                ) {
+                    ValueCard(cards[page], position = page + 1, total = cards.size)
+                }
+            }
+            if (cards.size > 1) {
+                // Dicen sin palabras que hay más tarjetas: el margen junto a la tarjeta queda libre.
+                CardDots(
+                    current = pagerState.currentPage,
+                    count = cards.size,
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                )
             }
         }
         if (bottomAction != null) {
@@ -91,6 +106,29 @@ fun ValueCardsScreen(
         } else {
             // Sin botón, en lo redondo la tarjeta igual debe terminar antes de que el círculo la corte.
             Box(Modifier.padding(bottom = screen.dp(if (screen.isRound) 0.235f else 0.025f)))
+        }
+    }
+}
+
+@Composable
+private fun CardDots(current: Int, count: Int, modifier: Modifier = Modifier) {
+    val screen = rememberScreenSize()
+    val dot = screen.dp(if (screen.isRound) 0.018f else 0.016f)
+    Column(
+        modifier = modifier
+            .padding(end = screen.sideMargin * 0.25f - dot / 2)
+            .clearAndSetSemantics {},
+        verticalArrangement = Arrangement.spacedBy(dot * 0.7f),
+    ) {
+        repeat(count) { index ->
+            Box(
+                Modifier
+                    .size(dot)
+                    .background(
+                        if (index == current) TanqueoColors.White else TanqueoColors.GlassBorder,
+                        CircleShape,
+                    ),
+            )
         }
     }
 }
