@@ -45,6 +45,9 @@ class RefuelNotifier @Inject constructor(@param:ApplicationContext private val c
         notifications.notify(NOTIFICATION_ID, notification)
     }
 
+    /** Ya no hace falta tanquear: el aviso anterior no debe quedarse. */
+    fun cancel() = NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+
     private fun openApp(register: Boolean): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
         if (register) intent.putExtra(MainActivity.EXTRA_DESTINATION, MainActivity.DESTINATION_REGISTER)

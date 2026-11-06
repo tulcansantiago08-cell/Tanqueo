@@ -13,7 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
-/** Revisa la estimación una vez al día, avisa si toca y deja la tile al día. */
+/** Revisa la estimación dos veces al día, avisa si toca (o quita un aviso viejo) y deja la tile al día. */
 @HiltWorker
 class RefuelReminderWorker @AssistedInject constructor(
     @Assisted context: Context,
@@ -24,7 +24,8 @@ class RefuelReminderWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        check()?.let(notifier::notify)
+        val estimate = check()
+        if (estimate != null) notifier.notify(estimate) else notifier.cancel()
         surfaces.refresh()
         return Result.success()
     }
@@ -35,8 +36,9 @@ class RefuelReminderWorker @AssistedInject constructor(
         fun schedule(context: Context) {
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 UNIQUE_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<RefuelReminderWorker>(1, TimeUnit.DAYS).build(),
+                // Con una sola revisión al día, el aviso de "menos de 1 día" podría llegar casi sin gasolina.
+                ExistingPeriodicWorkPolicy.UPDATE,
+                PeriodicWorkRequestBuilder<RefuelReminderWorker>(12, TimeUnit.HOURS).build(),
             )
         }
     }
