@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** En qué va el dictado por voz. */
-enum class DictationStatus { IDLE, INTERPRETING, REVIEW, NOT_UNDERSTOOD, UNAVAILABLE }
+/** En qué va el dictado por voz. CONFIRM es el resumen antes de guardar lo llenado a mano. */
+enum class DictationStatus { IDLE, INTERPRETING, REVIEW, CONFIRM, NOT_UNDERSTOOD, UNAVAILABLE }
 
 data class RegisterUiState(
     val isLoading: Boolean = true,
@@ -143,6 +143,11 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun onDictationUnavailable() = _state.update { it.copy(dictation = DictationStatus.UNAVAILABLE) }
+
+    /** Muestra el resumen antes de guardar, para que un toque suelto no anote un tanqueo. */
+    fun confirmBeforeSaving() = _state.update {
+        if (it.canSave) it.copy(dictation = DictationStatus.CONFIRM) else it
+    }
 
     fun closeDictation() = _state.update { it.copy(dictation = DictationStatus.IDLE) }
 

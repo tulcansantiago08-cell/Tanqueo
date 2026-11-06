@@ -162,6 +162,23 @@ class RegisterViewModelTest {
         assertNull(vm.state.value.odometerKm)
     }
 
+    @Test fun `pedir el resumen no guarda nada`() = runTest {
+        val fills = FakeFillUpRepository(history)
+        val vm = viewModel(fills)
+        vm.confirmBeforeSaving()
+        assertEquals(DictationStatus.CONFIRM, vm.state.value.dictation)
+        assertEquals(history.size, fills.items.value.size)
+        vm.closeDictation()
+        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+        assertEquals(history.size, fills.items.value.size)
+    }
+
+    @Test fun `sin valor no se muestra el resumen`() = runTest {
+        val vm = viewModel(FakeFillUpRepository())
+        vm.confirmBeforeSaving()
+        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+    }
+
     @Test fun `tocar guardar dos veces crea un solo tanqueo`() = runTest {
         val repo = FakeFillUpRepository(history)
         val vm = viewModel(repo)

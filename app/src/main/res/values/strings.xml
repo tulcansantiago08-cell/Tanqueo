@@ -118,6 +118,7 @@
     <string name="dictation_prompt">Di los galones, el valor y el combustible</string>
     <string name="dictation_interpreting">Entendiendo…</string>
     <string name="dictation_review">Entendí esto. ¿Está bien?</string>
+    <string name="confirm_review">Revisa antes de guardar</string>
     <string name="dictation_review_detail">%1$s gal · %2$s · %3$s</string>
     <string name="dictation_no_km">Sin kilometraje</string>
     <string name="dictation_not_understood">No entendí. Prueba con: 10 galones, 165 mil, corriente, lleno.</string>

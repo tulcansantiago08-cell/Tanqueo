@@ -107,14 +107,10 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         onResult = viewModel::onDictated,
         onUnavailable = viewModel::onDictationUnavailable,
     )
-    val saveOrComplete = {
-        if (state.canSave) {
-            viewModel.save()
-        } else {
-            // Falta el valor (primer tanqueo, sin precios de referencia): se lleva ahí.
-            viewModel.closeDictation()
-            scope.launch { pagerState.animateScrollToPage(PAID_PAGE) }
-        }
+    // Falta el valor (primer tanqueo, sin precios de referencia): se lleva ahí.
+    val goToPaid = {
+        viewModel.closeDictation()
+        scope.launch { pagerState.animateScrollToPage(PAID_PAGE) }
         Unit
     }
 
@@ -124,7 +120,7 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         DictationPanel(
             state = state,
             onEdit = viewModel::closeDictation,
-            onSave = saveOrComplete,
+            onSave = { if (state.canSave) viewModel.save() else goToPaid() },
             onRetry = {
                 viewModel.closeDictation()
                 startDictation()
@@ -143,7 +139,7 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
                     secondaryDescription = stringResource(R.string.action_dictate),
                     onSecondary = startDictation,
                     primaryText = stringResource(R.string.action_save),
-                    onPrimary = saveOrComplete,
+                    onPrimary = { if (state.canSave) viewModel.confirmBeforeSaving() else goToPaid() },
                 )
             },
         )

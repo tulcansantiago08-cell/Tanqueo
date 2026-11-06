@@ -67,7 +67,7 @@ fun ActionRow(
     }
 }
 
-/** Mientras la IA entiende, la revisión de lo entendido y el aviso si no se entendió. */
+/** Mientras la IA entiende, la revisión antes de guardar y el aviso si no se entendió. */
 @Composable
 fun DictationPanel(
     state: RegisterUiState,
@@ -87,7 +87,7 @@ fun DictationPanel(
             ) {
                 when (state.dictation) {
                     DictationStatus.INTERPRETING -> InterpretingContent()
-                    DictationStatus.REVIEW -> ReviewContent(state)
+                    DictationStatus.REVIEW, DictationStatus.CONFIRM -> ReviewContent(state)
                     else -> Message(
                         stringResource(
                             if (state.dictation == DictationStatus.UNAVAILABLE) {
@@ -107,7 +107,7 @@ fun DictationPanel(
             ) {
                 when (state.dictation) {
                     DictationStatus.INTERPRETING -> Unit
-                    DictationStatus.REVIEW -> ActionRow(
+                    DictationStatus.REVIEW, DictationStatus.CONFIRM -> ActionRow(
                         secondaryIcon = R.drawable.ic_edit,
                         secondaryDescription = stringResource(R.string.action_edit),
                         onSecondary = onEdit,
@@ -169,7 +169,9 @@ private fun ReviewContent(state: RegisterUiState) {
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Text(
-            text = stringResource(R.string.dictation_review),
+            text = stringResource(
+                if (state.dictation == DictationStatus.CONFIRM) R.string.confirm_review else R.string.dictation_review,
+            ),
             color = TanqueoColors.Secondary,
             fontSize = screen.sp(11f),
             lineHeight = screen.sp(13f),
