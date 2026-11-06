@@ -15,7 +15,19 @@ data class MonthSummary(
     val daysSinceLastFillUp: Long?,
 )
 
+data class MonthSpend(val month: YearMonth, val totalCop: Long)
+
 object MonthSummaryCalculator {
+    /** Gasto de los últimos [months] meses, del más antiguo al actual, incluidos los que van en cero. */
+    fun spendByMonth(fillUps: List<FillUp>, now: Instant, zone: ZoneId, months: Int = 6): List<MonthSpend> {
+        val current = YearMonth.from(now.atZone(zone))
+        val totals = fillUps.groupBy { YearMonth.from(it.at.atZone(zone)) }.mapValues { (_, list) -> list.sumOf { it.paidCop } }
+        return (months - 1 downTo 0).map { back ->
+            val month = current.minusMonths(back.toLong())
+            MonthSpend(month, totals[month] ?: 0L)
+        }
+    }
+
     /** El precio promedio se pondera: total pagado en el mes ÷ total de galones del mes. */
     fun calculate(fillUps: List<FillUp>, now: Instant, zone: ZoneId): MonthSummary {
         val today = now.atZone(zone).toLocalDate()

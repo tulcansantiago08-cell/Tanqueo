@@ -24,6 +24,9 @@ object TanqueoColors {
     val Red = Color(0xFFFF5A4F)
 
     val RingTrack = Color(0x24FFFFFF)
+
+    /** Barras de los meses anteriores en la gráfica: gris sólido, recesivo frente al acento. */
+    val ChartBar = Color(0xFF55555F)
     val GlassTop = Color(0x2EFFFFFF)
     val GlassBottom = Color(0x17FFFFFF)
     val GlassBorder = Color(0x40FFFFFF)

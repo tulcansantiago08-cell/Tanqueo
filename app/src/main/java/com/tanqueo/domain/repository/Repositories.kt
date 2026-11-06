@@ -1,5 +1,6 @@
 package com.tanqueo.domain.repository
 
+import com.tanqueo.domain.assistant.AskIntent
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
@@ -35,6 +36,7 @@ data class CachedTip(val key: String, val text: String)
  */
 interface FuelAssistant {
     suspend fun interpretFillUp(spokenText: String): DictatedFillUp?
+    suspend fun interpretQuestion(question: String): AskIntent?
     suspend fun writeTip(monthFacts: String): String?
 }
 

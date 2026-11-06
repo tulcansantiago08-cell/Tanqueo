@@ -1,12 +1,30 @@
 package com.tanqueo.domain
 
 import com.tanqueo.domain.calc.FillUpInput
+import com.tanqueo.domain.calc.FillUpWarning
 import com.tanqueo.domain.model.FuelType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
 class FillUpInputTest {
+    @Test fun `avisa de lo que no cabe en el tanque`() {
+        org.junit.Assert.assertEquals(FillUpWarning.OVER_CAPACITY, FillUpInput.warning(13.0, 200_000, 12.0))
+    }
+
+    @Test fun `avisa de un precio por galon poco creible`() {
+        org.junit.Assert.assertEquals(FillUpWarning.ODD_PRICE, FillUpInput.warning(10.0, 16_000, 12.0))
+        org.junit.Assert.assertEquals(FillUpWarning.ODD_PRICE, FillUpInput.warning(1.0, 900_000, 12.0))
+    }
+
+    @Test fun `un valor aun sin poner no es un precio raro`() {
+        org.junit.Assert.assertNull(FillUpInput.warning(10.0, 0, 12.0))
+    }
+
+    @Test fun `un tanqueo normal no lleva aviso`() {
+        org.junit.Assert.assertNull(FillUpInput.warning(10.0, 165_000, 12.0))
+    }
+
     @Test fun `galones avanzan de a una decima sin error de redondeo`() {
         var value = 10.0
         repeat(3) { value = FillUpInput.adjustGallons(value, 1) }

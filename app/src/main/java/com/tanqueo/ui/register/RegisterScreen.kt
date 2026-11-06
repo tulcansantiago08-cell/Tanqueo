@@ -1,11 +1,13 @@
 package com.tanqueo.ui.register
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -28,10 +30,33 @@ private val GALLON_STEPS = listOf(1, 10) // en décimas de galón
 private val COP_STEPS = listOf(1, 10, 100) // en múltiplos de $100
 private val KM_STEPS = listOf(1, 10, 100, 1_000, 10_000)
 
+private const val GALLONS_PAGE = 0
 private const val PAID_PAGE = 1
+private const val ODOMETER_PAGE = 4
+private const val NO_CARD = -1
+
+/** Abre el teclado para una tarjeta y avisa cuál quedó con un valor que no se entendió. */
+@Composable
+private fun rememberTypedValue(
+    @StringRes prompt: Int,
+    page: Int,
+    apply: (String) -> Boolean,
+    onInvalid: (Int) -> Unit,
+): () -> Unit = rememberTextInputLauncher(
+    prompt = stringResource(prompt),
+    onResult = { text ->
+        if (!text.isNullOrBlank()) onInvalid(if (apply(text)) NO_CARD else page)
+    },
+    onUnavailable = {},
+)
 
 @Composable
-fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewModel()) {
+fun RegisterScreen(
+    onSaved: () -> Unit,
+    /** Frase ya dicha en otra pantalla: llena las tarjetas y va directo a revisar. */
+    initialDictation: String? = null,
+    viewModel: RegisterViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { 5 })
     val scope = rememberCoroutineScope()
@@ -40,6 +65,19 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
     var gallonStep by rememberSaveable { mutableIntStateOf(0) }
     var copStep by rememberSaveable { mutableIntStateOf(1) }
     var kmStep by rememberSaveable { mutableIntStateOf(1) }
+    var invalidCard by rememberSaveable { mutableIntStateOf(NO_CARD) }
+    var usedInitialDictation by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(state.isLoading) {
+        if (!state.isLoading && initialDictation != null && !usedInitialDictation) {
+            usedInitialDictation = true
+            viewModel.onDictated(initialDictation)
+        }
+    }
+    val typeGallons = rememberTypedValue(R.string.type_gallons_prompt, GALLONS_PAGE, viewModel::typeGallons) { invalidCard = it }
+    val typePaid = rememberTypedValue(R.string.type_paid_prompt, PAID_PAGE, viewModel::typePaid) { invalidCard = it }
+    val typeKm = rememberTypedValue(R.string.type_km_prompt, ODOMETER_PAGE, viewModel::typeOdometer) { invalidCard = it }
+    val invalidHint = stringResource(R.string.type_invalid)
+    val typeLabel = stringResource(R.string.type_value)
     // Sin historia hay que recorrer el odómetro completo: arranca de a mil.
     LaunchedEffect(state.hasOdometerHistory, state.isLoading) {
         if (!state.isLoading && !state.hasOdometerHistory) kmStep = 3
@@ -58,15 +96,27 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         ValueCardModel(
             label = stringResource(R.string.card_gallons),
             value = Formats.oneDecimal(state.gallons),
-            onSteps = { viewModel.adjustGallons(it * GALLON_STEPS[gallonStep]) },
-            hint = stringResource(stepLabel, Formats.oneDecimal(GALLON_STEPS[gallonStep] / 10.0)),
+            onSteps = {
+                invalidCard = NO_CARD
+                viewModel.adjustGallons(it * GALLON_STEPS[gallonStep])
+            },
+            hint = invalidHint.takeIf { invalidCard == GALLONS_PAGE }
+                ?: stringResource(stepLabel, Formats.oneDecimal(GALLON_STEPS[gallonStep] / 10.0)),
+            onValueClick = typeGallons,
+            valueClickLabel = typeLabel,
             onHintClick = { gallonStep = (gallonStep + 1) % GALLON_STEPS.size },
         ),
         ValueCardModel(
             label = stringResource(R.string.card_paid),
             value = Formats.cop(state.paidCop),
-            onSteps = { viewModel.adjustPaid(it * COP_STEPS[copStep]) },
-            hint = stringResource(stepLabel, Formats.cop(COP_STEPS[copStep] * 100L)),
+            onSteps = {
+                invalidCard = NO_CARD
+                viewModel.adjustPaid(it * COP_STEPS[copStep])
+            },
+            hint = invalidHint.takeIf { invalidCard == PAID_PAGE }
+                ?: stringResource(stepLabel, Formats.cop(COP_STEPS[copStep] * 100L)),
+            onValueClick = typePaid,
+            valueClickLabel = typeLabel,
             onHintClick = { copStep = (copStep + 1) % COP_STEPS.size },
         ),
         ValueCardModel(
@@ -86,12 +136,17 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
         ValueCardModel(
             label = stringResource(R.string.card_odometer),
             value = state.odometerKm?.let { Formats.integer(it) } ?: stringResource(R.string.value_empty),
-            onSteps = { viewModel.adjustOdometer(it * KM_STEPS[kmStep]) },
-            hint = if (state.odometerKm == null) {
-                stringResource(R.string.hint_odometer_recommended)
-            } else {
-                stringResource(stepLabel, Formats.integer(KM_STEPS[kmStep]))
+            onSteps = {
+                invalidCard = NO_CARD
+                viewModel.adjustOdometer(it * KM_STEPS[kmStep])
             },
+            hint = when {
+                invalidCard == ODOMETER_PAGE -> invalidHint
+                state.odometerKm == null -> stringResource(R.string.hint_odometer_recommended)
+                else -> stringResource(stepLabel, Formats.integer(KM_STEPS[kmStep]))
+            },
+            onValueClick = typeKm,
+            valueClickLabel = typeLabel,
             onHintClick = if (state.odometerKm == null) {
                 { viewModel.adjustOdometer(0) }
             } else {
@@ -109,20 +164,20 @@ fun RegisterScreen(onSaved: () -> Unit, viewModel: RegisterViewModel = hiltViewM
     )
     // Falta el valor (primer tanqueo, sin precios de referencia): se lleva ahí.
     val goToPaid = {
-        viewModel.closeDictation()
+        viewModel.closePanel()
         scope.launch { pagerState.animateScrollToPage(PAID_PAGE) }
         Unit
     }
 
-    if (state.dictation != DictationStatus.IDLE) {
+    if (state.panel != RegisterPanel.NONE) {
         // Atrás vuelve a las tarjetas con lo dictado, sin perderlo ni salir de Registrar.
-        BackHandler(onBack = viewModel::closeDictation)
-        DictationPanel(
+        BackHandler(onBack = viewModel::closePanel)
+        RegisterPanels(
             state = state,
-            onEdit = viewModel::closeDictation,
+            onEdit = viewModel::closePanel,
             onSave = { if (state.canSave) viewModel.save() else goToPaid() },
             onRetry = {
-                viewModel.closeDictation()
+                viewModel.closePanel()
                 startDictation()
             },
         )

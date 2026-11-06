@@ -1,5 +1,6 @@
 package com.tanqueo.ui
 
+import com.tanqueo.domain.assistant.AskIntent
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
@@ -73,6 +74,7 @@ class FakeSettingsRepository(
 class FakeFuelAssistant(
     var dictation: DictatedFillUp? = null,
     var tip: String? = null,
+    var question: AskIntent? = null,
 ) : FuelAssistant {
     var tipCalls = 0
     val heard = mutableListOf<String>()
@@ -81,6 +83,8 @@ class FakeFuelAssistant(
         heard += spokenText
         return dictation
     }
+
+    override suspend fun interpretQuestion(question: String): AskIntent? = this.question
 
     override suspend fun writeTip(monthFacts: String): String? {
         tipCalls++

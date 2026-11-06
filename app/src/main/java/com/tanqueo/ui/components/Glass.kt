@@ -115,6 +115,7 @@ fun PrimaryPillButton(
     enabled: Boolean = true,
     horizontalPadding: Dp? = null,
     minHeight: Dp? = null,
+    textSize: Float = 15f,
 ) {
     val screen = rememberScreenSize()
     Box(
@@ -130,7 +131,7 @@ fun PrimaryPillButton(
         Text(
             text = text,
             color = TanqueoColors.White,
-            fontSize = screen.sp(15f),
+            fontSize = screen.sp(textSize),
             fontWeight = FontWeight.Bold,
             maxLines = 1,
         )
@@ -144,14 +145,16 @@ fun GlassPillButton(
     @DrawableRes icon: Int?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    horizontalPadding: Dp? = null,
+    minHeight: Dp? = null,
 ) {
     val screen = rememberScreenSize()
     Box(
         modifier = modifier
-            .heightIn(min = screen.dp(0.19f))
+            .heightIn(min = minHeight ?: screen.dp(0.19f))
             .glass(PillShape)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = screen.dp(if (screen.isRound) 0.05f else 0.08f), vertical = 2.dp),
+            .padding(horizontal = horizontalPadding ?: screen.dp(if (screen.isRound) 0.05f else 0.08f), vertical = 2.dp),
         contentAlignment = Alignment.Center,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

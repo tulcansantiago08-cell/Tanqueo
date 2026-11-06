@@ -15,6 +15,12 @@
 
     <!-- Inicio -->
     <string name="action_add_fill_up">+ Tanqueo</string>
+    <string name="action_register_fill_up">Registrar tanqueo</string>
+    <string name="action_menu">Menú</string>
+    <string name="action_back">Regresar</string>
+    <string name="action_previous_page">Página anterior</string>
+    <string name="action_next_page">Página siguiente</string>
+    <string name="action_month_summary">Resumen del mes</string>
     <string name="action_history">Historial</string>
     <string name="home_title_vehicle">Mi vehículo</string>
     <string name="home_title_range">Autonomía</string>
@@ -131,12 +137,85 @@
     <string name="action_budget">¿Cuánto me alcanza?</string>
     <string name="budget_money">Valor</string>
     <string name="budget_type_prompt">Escribe el valor en pesos</string>
-    <string name="budget_type_value">Escribir el valor</string>
-    <string name="budget_invalid_money">No válido</string>
     <string name="budget_reference_price">Galón %1$s</string>
     <string name="budget_own_price">Tu galón</string>
     <string name="budget_own_place">Tu último</string>
     <string name="budget_tank_full">tanque lleno</string>
+
+    <!-- Asistente -->
+    <string name="home_title_ask">Pregúntame</string>
+    <string name="home_ask_hint">Mañana voy de Pasto a Medellín, ¿cuánto tanqueo?</string>
+    <string name="ask_prompt">¿Qué quieres saber?</string>
+    <string name="ask_action">Preguntar</string>
+    <string name="ask_again">Otra pregunta</string>
+    <string name="ask_thinking">Pensando…</string>
+    <string name="ask_quote">“%1$s”</string>
+    <string name="ask_samples_title">O toca una:</string>
+    <string name="ask_sample_trip">De Pasto a Medellín</string>
+    <string name="ask_sample_trip_question">Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?</string>
+    <string name="ask_sample_range">¿Cuándo tanqueo?</string>
+    <string name="ask_sample_range_question">¿Cuándo me toca tanquear?</string>
+    <string name="ask_sample_budget">¿Hasta dónde con 80 mil?</string>
+    <string name="ask_sample_budget_question">¿Hasta dónde me alcanza con 80 mil pesos?</string>
+    <string name="ask_sample_gallons">Eché 5 galones, ¿cuántos km?</string>
+    <string name="ask_sample_gallons_question">Eché 5 galones, ¿cuántos kilómetros puedo recorrer?</string>
+    <string name="ask_sample_spending">¿Cuánto gasté este mes?</string>
+    <string name="ask_sample_spending_question">¿Cuánto he gastado este mes?</string>
+    <string name="ask_range_label">Te queda</string>
+    <string name="ask_until">hasta %1$s</string>
+    <string name="ask_tank_limit">No todo cabe en tu tanque: cuento solo lo que cabe.</string>
+    <string name="ask_note_own">Con tu consumo real: %1$s km/gal.</string>
+    <string name="ask_note_reference">Sin tu historial aún: uso un promedio de referencia de %1$s km/gal. Registra dos tanques llenos con km para usar el tuyo.</string>
+    <string name="ask_note_price_own">Tu galón: %1$s.</string>
+    <string name="ask_note_price_average">Sin tu precio aún: galón promedio de referencia, %1$s.</string>
+    <string name="ask_note_price_reference">Galón de referencia en %2$s: %1$s.</string>
+    <string name="ask_trip_cost">El viaje te cuesta</string>
+    <string name="ask_trip_cost_gallons">≈ %1$s gal con reserva</string>
+    <string name="ask_trip_in_tank">Tienes ≈ %1$s gal</string>
+    <string name="ask_spending_label">Gasto de %1$s</string>
+    <string name="ask_spending_detail">Tanqueos: %1$d</string>
+    <string name="ask_cost_per_km">Cada km te cuesta ≈ %1$s</string>
+    <string name="ask_trip_route">%1$s → %2$s</string>
+    <string name="ask_trip_distance">Tu viaje</string>
+    <string name="ask_leaving_today">Sales hoy</string>
+    <string name="ask_leaving_tomorrow">Sales mañana</string>
+    <string name="ask_leaving_day_after">Sales pasado mañana</string>
+    <string name="ask_trip_before">Antes de salir, echa</string>
+    <string name="ask_trip_enough">Con lo que tienes</string>
+    <string name="ask_trip_no_refuel">Te alcanza</string>
+    <string name="ask_gallons">≈ %1$s gal</string>
+    <string name="ask_approx_cop">≈ %1$s</string>
+    <string name="ask_stop_in">Vuelve a tanquear en %1$s</string>
+    <string name="ask_stop_at_km">Vuelve a tanquear cerca del km %1$s</string>
+    <string name="ask_stop_detail">a %1$s km de la salida</string>
+    <string name="ask_trip_total">Por comprar en total</string>
+    <string name="ask_trip_note" formatted="false">Distancia aproximada, con 10 % de reserva.</string>
+    <string name="ask_trip_missing">Dime de dónde sales y a dónde vas. Por ejemplo: de Pasto a Cali.</string>
+    <string name="ask_unavailable">Este reloj no tiene teclado ni dictado. Toca una de las preguntas de ejemplo.</string>
+    <string name="ask_unknown_place">No tengo la ruta de “%1$s”. Prueba con una ciudad grande cercana o dime los km: voy a manejar 200 km.</string>
+    <string name="ask_needs_data">Aún no conozco tu rendimiento. Registra dos tanques llenos con kilometraje.</string>
+    <string name="ask_not_understood">No entendí. Prueba con un viaje, un valor o cuánta gasolina te queda.</string>
+    <string name="ask_price_in">Galón en %1$s</string>
+    <string name="ask_price_unknown">No hay precio de referencia publicado para %1$s.</string>
+    <string name="ask_price_cheapest">Más barato: %1$s</string>
+    <string name="ask_price_average">Galón %1$s</string>
+
+    <!-- Escribir valores -->
+    <string name="type_value">Escribir el valor</string>
+    <string name="type_gallons_prompt">Escribe los galones</string>
+    <string name="type_paid_prompt">Escribe el valor pagado</string>
+    <string name="type_km_prompt">Escribe el kilometraje</string>
+    <string name="type_invalid">No válido</string>
+
+    <!-- Avisos al revisar -->
+    <string name="warning_over_capacity">No cabe en tu tanque de %1$s gal</string>
+    <string name="warning_odd_price">¿Seguro? Son %1$s por galón</string>
+
+    <!-- Gráfica -->
+    <string name="chart_title">Gasto de 6 meses</string>
+    <string name="chart_highest">Mes más alto: %1$s</string>
+    <string name="chart_description">Gasto por mes: %1$s</string>
+    <string name="chart_item">%1$s, %2$s</string>
 
     <!-- Consejo -->
     <string name="tip_title">Consejo</string>

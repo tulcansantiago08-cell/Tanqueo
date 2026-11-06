@@ -8,6 +8,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FormatsTest {
+    @org.junit.Test fun `una estimacion en pesos no finge precision`() {
+        org.junit.Assert.assertEquals("$\u00A044.700", Formats.approxCop(44_747.0))
+    }
+
     @Test fun `pesos colombianos con punto de miles y sin decimales`() {
         assertEquals("$\u00A0164.700", Formats.cop(164_700L))
         assertEquals("$\u00A01.250.000", Formats.cop(1_250_000L))

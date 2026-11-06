@@ -60,13 +60,13 @@ fun BudgetScreen(viewModel: BudgetViewModel = hiltViewModel()) {
             value = Formats.cop(state.moneyCop),
             onSteps = { viewModel.adjustMoney(it * MONEY_STEPS[step]) },
             hint = if (state.isMoneyInvalid) {
-                stringResource(R.string.budget_invalid_money)
+                stringResource(R.string.type_invalid)
             } else {
                 stringResource(R.string.hint_step, Formats.cop(MONEY_STEPS[step] * 1_000L))
             },
             onHintClick = { step = (step + 1) % MONEY_STEPS.size },
             onValueClick = typeMoney,
-            valueClickLabel = stringResource(R.string.budget_type_value),
+            valueClickLabel = stringResource(R.string.type_value),
         ),
         ValueCardModel(
             label = if (option?.place != null) {

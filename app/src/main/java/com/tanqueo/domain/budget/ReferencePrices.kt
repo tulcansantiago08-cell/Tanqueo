@@ -12,6 +12,7 @@ data class ReferencePrice(val place: String, val fuelType: FuelType, val pricePe
  */
 object ReferencePrices {
     const val VALID_FOR = "nov 2026"
+    const val AVERAGE = "Promedio"
 
     val all: List<ReferencePrice> = listOf(
         ReferencePrice("Promedio", FuelType.CORRIENTE, 15_886),

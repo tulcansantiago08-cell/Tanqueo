@@ -30,6 +30,9 @@ object Formats {
 
     fun cop(value: Double): String = cop(Math.round(value))
 
+    /** Pesos de una estimación, redondeados a $ 100: más precisión sería falsa. */
+    fun approxCop(value: Double): String = cop(Math.round(value / 100) * 100)
+
     /** Un decimal con coma: 10,5 */
     fun oneDecimal(value: Double): String = DecimalFormat("0.0", symbols).format(value)
 

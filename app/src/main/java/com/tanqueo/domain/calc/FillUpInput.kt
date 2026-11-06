@@ -5,8 +5,15 @@ import com.tanqueo.domain.model.FuelType
 import kotlin.math.round
 import kotlin.math.roundToLong
 
+/** Algo poco creíble al registrar. No impide guardar: pudo ser así de verdad. */
+enum class FillUpWarning { OVER_CAPACITY, ODD_PRICE }
+
 /** Reglas de los valores que se ajustan con la corona: pasos, límites y sugerencias iniciales. */
 object FillUpInput {
+    /** Fuera de esto, casi seguro es un error de dedo en galones o valor. */
+    private const val MIN_LIKELY_PRICE = 8_000.0
+    private const val MAX_LIKELY_PRICE = 35_000.0
+
     const val MIN_GALLONS = 0.1
     const val MAX_GALLONS = 99.9
     const val DEFAULT_GALLONS = 10.0
@@ -18,6 +25,13 @@ object FillUpInput {
     const val MAX_KM_THRESHOLD = 2_000
     const val MIN_KM_THRESHOLD = 10
     const val MAX_DAYS_THRESHOLD = 30
+
+    fun warning(gallons: Double, paidCop: Long, capacityGallons: Double): FillUpWarning? = when {
+        gallons > capacityGallons -> FillUpWarning.OVER_CAPACITY
+        // Cero es que aún no se ha puesto el valor, no un error de dedo.
+        gallons > 0 && paidCop > 0 && paidCop / gallons !in MIN_LIKELY_PRICE..MAX_LIKELY_PRICE -> FillUpWarning.ODD_PRICE
+        else -> null
+    }
 
     /** Sube o baja galones en pasos de 0,1 sin arrastrar el error de los decimales. */
     fun adjustGallons(

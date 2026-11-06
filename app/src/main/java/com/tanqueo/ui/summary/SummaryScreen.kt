@@ -43,6 +43,7 @@ fun SummaryScreen(viewModel: SummaryViewModel = hiltViewModel()) {
                 value = Formats.cop(month.totalSpentCop),
             )
         }
+        item { SpendChart(data.spendByMonth, Modifier.edgeAware(this)) }
         item {
             BigValueCard(
                 modifier = Modifier.edgeAware(this),

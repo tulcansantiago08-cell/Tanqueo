@@ -10,6 +10,16 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class MonthSummaryTest {
+    @Test fun `el gasto por mes incluye los meses en cero y termina en el actual`() {
+        val fills = listOf(full(0, 1000, 10.0), full(40, 1400, 5.0)) // 1 oct y 10 nov
+        val months = MonthSummaryCalculator.spendByMonth(fills, dayN(45.0), java.time.ZoneOffset.UTC)
+        org.junit.Assert.assertEquals(6, months.size)
+        org.junit.Assert.assertEquals(java.time.YearMonth.of(2026, 11), months.last().month)
+        org.junit.Assert.assertEquals(80_000L, months.last().totalCop)
+        org.junit.Assert.assertEquals(160_000L, months[4].totalCop)
+        org.junit.Assert.assertEquals(0L, months.first().totalCop)
+    }
+
     private val bogota = ZoneId.of("America/Bogota")
 
     private fun fillUp(at: String, gallons: Double, cop: Long) =

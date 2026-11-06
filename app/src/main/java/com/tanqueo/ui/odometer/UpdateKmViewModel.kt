@@ -9,6 +9,7 @@ import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
+import com.tanqueo.domain.voice.SpanishNumbers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
@@ -57,6 +58,14 @@ class UpdateKmViewModel @Inject constructor(
     /** El primer toque solo muestra la sugerencia; desde ahí se ajusta a lo que marca el carro. */
     fun adjust(steps: Int) = _state.update {
         it.copy(km = it.km?.let { km -> FillUpInput.adjustOdometer(km, steps, it.minKm) } ?: it.suggestedKm)
+    }
+
+    /** Lo escrito en el teclado. Devuelve false si no es un kilometraje posible, sin cambiar nada. */
+    fun type(text: String): Boolean {
+        val current = _state.value
+        val km = SpanishNumbers.parse(text)?.toInt()?.takeIf { it in maxOf(current.minKm, 1)..FillUpInput.MAX_ODOMETER_KM } ?: return false
+        _state.update { it.copy(km = km) }
+        return true
     }
 
     fun save() {

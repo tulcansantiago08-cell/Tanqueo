@@ -18,21 +18,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 
+private const val PERMISSION_PREFS = "permisos"
+private const val KEY_ASKED = "notificaciones_pedidas"
+
 private fun Context.notificationsEnabled() = NotificationManagerCompat.from(this).areNotificationsEnabled()
 
 /**
- * Pide el permiso de notificaciones al abrir la app si todavía no se ha concedido. Por debajo de
- * API 33 las notificaciones ya están activas y no se llega a pedir.
+ * Pide el permiso de notificaciones una sola vez en la vida de la app: cerrar el diálogo sin elegir
+ * no debe hacerlo reaparecer en cada apertura. Después se activa desde Ajustes. Por debajo de API 33
+ * las notificaciones ya están activas y no se llega a pedir.
  */
 @SuppressLint("InlinedApi")
 @Composable
 fun RequestNotificationPermissionOnce() {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
-    var asked by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        if (!asked && !context.notificationsEnabled()) {
-            asked = true
+        val prefs = context.getSharedPreferences(PERMISSION_PREFS, Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(KEY_ASKED, false) && !context.notificationsEnabled()) {
+            prefs.edit().putBoolean(KEY_ASKED, true).apply()
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }

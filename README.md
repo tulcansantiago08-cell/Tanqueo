@@ -24,10 +24,12 @@ Proyecto académico.
 
 ## Funciones
 
-- **Inicio de 3 páginas** que se deslizan en horizontal (también con la corona o el bisel), con puntos de página abajo:
-  1. **Mi vehículo:** carro visto desde arriba (vector propio, sin marcas reales), autonomía y odómetro, y botones de vidrio para Actualizar km, Historial y Ajustes.
+- **Inicio de 4 páginas** que se deslizan en horizontal (también con la corona o el bisel), con puntos de página abajo:
+  1. **Mi vehículo:** carro visto desde arriba (vector propio, sin marcas reales), autonomía y odómetro, **+ Tanqueo** y **Menú**: la lista con todo lo que hace la app, cada opción con su nombre escrito (Registrar tanqueo, Preguntar, Actualizar km, Historial, Resumen del mes, ¿Cuánto me alcanza? y Ajustes).
   2. **Autonomía:** anillo tipo medidor que se llena según el % de tanque estimado, con los km, los días, la fecha estimada para volver a tanquear y el botón **+ Tanqueo**.
   3. **Este mes:** gasto del mes, último tanqueo y **Ver historial**. Tocar el gasto abre el resumen completo: rendimiento, precio promedio por galón, número de tanqueos y días desde el último.
+- **Gráfica de gasto** de los últimos 6 meses en el resumen.
+- **Valores por teclado.** Tocar el número de galones, valor o kilometraje permite escribirlo. Si algo no parece real (no cabe en el tanque o el precio por galón es raro), la revisión lo avisa en ámbar.
 - **Registrar.** Una tarjeta por dato: galones, valor pagado en COP, combustible (Corriente, Extra, Diésel), tanque lleno o parcial y kilometraje. El número enorme cambia con la corona, el bisel o los botones; desliza hacia arriba para pasar de tarjeta. Tocar el chip `±` cambia el tamaño del paso. La fecha y la hora son automáticas.
   - Parte de tu último tanqueo: con los galones de tu último tanque lleno, el mismo combustible y el valor calculado con el último precio, se puede guardar en pocos toques. Guardar siempre muestra antes un resumen, donde se ve si falta el kilometraje, y desde ahí se confirma o se corrige. El valor sigue a los galones hasta que lo editas.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
@@ -36,11 +38,32 @@ Proyecto académico.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
 - **Consejo del mes** (en el resumen). Calculado con tus datos reales; si hay IA, ella lo redacta.
 - **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales. Empieza vacío: el primer toque muestra una sugerencia y se ajusta a lo que marca el carro, así una estimación nunca se guarda como lectura real.
-- **Aviso de tanquear.** Un trabajo de WorkManager revisa la estimación cada 12 horas y notifica cuando quedan menos de 50 km o menos de 1 día (se cambia en Ajustes). Si ya no hace falta, quita el aviso anterior.
+- **Aviso de tanquear.** Un trabajo de WorkManager revisa la estimación cada 12 horas y notifica cuando quedan menos de 50 km o menos de 1 día (se cambia en Ajustes). Si ya no hace falta, por ejemplo tras registrar un tanqueo, quita el aviso anterior.
 - **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
 - **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
 - **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
-- **Carátula propia** (módulo `watchface`, en Watch Face Format, sin código). Manecillas finas con borde negro, segundero violeta, fecha en español y los km de la complicación en un arco violeta. En modo ambiente se atenúa y oculta el segundero y las marcas de minutos. Se elige como cualquier carátula del reloj. Las manecillas y el XML se generan con `watchface/tools/generate.py`.
+- **Carátula propia** (módulo `watchface`, en Watch Face Format, sin código). Manecillas finas con borde negro, segundero violeta que avanza de a un segundo como un reloj de cuarzo, fecha en español y los km de la complicación en un arco violeta. En modo ambiente se atenúa y oculta el segundero y las marcas de minutos. Se elige como cualquier carátula del reloj. Las manecillas y el XML se generan con `watchface/tools/generate.py`.
+
+## Asistente: pregúntale al reloj
+
+En la cuarta página del inicio o en el Menú. Un toque y ya se puede preguntar, por voz o teclado; si se cancela, quedan a la vista los ejemplos para tocar:
+
+| Preguntas | Responde |
+|---|---|
+| "Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?" | Distancia, cuánto cuesta el viaje en pesos, cuánto echar antes de salir y en qué ciudad recargar |
+| "Eché 5 galones, ¿cuántos km puedo recorrer?" o "¿Hasta dónde llego con 80 mil?" | Km, días, hasta qué fecha, y el equivalente en galones y pesos |
+| "¿Cuándo me toca tanquear?" | Km, días y fecha |
+| "¿Cuánto gasté el mes pasado?" | Total y número de tanqueos |
+| "¿Cuánto cuesta el galón en Pasto?" | Precio de referencia, el más barato y el promedio |
+| "Tanqueé 10 galones por 165 mil" | Abre el registro lleno, para revisar y guardar |
+
+**Cómo se calcula un viaje:**
+
+- **La IA solo entiende la pregunta.** Si su respuesta trae una cifra que la persona no dijo, se descarta. Sin IA, un lector local entiende las preguntas más comunes.
+- **Distancia:** suma de tramos reales por carretera (`domain/assistant/RoadNetwork.kt`), no línea recta. Son valores aproximados y solo cubren las ciudades de esa red; de otro lugar la app lo dice y pide los km, nunca los inventa.
+- **Consumo:** el real del vehículo según su historial. Sin historial usa 35 km/galón y lo indica en la respuesta: no hay una cifra oficial actual en Colombia, y lo publicado para un carro particular va de 25 a 40 km/galón.
+- **Reserva:** 10 % más, porque en carretera y cordillera se gasta distinto que a diario.
+- **Precio:** el de referencia de la ciudad de salida si existe; si no, el último que pagaste.
 
 ## Inteligencia artificial
 
@@ -240,7 +263,7 @@ adb shell am broadcast -n com.tanqueo/.debug.ForceReminderReceiver
 adb shell am broadcast -n com.tanqueo/.debug.ForceReminderReceiver --ei umbral_km 50
 ```
 
-El permiso de notificaciones se pide al abrir la app por primera vez y se puede activar luego desde Ajustes.
+El permiso de notificaciones se pide una sola vez, cuando ya hay un tanqueo registrado, y se puede activar luego desde Ajustes.
 
 ### Probar la complicación
 

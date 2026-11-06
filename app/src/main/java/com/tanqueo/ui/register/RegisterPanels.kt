@@ -26,6 +26,7 @@ import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.tanqueo.R
+import com.tanqueo.domain.calc.FillUpWarning
 import com.tanqueo.domain.calc.RangeLevel
 import com.tanqueo.domain.format.Formats
 import com.tanqueo.ui.components.GlassCard
@@ -67,9 +68,9 @@ fun ActionRow(
     }
 }
 
-/** Mientras la IA entiende, la revisión antes de guardar y el aviso si no se entendió. */
+/** Encima de las tarjetas: mientras la IA entiende, la revisión antes de guardar o el aviso si no entendió. */
 @Composable
-fun DictationPanel(
+fun RegisterPanels(
     state: RegisterUiState,
     onEdit: () -> Unit,
     onSave: () -> Unit,
@@ -85,12 +86,12 @@ fun DictationPanel(
                     .weight(1f)
                     .padding(horizontal = screen.sideMargin * 0.5f, vertical = 3.dp),
             ) {
-                when (state.dictation) {
-                    DictationStatus.INTERPRETING -> InterpretingContent()
-                    DictationStatus.REVIEW, DictationStatus.CONFIRM -> ReviewContent(state)
+                when (state.panel) {
+                    RegisterPanel.INTERPRETING -> InterpretingContent()
+                    RegisterPanel.REVIEW, RegisterPanel.CONFIRM -> ReviewContent(state)
                     else -> Message(
                         stringResource(
-                            if (state.dictation == DictationStatus.UNAVAILABLE) {
+                            if (state.panel == RegisterPanel.UNAVAILABLE) {
                                 R.string.dictation_unavailable
                             } else {
                                 R.string.dictation_not_understood
@@ -105,16 +106,16 @@ fun DictationPanel(
                     .size(width = screen.dp(0.9f), height = screen.bottomRowHeight),
                 contentAlignment = Alignment.Center,
             ) {
-                when (state.dictation) {
-                    DictationStatus.INTERPRETING -> Unit
-                    DictationStatus.REVIEW, DictationStatus.CONFIRM -> ActionRow(
+                when (state.panel) {
+                    RegisterPanel.INTERPRETING -> Unit
+                    RegisterPanel.REVIEW, RegisterPanel.CONFIRM -> ActionRow(
                         secondaryIcon = R.drawable.ic_edit,
                         secondaryDescription = stringResource(R.string.action_edit),
                         onSecondary = onEdit,
                         primaryText = stringResource(if (state.canSave) R.string.action_save else R.string.action_complete),
                         onPrimary = onSave,
                     )
-                    DictationStatus.UNAVAILABLE -> PrimaryPillButton(
+                    RegisterPanel.UNAVAILABLE -> PrimaryPillButton(
                         text = stringResource(R.string.action_use_crown),
                         onClick = onEdit,
                         minHeight = screen.bottomRowHeight,
@@ -168,14 +169,24 @@ private fun ReviewContent(state: RegisterUiState) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Text(
-            text = stringResource(
-                if (state.dictation == DictationStatus.CONFIRM) R.string.confirm_review else R.string.dictation_review,
+        // Si algo no parece real, lo avisa en el título: así no le quita espacio a ningún dato.
+        val warning = when (state.warning) {
+            FillUpWarning.OVER_CAPACITY -> stringResource(R.string.warning_over_capacity, Formats.oneDecimal(state.capacityGallons))
+            FillUpWarning.ODD_PRICE -> stringResource(R.string.warning_odd_price, Formats.cop(state.paidCop / state.gallons))
+            null -> null
+        }
+        BasicText(
+            text = warning ?: stringResource(
+                if (state.panel == RegisterPanel.CONFIRM) R.string.confirm_review else R.string.dictation_review,
             ),
-            color = TanqueoColors.Secondary,
-            fontSize = screen.sp(11f),
-            lineHeight = screen.sp(13f),
+            style = TextStyle(
+                color = if (warning != null) TanqueoColors.Amber else TanqueoColors.Secondary,
+                textAlign = TextAlign.Center,
+            ),
             maxLines = 1,
+            softWrap = false,
+            autoSize = TextAutoSize.StepBased(8.sp, screen.sp(11f), 0.5.sp),
+            modifier = Modifier.fillMaxWidth(),
         )
         BasicText(
             text = Formats.cop(state.paidCop),

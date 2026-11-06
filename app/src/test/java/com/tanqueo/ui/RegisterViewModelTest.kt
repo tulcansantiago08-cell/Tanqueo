@@ -7,7 +7,7 @@ import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
 import com.tanqueo.domain.partial
 import com.tanqueo.domain.usecase.InterpretDictation
-import com.tanqueo.ui.register.DictationStatus
+import com.tanqueo.ui.register.RegisterPanel
 import com.tanqueo.ui.register.RegisterViewModel
 import java.time.Clock
 import java.time.ZoneOffset
@@ -120,7 +120,7 @@ class RegisterViewModelTest {
         val vm = viewModel(repo)
         vm.onDictated("12 galones, 200 mil, extra, parcial, 1500 km")
         val state = vm.state.value
-        assertEquals(DictationStatus.REVIEW, state.dictation)
+        assertEquals(RegisterPanel.REVIEW, state.panel)
         assertEquals(12.0, state.gallons, 0.0)
         assertEquals(200_000L, state.paidCop)
         assertEquals(FuelType.EXTRA, state.fuelType)
@@ -146,14 +146,14 @@ class RegisterViewModelTest {
     @Test fun `una frase sin datos pide repetir y deja todo igual`() = runTest {
         val vm = viewModel(FakeFillUpRepository(history))
         vm.onDictated("hola qué tal")
-        assertEquals(DictationStatus.NOT_UNDERSTOOD, vm.state.value.dictation)
+        assertEquals(RegisterPanel.NOT_UNDERSTOOD, vm.state.value.panel)
         assertEquals(160_000L, vm.state.value.paidCop)
     }
 
     @Test fun `cancelar el dictado no cambia nada`() = runTest {
         val vm = viewModel(FakeFillUpRepository(history))
         vm.onDictated(null)
-        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+        assertEquals(RegisterPanel.NONE, vm.state.value.panel)
     }
 
     @Test fun `un km dictado menor al ultimo se descarta`() = runTest {
@@ -162,21 +162,42 @@ class RegisterViewModelTest {
         assertNull(vm.state.value.odometerKm)
     }
 
+    @Test fun `el valor escrito reemplaza al sugerido`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        assertTrue(vm.typeGallons("8,5"))
+        assertEquals(8.5, vm.state.value.gallons, 0.0)
+        assertEquals(136_000L, vm.state.value.paidCop)
+        assertTrue(vm.typePaid("150 mil"))
+        assertEquals(150_000L, vm.state.value.paidCop)
+        assertTrue(vm.typeOdometer("1.600"))
+        assertEquals(1600, vm.state.value.odometerKm)
+    }
+
+    @Test fun `lo escrito que no sirve no cambia nada`() = runTest {
+        val vm = viewModel(FakeFillUpRepository(history))
+        val before = vm.state.value
+        assertFalse(vm.typeGallons("hola"))
+        assertFalse(vm.typeGallons("500"))
+        assertFalse(vm.typePaid("10"))
+        assertFalse(vm.typeOdometer("900")) // menor que el último km registrado
+        assertEquals(before, vm.state.value)
+    }
+
     @Test fun `pedir el resumen no guarda nada`() = runTest {
         val fills = FakeFillUpRepository(history)
         val vm = viewModel(fills)
         vm.confirmBeforeSaving()
-        assertEquals(DictationStatus.CONFIRM, vm.state.value.dictation)
+        assertEquals(RegisterPanel.CONFIRM, vm.state.value.panel)
         assertEquals(history.size, fills.items.value.size)
-        vm.closeDictation()
-        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+        vm.closePanel()
+        assertEquals(RegisterPanel.NONE, vm.state.value.panel)
         assertEquals(history.size, fills.items.value.size)
     }
 
     @Test fun `sin valor no se muestra el resumen`() = runTest {
         val vm = viewModel(FakeFillUpRepository())
         vm.confirmBeforeSaving()
-        assertEquals(DictationStatus.IDLE, vm.state.value.dictation)
+        assertEquals(RegisterPanel.NONE, vm.state.value.panel)
     }
 
     @Test fun `tocar guardar dos veces crea un solo tanqueo`() = runTest {

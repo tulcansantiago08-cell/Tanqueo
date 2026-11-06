@@ -3,6 +3,8 @@ package com.tanqueo.ui.components
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +21,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -144,7 +152,7 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val typeModifier = model.onValueClick?.let { onClick ->
-                Modifier.clickable(role = Role.Button, onClickLabel = model.valueClickLabel, onClick = onClick)
+                Modifier.tapWithoutDrag(model.valueClickLabel, onClick)
             } ?: Modifier
             Row(
                 modifier = typeModifier.padding(horizontal = 12.dp),
@@ -234,6 +242,38 @@ private fun ValueCard(model: ValueCardModel, position: Int, total: Int) {
             }
         }
     }
+}
+
+/**
+ * Como clickable, pero un deslizamiento nunca cuenta como toque. El carrusel es vertical: sin esto,
+ * deslizar de lado sobre el número abría el teclado.
+ */
+@Composable
+private fun Modifier.tapWithoutDrag(label: String?, onClick: () -> Unit): Modifier {
+    val currentOnClick by rememberUpdatedState(onClick)
+    return this
+        .semantics {
+            role = Role.Button
+            onClick(label) {
+                currentOnClick()
+                true
+            }
+        }
+        .pointerInput(Unit) {
+            awaitEachGesture {
+                val down = awaitFirstDown()
+                while (true) {
+                    val change = awaitPointerEvent().changes.firstOrNull { it.id == down.id } ?: break
+                    val moved = (change.position - down.position).getDistance() > viewConfiguration.touchSlop
+                    if (change.isConsumed || moved) break
+                    if (!change.pressed) {
+                        change.consume()
+                        currentOnClick()
+                        break
+                    }
+                }
+            }
+        }
 }
 
 @Composable

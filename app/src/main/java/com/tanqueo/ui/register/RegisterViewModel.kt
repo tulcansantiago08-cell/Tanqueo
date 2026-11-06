@@ -3,14 +3,17 @@ package com.tanqueo.ui.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tanqueo.domain.calc.FillUpInput
+import com.tanqueo.domain.calc.FillUpWarning
 import com.tanqueo.domain.calc.RangeEstimate
 import com.tanqueo.domain.calc.RangeEstimator
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
+import com.tanqueo.domain.model.TankSettings
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
 import com.tanqueo.domain.usecase.InterpretDictation
+import com.tanqueo.domain.voice.SpanishNumbers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
@@ -22,8 +25,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** En qué va el dictado por voz. CONFIRM es el resumen antes de guardar lo llenado a mano. */
-enum class DictationStatus { IDLE, INTERPRETING, REVIEW, CONFIRM, NOT_UNDERSTOOD, UNAVAILABLE }
+/** Qué se muestra encima de las tarjetas: el dictado en curso o el resumen antes de guardar. */
+enum class RegisterPanel { NONE, INTERPRETING, REVIEW, CONFIRM, NOT_UNDERSTOOD, UNAVAILABLE }
 
 data class RegisterUiState(
     val isLoading: Boolean = true,
@@ -38,9 +41,11 @@ data class RegisterUiState(
     val suggestedOdometerKm: Int = 0,
     val hasOdometerHistory: Boolean = false,
     val isSaved: Boolean = false,
-    val dictation: DictationStatus = DictationStatus.IDLE,
+    val panel: RegisterPanel = RegisterPanel.NONE,
+    val capacityGallons: Double = TankSettings.DEFAULT_CAPACITY_GALLONS,
 ) {
     val canSave: Boolean get() = !isLoading && gallons > 0 && paidCop > 0
+    val warning: FillUpWarning? get() = FillUpInput.warning(gallons, paidCop, capacityGallons)
 }
 
 @HiltViewModel
@@ -77,11 +82,36 @@ class RegisterViewModel @Inject constructor(
                     fuelType = fuel,
                     paidCop = suggestedPaid(gallons, fuel),
                     minOdometerKm = minKm,
+                    capacityGallons = config.tankCapacityGallons,
                     suggestedOdometerKm = (minKm + driven).coerceAtMost(FillUpInput.MAX_ODOMETER_KM),
                     hasOdometerHistory = minKm > 0,
                 )
             }
         }
+    }
+
+    /** Lo escrito en el teclado. Devuelve false si no es un valor posible, sin cambiar nada. */
+    fun typeGallons(text: String): Boolean {
+        val gallons = SpanishNumbers.parse(text)?.takeIf { it in FillUpInput.MIN_GALLONS..FillUpInput.MAX_GALLONS } ?: return false
+        _state.update { current ->
+            val rounded = FillUpInput.adjustGallons(gallons, 0)
+            current.copy(gallons = rounded, paidCop = paidFor(rounded, current.fuelType, current.paidCop))
+        }
+        return true
+    }
+
+    fun typePaid(text: String): Boolean {
+        val paid = SpanishNumbers.parse(text)?.toLong()?.takeIf { it in FillUpInput.COP_STEP..FillUpInput.MAX_COP } ?: return false
+        paidEdited = true
+        _state.update { it.copy(paidCop = paid) }
+        return true
+    }
+
+    fun typeOdometer(text: String): Boolean {
+        val minKm = _state.value.minOdometerKm
+        val km = SpanishNumbers.parse(text)?.toInt()?.takeIf { it in maxOf(minKm, 1)..FillUpInput.MAX_ODOMETER_KM } ?: return false
+        _state.update { it.copy(odometerKm = km) }
+        return true
     }
 
     fun adjustGallons(steps: Int) = _state.update { current ->
@@ -119,11 +149,11 @@ class RegisterViewModel @Inject constructor(
     /** Llena las tarjetas con lo dictado. No guarda: el usuario revisa primero. */
     fun onDictated(spokenText: String?) {
         if (spokenText.isNullOrBlank() || _state.value.isLoading) return
-        _state.update { it.copy(dictation = DictationStatus.INTERPRETING) }
+        _state.update { it.copy(panel = RegisterPanel.INTERPRETING) }
         viewModelScope.launch {
             val dictated = interpretDictation(spokenText, _state.value.minOdometerKm)
             if (dictated.isEmpty) {
-                _state.update { it.copy(dictation = DictationStatus.NOT_UNDERSTOOD) }
+                _state.update { it.copy(panel = RegisterPanel.NOT_UNDERSTOOD) }
                 return@launch
             }
             if (dictated.paidCop != null) paidEdited = true
@@ -136,20 +166,20 @@ class RegisterViewModel @Inject constructor(
                     paidCop = dictated.paidCop ?: paidFor(gallons, fuel, current.paidCop),
                     isFull = dictated.isFull ?: current.isFull,
                     odometerKm = dictated.odometerKm ?: current.odometerKm,
-                    dictation = DictationStatus.REVIEW,
+                    panel = RegisterPanel.REVIEW,
                 )
             }
         }
     }
 
-    fun onDictationUnavailable() = _state.update { it.copy(dictation = DictationStatus.UNAVAILABLE) }
+    fun onDictationUnavailable() = _state.update { it.copy(panel = RegisterPanel.UNAVAILABLE) }
 
     /** Muestra el resumen antes de guardar, para que un toque suelto no anote un tanqueo. */
     fun confirmBeforeSaving() = _state.update {
-        if (it.canSave) it.copy(dictation = DictationStatus.CONFIRM) else it
+        if (it.canSave) it.copy(panel = RegisterPanel.CONFIRM) else it
     }
 
-    fun closeDictation() = _state.update { it.copy(dictation = DictationStatus.IDLE) }
+    fun closePanel() = _state.update { it.copy(panel = RegisterPanel.NONE) }
 
     fun save() {
         val current = _state.value

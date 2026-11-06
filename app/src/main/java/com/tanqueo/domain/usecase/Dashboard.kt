@@ -1,5 +1,6 @@
 package com.tanqueo.domain.usecase
 
+import com.tanqueo.domain.calc.MonthSpend
 import com.tanqueo.domain.calc.MonthSummary
 import com.tanqueo.domain.calc.MonthSummaryCalculator
 import com.tanqueo.domain.calc.RangeEstimate
@@ -26,6 +27,7 @@ data class Dashboard(
     /** Null si todavía no hay ningún tanqueo. */
     val lastFillUp: FillUp?,
     val latestOdometerKm: Int?,
+    val spendByMonth: List<MonthSpend> = emptyList(),
 )
 
 class ObserveDashboard @Inject constructor(
@@ -58,6 +60,7 @@ class ObserveDashboard @Inject constructor(
             settings = config,
             lastFillUp = list.maxWithOrNull(compareBy({ it.at }, { it.id })),
             latestOdometerKm = RangeEstimator.latestOdometer(list, update),
+            spendByMonth = MonthSummaryCalculator.spendByMonth(list, now, clock.zone),
         )
     }
 }

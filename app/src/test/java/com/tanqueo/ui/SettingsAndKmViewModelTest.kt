@@ -57,6 +57,16 @@ class SettingsAndKmViewModelTest {
         assertEquals(1400, vm.state.value.km)
     }
 
+    @Test fun `el km escrito se puede guardar y uno imposible no`() = runTest {
+        val settings = FakeSettingsRepository()
+        val vm = UpdateKmViewModel(FakeFillUpRepository(history), settings, refresher, clock)
+        assertTrue(!vm.type("900")) // menor que el último tanqueo
+        assertNull(vm.state.value.km)
+        assertTrue(vm.type("1.555"))
+        vm.save()
+        assertEquals(OdometerUpdate(1555, now), settings.odometerUpdate.value)
+    }
+
     @Test fun `una estimacion sin tocar no se guarda como lectura real`() = runTest {
         val settings = FakeSettingsRepository()
         val vm = UpdateKmViewModel(FakeFillUpRepository(history), settings, refresher, clock)
