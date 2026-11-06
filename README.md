@@ -40,6 +40,7 @@ Proyecto académico.
 - **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
 - **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
 - **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
+- **Carátula propia** (módulo `watchface`, en Watch Face Format, sin código). Manecillas finas con borde negro, segundero violeta, fecha en español y los km de la complicación en un arco violeta. En modo ambiente se atenúa y oculta el segundero y las marcas de minutos. Se elige como cualquier carátula del reloj. Las manecillas y el XML se generan con `watchface/tools/generate.py`.
 
 ## Inteligencia artificial
 

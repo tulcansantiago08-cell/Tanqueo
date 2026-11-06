@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generado por watchface/tools/generate.py: cambia ese archivo, no este. -->
+<WatchFace width="450" height="450">
+  <Metadata key="CLOCK_TYPE" value="ANALOG"/>
+  <Metadata key="PREVIEW_TIME" value="10:08:32"/>
+  <Scene backgroundColor="#ff000000">
+    <PartDraw name="minutos" x="0" y="0" width="450" height="450">
+        <Line startX="246.64" startY="19.13" endX="247.37" endY="12.17"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="268.04" startY="22.52" endX="269.49" endY="15.68"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="288.97" startY="28.13" endX="291.13" endY="21.47"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="309.19" startY="35.90" endX="312.04" endY="29.50"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="346.67" startY="57.53" endX="350.79" endY="51.87"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="363.51" startY="71.17" endX="368.19" endY="65.97"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="378.83" startY="86.49" endX="384.03" endY="81.81"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="392.47" startY="103.33" endX="398.13" endY="99.21"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="414.10" startY="140.81" endX="420.50" endY="137.96"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="421.87" startY="161.03" endX="428.53" endY="158.87"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="427.48" startY="181.96" endX="434.32" endY="180.51"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="430.87" startY="203.36" endX="437.83" endY="202.63"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="430.87" startY="246.64" endX="437.83" endY="247.37"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="427.48" startY="268.04" endX="434.32" endY="269.49"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="421.87" startY="288.97" endX="428.53" endY="291.13"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="414.10" startY="309.19" endX="420.50" endY="312.04"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="392.47" startY="346.67" endX="398.13" endY="350.79"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="378.83" startY="363.51" endX="384.03" endY="368.19"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="363.51" startY="378.83" endX="368.19" endY="384.03"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="346.67" startY="392.47" endX="350.79" endY="398.13"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="309.19" startY="414.10" endX="312.04" endY="420.50"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="288.97" startY="421.87" endX="291.13" endY="428.53"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="268.04" startY="427.48" endX="269.49" endY="434.32"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="246.64" startY="430.87" endX="247.37" endY="437.83"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="203.36" startY="430.87" endX="202.63" endY="437.83"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="181.96" startY="427.48" endX="180.51" endY="434.32"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="161.03" startY="421.87" endX="158.87" endY="428.53"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="140.81" startY="414.10" endX="137.96" endY="420.50"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="103.33" startY="392.47" endX="99.21" endY="398.13"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="86.49" startY="378.83" endX="81.81" endY="384.03"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="71.17" startY="363.51" endX="65.97" endY="368.19"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="57.53" startY="346.67" endX="51.87" endY="350.79"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="35.90" startY="309.19" endX="29.50" endY="312.04"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="28.13" startY="288.97" endX="21.47" endY="291.13"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="22.52" startY="268.04" endX="15.68" endY="269.49"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="19.13" startY="246.64" endX="12.17" endY="247.37"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="19.13" startY="203.36" endX="12.17" endY="202.63"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="22.52" startY="181.96" endX="15.68" endY="180.51"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="28.13" startY="161.03" endX="21.47" endY="158.87"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="35.90" startY="140.81" endX="29.50" endY="137.96"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="57.53" startY="103.33" endX="51.87" endY="99.21"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="71.17" startY="86.49" endX="65.97" endY="81.81"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="86.49" startY="71.17" endX="81.81" endY="65.97"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="103.33" startY="57.53" endX="99.21" endY="51.87"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="140.81" startY="35.90" endX="137.96" endY="29.50"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="161.03" startY="28.13" endX="158.87" endY="21.47"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="181.96" startY="22.52" endX="180.51" endY="15.68"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+        <Line startX="203.36" startY="19.13" endX="202.63" endY="12.17"><Stroke color="#ff55555f" thickness="1.5" cap="ROUND"/></Line>
+      <Variant mode="AMBIENT" target="alpha" value="0"/>
+    </PartDraw>
+    <PartDraw name="horas" x="0" y="0" width="450" height="450">
+        <Line startX="225.00" startY="47.00" endX="225.00" endY="11.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="314.00" startY="70.85" endX="332.00" endY="39.67"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="379.15" startY="136.00" endX="410.33" endY="118.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="403.00" startY="225.00" endX="439.00" endY="225.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="379.15" startY="314.00" endX="410.33" endY="332.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="314.00" startY="379.15" endX="332.00" endY="410.33"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="225.00" startY="403.00" endX="225.00" endY="439.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="136.00" startY="379.15" endX="118.00" endY="410.33"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="70.85" startY="314.00" endX="39.67" endY="332.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="47.00" startY="225.00" endX="11.00" endY="225.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="70.85" startY="136.00" endX="39.67" endY="118.00"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+        <Line startX="136.00" startY="70.85" endX="118.00" endY="39.67"><Stroke color="#ffffffff" thickness="3.5" cap="ROUND"/></Line>
+      <Variant mode="AMBIENT" target="alpha" value="150"/>
+    </PartDraw>
+    <Group name="fecha" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="d1"><![CDATA[[DAY_OF_WEEK] == 1]]></Expression>
+          <Expression name="d2"><![CDATA[[DAY_OF_WEEK] == 2]]></Expression>
+          <Expression name="d3"><![CDATA[[DAY_OF_WEEK] == 3]]></Expression>
+          <Expression name="d4"><![CDATA[[DAY_OF_WEEK] == 4]]></Expression>
+          <Expression name="d5"><![CDATA[[DAY_OF_WEEK] == 5]]></Expression>
+          <Expression name="d6"><![CDATA[[DAY_OF_WEEK] == 6]]></Expression>
+          <Expression name="d7"><![CDATA[[DAY_OF_WEEK] == 7]]></Expression>
+        </Expressions>
+        <Compare expression="d1">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>DOM %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d2">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>LUN %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d3">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>MAR %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d4">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>MIÉ %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d5">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>JUE %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d6">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>VIE %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Compare expression="d7">
+          <PartText x="125" y="118" width="200" height="40">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="SEMI_BOLD" color="#ffffffff"><Template>SÁB %d<Parameter expression="[DAY]"/></Template></Font></Text>
+          </PartText>
+        </Compare>
+        <Default/>
+      </Condition>
+    </Group>
+    <ComplicationSlot slotId="0" x="170" y="285" width="110" height="110" supportedTypes="RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
+      <DefaultProviderPolicy defaultSystemProvider="WATCH_BATTERY" defaultSystemProviderType="RANGED_VALUE" primaryProvider="com.tanqueo/com.tanqueo.complication.RangeComplicationService" primaryProviderType="RANGED_VALUE"/>
+      <BoundingOval x="0" y="0" width="110" height="110"/>
+      <Complication type="RANGED_VALUE">
+        <PartDraw x="5" y="5" width="100" height="100">
+          <Arc centerX="50" centerY="50" width="92" height="92" startAngle="-135" endAngle="135" direction="CLOCKWISE"><Stroke color="#ff2a2a30" thickness="7" cap="ROUND"/></Arc>
+          <Arc centerX="50" centerY="50" width="92" height="92" startAngle="-135" endAngle="135" direction="CLOCKWISE">
+            <Transform target="endAngle" value="-135 + 270 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
+            <Stroke color="#ff8c70ff" thickness="7" cap="ROUND"/>
+          </Arc>
+        </PartDraw>
+        <Group x="5" y="5" width="100" height="100">
+          <PartText x="0" y="26" width="100" height="48">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="BOLD" color="#ffffffff"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font></Text>
+          </PartText>
+        </Group>
+      </Complication>
+      <Complication type="SHORT_TEXT">
+        <Group x="5" y="5" width="100" height="100">
+          <PartText x="0" y="26" width="100" height="48">
+            <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="27" weight="BOLD" color="#ffffffff"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font></Text>
+          </PartText>
+        </Group>
+      </Complication>
+      <Complication type="EMPTY"/>
+    </ComplicationSlot>
+    <AnalogClock x="0" y="0" width="450" height="450">
+      <HourHand resource="hand_hour" x="215" y="101" width="20" height="132" pivotX="0.5" pivotY="0.93939"/>
+      <MinuteHand resource="hand_minute" x="217" y="37" width="16" height="196" pivotX="0.5" pivotY="0.95918"/>
+      <SecondHand resource="hand_second" x="220" y="23" width="10" height="252" pivotX="0.5" pivotY="0.80159"><Variant mode="AMBIENT" target="alpha" value="0"/><Sweep frequency="15"/></SecondHand>
+    </AnalogClock>
+    <PartDraw name="centro" x="217" y="217" width="16" height="16">
+      <Ellipse x="0" y="0" width="16" height="16"><Fill color="#ffffffff"/></Ellipse>
+      <Ellipse x="4.5" y="4.5" width="7" height="7"><Fill color="#ff000000"/></Ellipse>
+    </PartDraw>
+  </Scene>
+</WatchFace>

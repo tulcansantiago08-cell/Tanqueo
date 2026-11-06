@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tanqueo"
 include(":app")
+include(":watchface")
