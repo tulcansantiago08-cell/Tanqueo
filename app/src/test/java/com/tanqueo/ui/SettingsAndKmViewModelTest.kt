@@ -40,6 +40,8 @@ class SettingsAndKmViewModelTest {
     @Test fun `actualizar km sugiere lo estimado y guarda lectura con la hora actual`() = runTest {
         val settings = FakeSettingsRepository()
         val vm = UpdateKmViewModel(FakeFillUpRepository(history), settings, refresher, clock)
+        assertNull(vm.state.value.km)
+        vm.adjust(1)
         assertEquals(1520, vm.state.value.km) // 1400 + 3 días × 40 km
         vm.adjust(30)
         vm.save()
@@ -50,8 +52,17 @@ class SettingsAndKmViewModelTest {
 
     @Test fun `actualizar km no baja del ultimo tanqueo`() = runTest {
         val vm = UpdateKmViewModel(FakeFillUpRepository(history), FakeSettingsRepository(), refresher, clock)
+        vm.adjust(1)
         vm.adjust(-5_000)
         assertEquals(1400, vm.state.value.km)
+    }
+
+    @Test fun `una estimacion sin tocar no se guarda como lectura real`() = runTest {
+        val settings = FakeSettingsRepository()
+        val vm = UpdateKmViewModel(FakeFillUpRepository(history), settings, refresher, clock)
+        vm.save()
+        assertNull(settings.odometerUpdate.value)
+        assertTrue(!vm.state.value.isSaved)
     }
 
     @Test fun `borrar desde el detalle quita el tanqueo y actualiza la tile`() = runTest {

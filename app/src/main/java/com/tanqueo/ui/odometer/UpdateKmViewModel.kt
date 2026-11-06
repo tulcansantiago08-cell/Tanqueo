@@ -22,7 +22,9 @@ import kotlinx.coroutines.launch
 
 data class UpdateKmUiState(
     val isLoading: Boolean = true,
-    val km: Int = 0,
+    /** Null hasta que el usuario lo toque: una estimación nunca se guarda como lectura real. */
+    val km: Int? = null,
+    val suggestedKm: Int = 0,
     /** No se acepta menos que el último tanqueo; una lectura manual equivocada sí se puede bajar. */
     val minKm: Int = 0,
     val isSaved: Boolean = false,
@@ -48,19 +50,21 @@ class UpdateKmViewModel @Inject constructor(
             val driven = (estimate as? RangeEstimate.Available)?.kmSinceLastFillUp?.roundToInt() ?: 0
             val base = history.firstOrNull()?.odometerKm
             val suggested = if (base != null) base + driven else maxOf(minKm, update?.km ?: 0)
-            _state.update { it.copy(isLoading = false, km = maxOf(suggested, minKm), minKm = minKm) }
+            _state.update { it.copy(isLoading = false, suggestedKm = maxOf(suggested, minKm), minKm = minKm) }
         }
     }
 
+    /** El primer toque solo muestra la sugerencia; desde ahí se ajusta a lo que marca el carro. */
     fun adjust(steps: Int) = _state.update {
-        it.copy(km = FillUpInput.adjustOdometer(it.km, steps, it.minKm))
+        it.copy(km = it.km?.let { km -> FillUpInput.adjustOdometer(km, steps, it.minKm) } ?: it.suggestedKm)
     }
 
     fun save() {
         val current = _state.value
-        if (current.isLoading || current.isSaved) return
+        val km = current.km
+        if (current.isLoading || current.isSaved || km == null) return
         viewModelScope.launch {
-            settings.setOdometerUpdate(OdometerUpdate(current.km, clock.instant()))
+            settings.setOdometerUpdate(OdometerUpdate(km, clock.instant()))
             surfaces.refresh()
             _state.update { it.copy(isSaved = true) }
         }

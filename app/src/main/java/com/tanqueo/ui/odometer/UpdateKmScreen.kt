@@ -43,16 +43,24 @@ fun UpdateKmScreen(onSaved: () -> Unit, viewModel: UpdateKmViewModel = hiltViewM
             cards = listOf(
                 ValueCardModel(
                     label = stringResource(R.string.update_km_title),
-                    value = Formats.integer(state.km),
+                    value = state.km?.let { Formats.integer(it) } ?: stringResource(R.string.value_empty),
                     onSteps = { viewModel.adjust(it * KM_STEPS[step]) },
-                    hint = stringResource(R.string.hint_step, Formats.integer(KM_STEPS[step])),
-                    onHintClick = { step = (step + 1) % KM_STEPS.size },
+                    hint = if (state.km == null) {
+                        stringResource(R.string.hint_odometer_recommended)
+                    } else {
+                        stringResource(R.string.hint_step, Formats.integer(KM_STEPS[step]))
+                    },
+                    onHintClick = if (state.km == null) {
+                        { viewModel.adjust(0) }
+                    } else {
+                        { step = (step + 1) % KM_STEPS.size }
+                    },
                 ),
             ),
             bottomAction = {
                 PrimaryPillButton(
                     text = stringResource(R.string.action_save),
-                    enabled = !state.isLoading,
+                    enabled = !state.isLoading && state.km != null,
                     onClick = viewModel::save,
                 )
             },
