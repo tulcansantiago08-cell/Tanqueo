@@ -10,6 +10,7 @@ import com.tanqueo.domain.assistant.TripStop
 import com.tanqueo.domain.budget.ReferencePrice
 import com.tanqueo.domain.budget.ReferencePrices
 import com.tanqueo.domain.format.Formats
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.usecase.AskAnswer
 import com.tanqueo.domain.usecase.EfficiencyUsed
 import com.tanqueo.ui.components.edgeAware
@@ -62,8 +63,8 @@ internal fun TransformingLazyColumnScope.answerItems(answer: AskAnswer) {
         AskAnswer.NotUnderstood -> item {
             AnswerMessage(modifier = Modifier.edgeAware(this), text = stringResource(R.string.ask_not_understood))
         }
-        // La pantalla la lleva directo al registro; aquí nunca se dibuja.
-        is AskAnswer.LogFillUp -> Unit
+        // La pantalla lleva directo al registro o a las gasolineras; aquí nunca se dibujan.
+        is AskAnswer.LogFillUp, AskAnswer.GasStations -> Unit
     }
 }
 
@@ -97,6 +98,7 @@ private fun TransformingLazyColumnScope.fuelRangeItems(answer: AskAnswer.FuelRan
 
 private fun TransformingLazyColumnScope.tripItems(answer: AskAnswer.Trip) {
     val plan = answer.plan
+    if (answer.asksTime) item { TripTimeCard(answer, Modifier.edgeAware(this)) }
     item {
         AnswerCard(
             modifier = Modifier.edgeAware(this),
@@ -105,6 +107,7 @@ private fun TransformingLazyColumnScope.tripItems(answer: AskAnswer.Trip) {
             detail = departureText(answer.daysUntil),
         )
     }
+    if (!answer.asksTime) item { TripTimeCard(answer, Modifier.edgeAware(this)) }
     item {
         AnswerCard(
             modifier = Modifier.edgeAware(this),
@@ -151,6 +154,23 @@ private fun TransformingLazyColumnScope.tripItems(answer: AskAnswer.Trip) {
     item {
         AnswerFootnote(modifier = Modifier.edgeAware(this), text = tripNote(answer, plan))
     }
+}
+
+/** Cuánto se demora en ese vehículo, manejando a su velocidad promedio y sin contar paradas. */
+@Composable
+private fun TripTimeCard(answer: AskAnswer.Trip, modifier: Modifier) {
+    AnswerCard(
+        modifier = modifier,
+        label = stringResource(
+            when (answer.vehicle) {
+                VehicleType.CARRO -> R.string.ask_trip_time_car
+                VehicleType.MOTO -> R.string.ask_trip_time_moto
+            },
+        ),
+        value = stringResource(R.string.ask_trip_time_value, Formats.duration(answer.hours)),
+        valueColor = if (answer.asksTime) TanqueoColors.Accent else TanqueoColors.White,
+        detail = stringResource(R.string.ask_trip_time_detail, Formats.integer(answer.vehicle.averageRoadSpeedKmh.toInt())),
+    )
 }
 
 @Composable

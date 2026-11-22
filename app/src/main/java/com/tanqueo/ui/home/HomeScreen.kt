@@ -57,8 +57,8 @@ fun HomeScreen(actions: HomeActions, viewModel: HomeViewModel = hiltViewModel())
             val data = dashboard
             when {
                 data == null -> Unit
-                data.lastFillUp == null -> EmptyHome(actions)
-                else -> HomePager(data, actions)
+                data.lastFillUp == null -> EmptyHome(data.settings.vehicle, actions, viewModel::switchVehicle)
+                else -> HomePager(data, actions, viewModel::switchVehicle)
             }
             // La hora queda fija arriba mientras las páginas se deslizan debajo.
             TimeHeader(Modifier.align(Alignment.TopCenter), showBack = false)
@@ -67,7 +67,7 @@ fun HomeScreen(actions: HomeActions, viewModel: HomeViewModel = hiltViewModel())
 }
 
 @Composable
-private fun HomePager(dashboard: Dashboard, actions: HomeActions) {
+private fun HomePager(dashboard: Dashboard, actions: HomeActions, onSwitchVehicle: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { PAGE_COUNT })
     val scope = rememberCoroutineScope()
     Box(Modifier.fillMaxSize()) {
@@ -79,7 +79,7 @@ private fun HomePager(dashboard: Dashboard, actions: HomeActions) {
         ) { page ->
             val isCurrent = pagerState.currentPage == page
             when (page) {
-                0 -> VehiclePage(dashboard, isCurrent, actions)
+                0 -> VehiclePage(dashboard, isCurrent, actions, onSwitchVehicle)
                 1 -> RangePage(dashboard, isCurrent, actions)
                 2 -> MonthPage(dashboard, isCurrent, actions)
                 else -> AskPage(actions)

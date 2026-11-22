@@ -8,15 +8,20 @@ import com.tanqueo.domain.calc.RangeEstimator
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
 import java.time.Clock
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 /** Todo lo que muestran Inicio, Resumen y la tile, y lo que revisa el aviso diario. */
 data class Dashboard(
@@ -35,21 +40,36 @@ class ObserveDashboard @Inject constructor(
     private val settings: SettingsRepository,
     private val clock: Clock,
 ) {
-    /** Se recalcula cuando cambian los datos y cada minuto, porque la estimación depende de la hora. */
-    fun observe(tickMillis: Long = 60_000): Flow<Dashboard> = combine(
-        fillUps.observeAll(),
-        settings.settings,
-        settings.odometerUpdate,
-        flow {
-            while (true) {
-                emit(Unit)
-                delay(tickMillis)
-            }
-        },
-    ) { list, config, update, _ -> build(list, config, update) }
+    /**
+     * El tablero del vehículo activo. Se recalcula cuando cambian los datos y cada minuto, porque la
+     * estimación depende de la hora. Al cambiar de vehículo, todo se lee de nuevo del otro: los datos de
+     * uno y los ajustes del otro nunca se juntan, ni por un instante.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observe(tickMillis: Long = 60_000): Flow<Dashboard> =
+        settings.settings.map { it.vehicle }.distinctUntilChanged().flatMapLatest { vehicle ->
+            combine(
+                fillUps.observeAll(vehicle),
+                settings.settingsFor(vehicle),
+                settings.odometerUpdateFor(vehicle),
+                flow {
+                    while (true) {
+                        emit(Unit)
+                        delay(tickMillis)
+                    }
+                },
+            ) { list, config, update, _ -> build(list, config, update) }
+        }
 
-    suspend fun current(): Dashboard =
-        build(fillUps.observeAll().first(), settings.settings.first(), settings.odometerUpdate.first())
+    /** El tablero de [vehicle], o del activo si es null. */
+    suspend fun current(vehicle: VehicleType? = null): Dashboard {
+        val chosen = vehicle ?: settings.settings.first().vehicle
+        return build(
+            fillUps.observeAll(chosen).first(),
+            settings.settingsFor(chosen).first(),
+            settings.odometerUpdateFor(chosen).first(),
+        )
+    }
 
     private fun build(list: List<FillUp>, config: TankSettings, update: OdometerUpdate?): Dashboard {
         val now = clock.instant()

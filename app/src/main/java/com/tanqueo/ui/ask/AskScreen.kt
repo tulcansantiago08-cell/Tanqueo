@@ -52,6 +52,8 @@ import com.tanqueo.ui.theme.TanqueoColors
 @Composable
 fun AskScreen(
     onLogFillUp: (String) -> Unit,
+    /** "¿Dónde hay una gasolinera?" lleva a la lista de gasolineras cercanas. */
+    onGasStations: () -> Unit,
     /** Abre la entrada de una vez; si se cancela, quedan a la vista los ejemplos. */
     listenOnOpen: Boolean = false,
     viewModel: AskViewModel = hiltViewModel(),
@@ -80,6 +82,11 @@ fun AskScreen(
                     viewModel.reset()
                     onLogFillUp(answer.text)
                 }
+            } else if (answer is AskAnswer.GasStations) {
+                LaunchedEffect(answer) {
+                    viewModel.reset()
+                    onGasStations()
+                }
             } else {
                 BackHandler(onBack = viewModel::reset)
                 ListScreen {
@@ -103,6 +110,8 @@ fun AskScreen(
 private fun IdleContent(inputUnavailable: Boolean, onAsk: () -> Unit, onSample: (String) -> Unit) {
     val samples = listOf(
         R.string.ask_sample_trip to R.string.ask_sample_trip_question,
+        R.string.ask_sample_time to R.string.ask_sample_time_question,
+        R.string.ask_sample_stations to R.string.ask_sample_stations_question,
         R.string.ask_sample_range to R.string.ask_sample_range_question,
         R.string.ask_sample_budget to R.string.ask_sample_budget_question,
         R.string.ask_sample_gallons to R.string.ask_sample_gallons_question,

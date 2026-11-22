@@ -17,6 +17,7 @@ import com.tanqueo.domain.model.TankSettings
 import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
 import com.tanqueo.ui.components.rememberNotificationAccess
+import com.tanqueo.ui.welcome.label
 
 private val CAPACITY_STEPS = listOf(1, 10) // en décimas de galón
 private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
@@ -25,12 +26,17 @@ private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val loaded by viewModel.settings.collectAsStateWithLifecycle()
     val settings = loaded ?: TankSettings()
-    val pagerState = rememberPagerState(pageCount = { 4 })
+    val pagerState = rememberPagerState(pageCount = { 5 })
     val notifications = rememberNotificationAccess()
     var capacityStep by rememberSaveable { mutableIntStateOf(1) }
     var kmStep by rememberSaveable { mutableIntStateOf(0) }
 
     val cards = listOf(
+        ValueCardModel(
+            label = stringResource(R.string.settings_vehicle),
+            value = stringResource(settings.vehicle.label),
+            onSteps = viewModel::adjustVehicle,
+        ),
         ValueCardModel(
             label = stringResource(R.string.settings_capacity),
             value = stringResource(R.string.value_gallons, Formats.oneDecimal(settings.tankCapacityGallons)),

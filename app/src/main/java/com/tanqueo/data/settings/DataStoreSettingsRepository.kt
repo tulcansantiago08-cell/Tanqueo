@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.CachedTip
 import com.tanqueo.domain.repository.SettingsRepository
 import java.time.Instant
@@ -18,40 +19,50 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+/**
+ * Los ajustes y el "Actualizar km" se guardan aparte para cada vehículo. Las claves del carro son las
+ * mismas de antes de poder elegir vehículo, así lo que ya estaba guardado sigue siendo del carro.
+ */
 class DataStoreSettingsRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsRepository {
 
     override val settings: Flow<TankSettings> = dataStore.data.map { prefs ->
-        TankSettings(
-            tankCapacityGallons = prefs[CAPACITY] ?: TankSettings.DEFAULT_CAPACITY_GALLONS,
-            reminderKmThreshold = prefs[KM_THRESHOLD] ?: TankSettings.DEFAULT_KM_THRESHOLD,
-            reminderDaysThreshold = prefs[DAYS_THRESHOLD] ?: TankSettings.DEFAULT_DAYS_THRESHOLD,
-        )
+        val active = prefs.activeVehicle()
+        prefs.settingsOf(active ?: VehicleType.DEFAULT).copy(vehicleType = active)
     }.distinctUntilChanged()
 
     override val odometerUpdate: Flow<OdometerUpdate?> = dataStore.data.map { prefs ->
-        val km = prefs[ODOMETER_KM]
-        val at = prefs[ODOMETER_AT]
-        if (km != null && at != null) OdometerUpdate(km, Instant.ofEpochMilli(at)) else null
+        prefs.odometerOf(prefs.activeOrDefault())
     }.distinctUntilChanged()
 
+    override fun settingsFor(vehicle: VehicleType): Flow<TankSettings> =
+        dataStore.data.map { it.settingsOf(vehicle) }.distinctUntilChanged()
+
+    override fun odometerUpdateFor(vehicle: VehicleType): Flow<OdometerUpdate?> =
+        dataStore.data.map { it.odometerOf(vehicle) }.distinctUntilChanged()
+
     override suspend fun setTankCapacity(gallons: Double) {
-        dataStore.edit { it[CAPACITY] = gallons }
+        dataStore.edit { it[Keys.of(it.activeOrDefault()).capacity] = gallons }
     }
 
     override suspend fun setKmThreshold(km: Int) {
-        dataStore.edit { it[KM_THRESHOLD] = km }
+        dataStore.edit { it[Keys.of(it.activeOrDefault()).kmThreshold] = km }
     }
 
     override suspend fun setDaysThreshold(days: Int) {
-        dataStore.edit { it[DAYS_THRESHOLD] = days }
+        dataStore.edit { it[Keys.of(it.activeOrDefault()).daysThreshold] = days }
+    }
+
+    override suspend fun setVehicleType(type: VehicleType) {
+        dataStore.edit { it[VEHICLE] = type.name }
     }
 
     override suspend fun setOdometerUpdate(update: OdometerUpdate) {
         dataStore.edit {
-            it[ODOMETER_KM] = update.km
-            it[ODOMETER_AT] = update.at.toEpochMilli()
+            val keys = Keys.of(it.activeOrDefault())
+            it[keys.odometerKm] = update.km
+            it[keys.odometerAt] = update.at.toEpochMilli()
         }
     }
 
@@ -69,12 +80,47 @@ class DataStoreSettingsRepository @Inject constructor(
         }
     }
 
+    private fun Preferences.activeVehicle(): VehicleType? =
+        this[VEHICLE]?.let { name -> VehicleType.entries.firstOrNull { it.name == name } }
+
+    private fun Preferences.activeOrDefault(): VehicleType = activeVehicle() ?: VehicleType.DEFAULT
+
+    private fun Preferences.settingsOf(vehicle: VehicleType): TankSettings {
+        val keys = Keys.of(vehicle)
+        return TankSettings(
+            tankCapacityGallons = this[keys.capacity] ?: vehicle.defaultCapacityGallons,
+            reminderKmThreshold = this[keys.kmThreshold] ?: TankSettings.DEFAULT_KM_THRESHOLD,
+            reminderDaysThreshold = this[keys.daysThreshold] ?: TankSettings.DEFAULT_DAYS_THRESHOLD,
+            vehicleType = vehicle,
+        )
+    }
+
+    private fun Preferences.odometerOf(vehicle: VehicleType): OdometerUpdate? {
+        val keys = Keys.of(vehicle)
+        val km = this[keys.odometerKm]
+        val at = this[keys.odometerAt]
+        return if (km != null && at != null) OdometerUpdate(km, Instant.ofEpochMilli(at)) else null
+    }
+
+    /** Claves de un vehículo. Las del carro no llevan sufijo: son las que ya existían. */
+    private class Keys(suffix: String) {
+        val capacity = doublePreferencesKey("tank_capacity_gallons$suffix")
+        val kmThreshold = intPreferencesKey("reminder_km_threshold$suffix")
+        val daysThreshold = intPreferencesKey("reminder_days_threshold$suffix")
+        val odometerKm = intPreferencesKey("odometer_update_km$suffix")
+        val odometerAt = longPreferencesKey("odometer_update_at$suffix")
+
+        companion object {
+            private val byVehicle = VehicleType.entries.associateWith { vehicle ->
+                Keys(if (vehicle == VehicleType.CARRO) "" else "_${vehicle.name.lowercase()}")
+            }
+
+            fun of(vehicle: VehicleType): Keys = byVehicle.getValue(vehicle)
+        }
+    }
+
     private companion object {
-        val CAPACITY = doublePreferencesKey("tank_capacity_gallons")
-        val KM_THRESHOLD = intPreferencesKey("reminder_km_threshold")
-        val DAYS_THRESHOLD = intPreferencesKey("reminder_days_threshold")
-        val ODOMETER_KM = intPreferencesKey("odometer_update_km")
-        val ODOMETER_AT = longPreferencesKey("odometer_update_at")
+        val VEHICLE = stringPreferencesKey("vehicle_type")
         val TIP_KEY = stringPreferencesKey("tip_key")
         val TIP_TEXT = stringPreferencesKey("tip_text")
     }

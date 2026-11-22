@@ -1,6 +1,6 @@
 # Tanqueo
 
-App para **smartwatch Wear OS** que registra cada vez que le pones gasolina a tu vehículo, estima cuánto te dura y te avisa cuándo volver a tanquear. Funciona solo en el reloj: sin app de celular y sin cuenta. La IA es opcional; sin ella la app funciona igual con cálculos locales.
+App para **smartwatch Wear OS** que registra cada vez que le pones gasolina a tu carro o tu moto, estima cuánto te dura y te avisa cuándo volver a tanquear. Funciona solo en el reloj: sin app de celular y sin cuenta. La IA es opcional; sin ella la app funciona igual con cálculos locales.
 
 Proyecto académico.
 
@@ -24,6 +24,16 @@ Proyecto académico.
 
 ## Funciones
 
+- **Carro y moto, cada uno aparte.** La primera vez la app pregunta qué vas a tanquear. Después se cambia tocando **Mi carro ⇄ / Mi moto ⇄** en el inicio (o el dibujo), o en Ajustes. Cada vehículo tiene su propio historial, tanque, kilometraje, umbrales de aviso, rendimiento y autonomía: un tanqueo de la moto nunca entra en las cuentas del carro ni al revés.
+
+  | | Carro | Moto (scooter) |
+  |---|---|---|
+  | Tanque inicial | 12 galones | 3 galones |
+  | Primer registro sugiere | 10 galones | 2 galones |
+  | Consumo de referencia sin historial | 35 km/galón | 100 km/galón |
+  | Velocidad promedio en carretera | 50 km/h | 45 km/h |
+
+  El aviso de tanquear revisa los dos por separado y cada uno tiene su notificación ("Hora de tanquear el carro" / "… la moto"); tocarla abre la app con ese vehículo.
 - **Inicio de 4 páginas** que se deslizan en horizontal (también con la corona o el bisel), con puntos de página abajo:
   1. **Mi vehículo:** carro visto desde arriba (vector propio, sin marcas reales), autonomía y odómetro, **+ Tanqueo** y **Menú**: la lista con todo lo que hace la app, cada opción con su nombre escrito (Registrar tanqueo, Preguntar, Actualizar km, Historial, Resumen del mes, ¿Cuánto me alcanza? y Ajustes).
   2. **Autonomía:** anillo tipo medidor que se llena según el % de tanque estimado, con los km, los días, la fecha estimada para volver a tanquear y el botón **+ Tanqueo**.
@@ -35,11 +45,16 @@ Proyecto académico.
   - El kilometraje queda vacío hasta que lo tocas: nunca se guarda uno que no elegiste. El odómetro no puede bajar del último registrado.
   - **Por voz o teclado:** el micrófono abre la entrada del sistema. Dices "10 galones, 165 mil, corriente, lleno", la app llena las tarjetas y **tú revisas antes de guardar**.
 - **¿Cuánto me alcanza?** (botón de calculadora en "Este mes"). Tocas el valor para escribirlo con el teclado del reloj (o lo cambias con la corona o los botones), eliges el precio del galón y ves al instante cuántos km y días te dura, hasta qué fecha y los galones. Los km usan el rendimiento real de tu vehículo y los días lo que manejas a diario; sin datos suficientes solo muestra galones. Lo que no cabe en el tanque no suma km.
+- **Gasolineras cerca.** En el Menú, en el aviso de tanquear y preguntándole al asistente ("¿dónde hay una gasolinera?"). Muestra la lista de gasolineras a menos de 5 km, de la más cercana a la más lejana, con nombre, marca, calle y distancia en línea recta, en la ciudad que sea. Funciona sin Google Maps: también en el emulador, con una ubicación simulada (`adb emu geo fix -77.2811 1.2136` la pone en Pasto).
+  - **Mapa propio** arriba de la lista: tu ubicación (punto azul) y las 9 gasolineras más cercanas numeradas igual que en la lista, con botones + y − para acercar o alejar. Usa las teselas de OpenStreetMap, así que se ve también en el emulador; sin internet para el mapa, los puntos se ven igual sobre fondo oscuro.
+  - Los datos y el mapa salen de OpenStreetMap (gasolineras de Nominatim y, si no responde, de Overpass), gratis y sin clave. Las teselas se guardan en memoria mientras la app está abierta para no descargarlas otra vez.
+  - Si el reloj tiene Google Maps (u otra app de mapas), aparece **Ver en Mapas** y tocar una gasolinera la abre allí. Si no tiene, ese botón no aparece y tocar una gasolinera la marca y la centra en el mapa propio: nunca manda a la tienda ni pide una cuenta de Google.
+  - **Ubicación:** se pide permiso la primera vez. Solo se usa en esa pantalla, no se guarda, y a OpenStreetMap se envía únicamente el punto redondeado a unos 100 m.
 - **Historial.** Del más reciente al más antiguo; tocar uno muestra el detalle y permite borrarlo (con un segundo toque de confirmación).
 - **Consejo del mes** (en el resumen). Calculado con tus datos reales; si hay IA, ella lo redacta.
 - **Actualizar km.** Registra el kilometraje actual para que la estimación use km reales. Empieza vacío: el primer toque muestra una sugerencia y se ajusta a lo que marca el carro, así una estimación nunca se guarda como lectura real.
 - **Aviso de tanquear.** Un trabajo de WorkManager revisa la estimación cada 12 horas y notifica cuando quedan menos de 50 km o menos de 1 día (se cambia en Ajustes). Si ya no hace falta, por ejemplo tras registrar un tanqueo, quita el aviso anterior.
-- **Ajustes.** Capacidad del tanque, umbrales del aviso y estado de las notificaciones.
+- **Ajustes.** Vehículo (carro o moto; al cambiarlo, la capacidad pasa a la típica del nuevo), capacidad del tanque, umbrales del aviso y estado de las notificaciones.
 - **Tile.** Arco de progreso por el borde, km y días, gasto del mes y **+ Tanqueo**, que abre directamente el registro.
 - **Complicación.** Km restantes para cualquier carátula, con arco de progreso (`RANGED_VALUE`) o como texto corto (`SHORT_TEXT`). El dato trae el degradado violeta → azul, pero cada carátula decide si lo respeta: en las capturas se usó el tema *Lilac* de la carátula.
 - **Carátula propia** (módulo `watchface`, en Watch Face Format, sin código). Manecillas finas con borde negro, segundero violeta que avanza de a un segundo como un reloj de cuarzo, fecha en español y los km de la complicación en un arco violeta. En modo ambiente se atenúa y oculta el segundero y las marcas de minutos. Se elige como cualquier carátula del reloj. Las manecillas y el XML se generan con `watchface/tools/generate.py`.
@@ -50,18 +65,22 @@ En la cuarta página del inicio o en el Menú. Un toque y ya se puede preguntar,
 
 | Preguntas | Responde |
 |---|---|
-| "Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?" | Distancia, cuánto cuesta el viaje en pesos, cuánto echar antes de salir y en qué ciudad recargar |
+| "Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?" | Distancia, tiempo de manejo, cuánto cuesta el viaje en pesos, cuánto echar antes de salir y en qué ciudad recargar |
+| "¿Cuánto me demoro de Pasto a Cali en moto?" | El tiempo primero (a la velocidad promedio de ese vehículo, sin paradas), y luego distancia y gasolina |
 | "Eché 5 galones, ¿cuántos km puedo recorrer?" o "¿Hasta dónde llego con 80 mil?" | Km, días, hasta qué fecha, y el equivalente en galones y pesos |
 | "¿Cuándo me toca tanquear?" | Km, días y fecha |
 | "¿Cuánto gasté el mes pasado?" | Total y número de tanqueos |
 | "¿Cuánto cuesta el galón en Pasto?" | Precio de referencia, el más barato y el promedio |
 | "Tanqueé 10 galones por 165 mil" | Abre el registro lleno, para revisar y guardar |
+| "¿Dónde hay una gasolinera cerca?" | Abre Mapas con las gasolineras alrededor |
 
 **Cómo se calcula un viaje:**
 
 - **La IA solo entiende la pregunta.** Si su respuesta trae una cifra que la persona no dijo, se descarta. Sin IA, un lector local entiende las preguntas más comunes.
 - **Distancia:** suma de tramos reales por carretera (`domain/assistant/RoadNetwork.kt`), no línea recta. Son valores aproximados y solo cubren las ciudades de esa red; de otro lugar la app lo dice y pide los km, nunca los inventa.
-- **Consumo:** el real del vehículo según su historial. Sin historial usa 35 km/galón y lo indica en la respuesta: no hay una cifra oficial actual en Colombia, y lo publicado para un carro particular va de 25 a 40 km/galón.
+- **Consumo:** el real del vehículo según su historial. Sin historial usa 35 km/galón para un carro o 100 para una moto, y lo indica en la respuesta: no hay una cifra oficial actual en Colombia; lo publicado para un carro particular va de 25 a 40 km/galón y para una moto de trabajo de 80 a 130.
+- **Vehículo:** el que nombre la pregunta ("en moto", "en carro"); si no nombra ninguno, el activo. Se usan sus datos, su tanque y su consumo, nunca los del otro. Ese dato sale de las palabras de la persona, no de la IA.
+- **Tiempo:** distancia ÷ velocidad promedio del vehículo (50 km/h el carro, 45 km/h la moto), sin contar paradas. Es una guía: el tráfico, la lluvia y las obras cambian mucho el tiempo real.
 - **Reserva:** 10 % más, porque en carretera y cordillera se gasta distinto que a diario.
 - **Precio:** el de referencia de la ciudad de salida si existe; si no, el último que pagaste.
 
@@ -80,7 +99,7 @@ Controles para que no invente datos:
 - **Consejo:** se rechaza si trae una cifra que no esté en los datos que recibió.
 - **Sin espera larga:** si no responde en 12 s, la app sigue sin ella.
 
-**Privacidad:** el texto dictado se envía a Google para interpretarlo, y para el consejo se envían solo agregados (gasto, precios promedio y rendimiento), sin fechas exactas ni kilometraje. No se envía nada más.
+**Privacidad:** el texto dictado se envía a Google para interpretarlo, y para el consejo se envían solo agregados (gasto, precios promedio y rendimiento), sin fechas exactas ni kilometraje. Al abrir "Gasolineras cerca" se envía a OpenStreetMap el punto de búsqueda redondeado a unos 100 m. No se envía nada más.
 
 ### Precios de referencia
 

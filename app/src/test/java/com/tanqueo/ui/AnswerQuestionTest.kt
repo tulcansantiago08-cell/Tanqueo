@@ -3,6 +3,8 @@ package com.tanqueo.ui
 import com.tanqueo.domain.assistant.AskIntent
 import com.tanqueo.domain.dayN
 import com.tanqueo.domain.full
+import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.usecase.AnswerQuestion
 import com.tanqueo.domain.usecase.AskAnswer
 import com.tanqueo.domain.usecase.ObserveDashboard
@@ -18,9 +20,13 @@ class AnswerQuestionTest {
     private val clock = Clock.fixed(dayN(10.0), ZoneOffset.UTC)
     private val history = listOf(full(0, 1000, 10.0), full(10, 1400, 10.0)) // 40 km/gal, 40 km/día, $ 16.000/gal
 
-    private fun answer(ai: AskIntent? = null, fills: List<com.tanqueo.domain.model.FillUp> = history): AnswerQuestion {
+    private fun answer(
+        ai: AskIntent? = null,
+        fills: List<com.tanqueo.domain.model.FillUp> = history,
+        settings: TankSettings = TankSettings(),
+    ): AnswerQuestion {
         val repo = FakeFillUpRepository(fills)
-        return AnswerQuestion(FakeFuelAssistant(question = ai), ObserveDashboard(repo, FakeSettingsRepository(), clock), repo, clock)
+        return AnswerQuestion(FakeFuelAssistant(question = ai), ObserveDashboard(repo, FakeSettingsRepository(settings), clock), repo, clock)
     }
 
     @Test fun `sin ia responde el viaje con el lector local`() = runTest {
@@ -150,5 +156,35 @@ class AnswerQuestionTest {
 
     @Test fun `lo que no entiende lo admite`() = runTest {
         assertEquals(AskAnswer.NotUnderstood, answer()("¿va a llover?"))
+    }
+
+    @Test fun `una moto sin historial usa la referencia de moto`() = runTest {
+        val moto = TankSettings(tankCapacityGallons = 3.0, vehicleType = VehicleType.MOTO)
+        val result = answer(fills = emptyList(), settings = moto)("voy de Pasto a Medellín") as AskAnswer.Trip
+        assertTrue(result.efficiency.isReference)
+        assertEquals(100.0, result.efficiency.kmPerGallon, 0.0)
+        assertEquals(8.8, result.plan.gallonsNeeded, 0.01) // 800 ÷ 100 × 1,10
+    }
+
+    @Test fun `cuanto me demoro usa la velocidad del vehiculo que nombra`() = runTest {
+        val result = answer()("¿Cuánto me demoro de Pasto a Medellín en moto?") as AskAnswer.Trip
+        assertEquals(VehicleType.MOTO, result.vehicle)
+        assertTrue(result.asksTime)
+        assertEquals(800 / 45.0, result.hours, 0.01)
+        // El historial es del carro: la moto no lo usa y calcula con su referencia.
+        assertTrue(result.efficiency.isReference)
+        assertEquals(100.0, result.efficiency.kmPerGallon, 0.0)
+    }
+
+    @Test fun `sin nombrar vehiculo usa el activo`() = runTest {
+        val result = answer()("voy de Pasto a Medellín") as AskAnswer.Trip
+        assertEquals(VehicleType.CARRO, result.vehicle)
+        assertEquals(800 / 50.0, result.hours, 0.01)
+        assertTrue(!result.asksTime)
+    }
+
+    @Test fun `buscar gasolinera abre mapas sin calcular nada`() = runTest {
+        assertEquals(AskAnswer.GasStations, answer()("¿Dónde hay una gasolinera?"))
+        assertEquals(AskAnswer.GasStations, answer(AskIntent.GasStations)("necesito echar gasolina, ¿dónde?"))
     }
 }

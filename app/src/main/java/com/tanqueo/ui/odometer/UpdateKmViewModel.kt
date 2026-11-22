@@ -43,9 +43,10 @@ class UpdateKmViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val history = fillUps.observeAll().first()
-            val update = settings.odometerUpdate.first()
+            // Todo del mismo vehículo: el que está activo al abrir la pantalla.
             val config = settings.settings.first()
+            val history = fillUps.observeAll(config.vehicle).first()
+            val update = settings.odometerUpdateFor(config.vehicle).first()
             val minKm = FillUpInput.minOdometer(history)
             val estimate = RangeEstimator.estimate(history, config.tankCapacityGallons, update, clock.instant())
             val driven = (estimate as? RangeEstimate.Available)?.kmSinceLastFillUp?.roundToInt() ?: 0

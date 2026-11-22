@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Scooter grande vista de lado, dibujado a mano y sin marcas reales. Sigue la forma de un maxi
+     scooter: carenaje delantero alto y anguloso con parabrisas, farola en punta, piso plano, sillín
+     largo con escalón para el parrillero, cola en punta con agarradera, exosto grande al lado y
+     ruedas con disco. El frente mira a la derecha. Mismo tamaño y estilo que ic_car_top. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="180dp"
+    android:height="100dp"
+    android:viewportWidth="180"
+    android:viewportHeight="100">
+    <!-- Llantas -->
+    <path
+        android:fillColor="#3E3E46"
+        android:fillType="evenOdd"
+        android:pathData="M21,78 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0 Z M27,78 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 Z M123,78 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0 Z M129,78 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 Z" />
+    <!-- Rines claros con el centro hundido -->
+    <path
+        android:fillColor="#B9B9C2"
+        android:fillType="evenOdd"
+        android:pathData="M27,78 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 Z M31,78 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 Z M129,78 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 Z M133,78 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 Z" />
+    <!-- Disco del freno delantero y centros -->
+    <path
+        android:fillColor="#7A7A86"
+        android:fillType="evenOdd"
+        android:pathData="M133,78 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 Z M137,78 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 Z" />
+    <path
+        android:fillColor="#5C5C66"
+        android:pathData="M36,78 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z M138,78 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- Bloque del motor y basculante -->
+    <path
+        android:fillColor="#6A6A75"
+        android:pathData="M38,72 L76,64 C83,63 87,69 82,73 L46,84 C40,86 34,76 38,72 Z" />
+    <!-- Amortiguador trasero -->
+    <path
+        android:fillColor="#4A4A54"
+        android:pathData="M46,50 L53,72 L57,71 L50,49 Z" />
+    <!-- Carrocería trasera: de la cola en punta al piso, más brillante arriba -->
+    <path android:pathData="M8,44 L22,39 L62,43 L92,47 C97,48 99,53 96,57 L90,66 L64,68 C60,60 52,55 42,55 C33,55 26,58 21,61 L13,52 C10,49 8,47 8,44 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="50"
+                android:startY="39"
+                android:endX="50"
+                android:endY="68">
+                <item android:color="#FFF0F0F4" android:offset="0" />
+                <item android:color="#FFA3A3AE" android:offset="0.55" />
+                <item android:color="#FF90909C" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Pliegue deportivo de la carrocería -->
+    <path
+        android:fillColor="#7A7A86"
+        android:pathData="M20,51 L90,55 L88,58 L23,55 Z" />
+    <!-- Agarradera y calavera -->
+    <path
+        android:fillColor="#5C5C66"
+        android:pathData="M10,40 L28,35 L29,38 L11,43 Z" />
+    <path
+        android:fillColor="#FF5A4F"
+        android:pathData="M6,43 L16,40 L17,44 L8,47 Z" />
+    <!-- Sillín largo con escalón para el parrillero -->
+    <path
+        android:fillColor="#2E2E36"
+        android:pathData="M20,40 C24,33 38,31 50,32 L58,36 C70,35 84,37 93,41 C98,43 96,48 91,47 L25,44 C20,44 18,42 20,40 Z" />
+    <!-- Piso plano -->
+    <path
+        android:fillColor="#B9B9C2"
+        android:pathData="M90,61 L116,59 L118,66 L88,68 Z" />
+    <path
+        android:fillColor="#4A4A54"
+        android:pathData="M86,68 L118,66 L116,71 L84,72 Z" />
+    <!-- Exosto grande, del lado que se ve, subiendo hacia atrás -->
+    <path android:pathData="M14,58 C13,55 17,54 20,55 L50,62 L49,68 L18,63 C15,62 14,60 14,58 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="34"
+                android:startY="55"
+                android:endX="34"
+                android:endY="68">
+                <item android:color="#FFC9C9D2" android:offset="0" />
+                <item android:color="#FF7A7A86" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Barras de la suspensión delantera -->
+    <path
+        android:fillColor="#7A7A86"
+        android:pathData="M144,80 L131,52 L135,50 L148,78 Z" />
+    <!-- Guardabarros delantero -->
+    <path
+        android:fillColor="#B9B9C2"
+        android:pathData="M124,66 C130,56 154,55 161,63 L157,66 C151,60 136,61 129,69 Z" />
+    <!-- Carenaje delantero alto y anguloso, más brillante al frente -->
+    <path android:pathData="M110,66 L114,44 L122,24 L131,21 L146,33 L153,42 L149,54 C145,60 132,64 110,66 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="110"
+                android:startY="44"
+                android:endX="153"
+                android:endY="44">
+                <item android:color="#FF90909C" android:offset="0" />
+                <item android:color="#FFA3A3AE" android:offset="0.35" />
+                <item android:color="#FFF0F0F4" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Escudo de las piernas: la cara interna del carenaje, en sombra -->
+    <path
+        android:fillColor="#7A7A86"
+        android:pathData="M110,66 L114,44 L121,28 L125,44 L121,63 Z" />
+    <!-- Parabrisas alto, gris translúcido -->
+    <path
+        android:fillColor="#99C9C9D2"
+        android:pathData="M123,24 L129,7 L137,2 L142,5 L140,22 L131,21 Z" />
+    <!-- Farola en punta y luz de día debajo -->
+    <path
+        android:fillColor="#F0F0F4"
+        android:pathData="M139,37 L153,42 L151,46 L137,41 Z" />
+    <path
+        android:fillColor="#CCF0F0F4"
+        android:pathData="M135,45 L149,50 L148,52 L134,47 Z" />
+    <!-- Manubrio con puño, y espejo sobre su vástago -->
+    <path
+        android:fillColor="#4A4A54"
+        android:pathData="M106,28 L126,23 L127,26 L107,31 Z" />
+    <path
+        android:fillColor="#2E2E36"
+        android:pathData="M103,29 L110,27 L111,31 L104,33 Z" />
+    <path
+        android:fillColor="#5C5C66"
+        android:pathData="M117,25 L113,12 L115,11 L119,24 Z M107,9 a5,3.5 0 1,0 10,0 a5,3.5 0 1,0 -10,0 Z" />
+</vector>

@@ -54,6 +54,25 @@ object Formats {
     /** Fecha del encabezado: MIÉ 4 */
     fun headerDate(date: LocalDate): String = dayDate(date).uppercase(spanish)
 
+    /** Tiempo de viaje redondeado a 10 minutos: 45 min, 8 h, 8 h 30 min. Más precisión sería falsa. */
+    fun duration(hours: Double): String {
+        val totalMinutes = (Math.round(hours * 6).coerceAtLeast(1) * 10).toInt()
+        val h = totalMinutes / 60
+        val m = totalMinutes % 60
+        return when {
+            h == 0 -> "$m\u00A0min"
+            m == 0 -> "$h\u00A0h"
+            else -> "$h\u00A0h $m\u00A0min"
+        }
+    }
+
+    /** Distancia corta: 350 m, o 1,2 km desde un kilómetro. */
+    fun distance(km: Double): String {
+        val meters = (Math.round(km * 20) * 50).coerceAtLeast(50)
+        // 980 m redondea a 1000 m: desde ahí se escribe en km.
+        return if (meters < 1000) "$meters\u00A0m" else "${oneDecimal(km.coerceAtLeast(1.0))}\u00A0km"
+    }
+
     fun days(days: Double): DaysDisplay =
         if (days < 1.0) DaysDisplay.LessThanOne else DaysDisplay.About(days.roundToInt())
 }

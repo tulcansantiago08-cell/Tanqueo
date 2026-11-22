@@ -5,6 +5,8 @@ import com.tanqueo.domain.dayN
 import com.tanqueo.domain.full
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
+import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.partial
 import com.tanqueo.domain.usecase.InterpretDictation
 import com.tanqueo.ui.register.RegisterPanel
@@ -27,8 +29,8 @@ class RegisterViewModelTest {
     private val refresher = CountingRefresher()
     private val assistant = FakeFuelAssistant()
 
-    private fun viewModel(fillUps: FakeFillUpRepository) =
-        RegisterViewModel(fillUps, FakeSettingsRepository(), refresher, clock, InterpretDictation(assistant))
+    private fun viewModel(fillUps: FakeFillUpRepository, settings: TankSettings = TankSettings()) =
+        RegisterViewModel(fillUps, FakeSettingsRepository(settings), refresher, clock, InterpretDictation(assistant))
 
     private val history = listOf(full(0, 1000, 10.0), full(10, 1400, 10.0)) // $16.000/galón
 
@@ -221,5 +223,23 @@ class RegisterViewModelTest {
         vm.save()
         assertTrue(vm.state.value.isSaved)
         assertEquals(3, repo.items.value.size)
+    }
+
+    @Test fun `el primer tanqueo de una moto parte de pocos galones`() = runTest {
+        val moto = TankSettings(tankCapacityGallons = 3.0, vehicleType = VehicleType.MOTO)
+        val vm = viewModel(FakeFillUpRepository(), moto)
+        assertEquals(2.0, vm.state.value.gallons, 0.0)
+        assertNull(vm.state.value.warning)
+    }
+
+    @Test fun `con la moto activa el tanqueo se guarda como de la moto y no usa la historia del carro`() = runTest {
+        val repo = FakeFillUpRepository(history) // tanqueos del carro
+        val moto = TankSettings(tankCapacityGallons = 3.0, vehicleType = VehicleType.MOTO)
+        val vm = viewModel(repo, moto)
+        assertEquals(2.0, vm.state.value.gallons, 0.0) // no los 10 galones del carro
+        assertEquals(0, vm.state.value.minOdometerKm) // ni su odómetro
+        vm.adjustPaid(100)
+        vm.save()
+        assertEquals(VehicleType.MOTO, repo.items.value.first { it.at == now }.vehicle)
     }
 }

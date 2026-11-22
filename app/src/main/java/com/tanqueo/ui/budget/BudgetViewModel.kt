@@ -50,7 +50,9 @@ class BudgetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val history = fillUps.observeAll().first()
+            // El tanque y el rendimiento son los del vehículo activo: lo que cabe en una moto no es lo de un carro.
+            val config = settings.settings.first()
+            val history = fillUps.observeAll(config.vehicle).first()
             val fuel = history.firstOrNull()?.fuelType ?: FuelType.CORRIENTE
             val own = FillUpInput.lastPricePerGallon(history, fuel)?.let { PriceOption(it, place = null) }
             val references = ReferencePrices.forFuel(fuel).map { PriceOption(it.pricePerGallon.toDouble(), it.place) }
@@ -59,7 +61,7 @@ class BudgetViewModel @Inject constructor(
                     options = listOfNotNull(own) + references,
                     kmPerGallon = RangeEstimator.kmPerGallon(history),
                     kmPerDay = RangeEstimator.kmPerDay(history),
-                    tankCapacityGallons = settings.settings.first().tankCapacityGallons,
+                    tankCapacityGallons = config.tankCapacityGallons,
                 )
             }
         }

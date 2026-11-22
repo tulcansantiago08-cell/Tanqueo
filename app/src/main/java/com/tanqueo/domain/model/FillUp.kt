@@ -4,7 +4,10 @@ import java.time.Instant
 
 enum class FuelType { CORRIENTE, EXTRA, DIESEL }
 
-/** Un tanqueo registrado. [odometerKm] es opcional, pero sin él no aporta a la estimación. */
+/**
+ * Un tanqueo registrado. [odometerKm] es opcional, pero sin él no aporta a la estimación. Cada tanqueo
+ * pertenece a un [vehicle]: los del carro y los de la moto nunca se mezclan en un cálculo.
+ */
 data class FillUp(
     val id: Long = 0,
     val at: Instant,
@@ -13,6 +16,7 @@ data class FillUp(
     val fuelType: FuelType,
     val isFull: Boolean,
     val odometerKm: Int?,
+    val vehicle: VehicleType = VehicleType.DEFAULT,
 )
 
 /** Kilometraje que el usuario registró a mano con "Actualizar km". */
@@ -22,7 +26,12 @@ data class TankSettings(
     val tankCapacityGallons: Double = DEFAULT_CAPACITY_GALLONS,
     val reminderKmThreshold: Int = DEFAULT_KM_THRESHOLD,
     val reminderDaysThreshold: Int = DEFAULT_DAYS_THRESHOLD,
+    /** Null hasta que se elige en la bienvenida. */
+    val vehicleType: VehicleType? = null,
 ) {
+    /** El vehículo para los cálculos: si todavía no se eligió, un carro. */
+    val vehicle: VehicleType get() = vehicleType ?: VehicleType.DEFAULT
+
     companion object {
         const val DEFAULT_CAPACITY_GALLONS = 12.0
         const val DEFAULT_KM_THRESHOLD = 50

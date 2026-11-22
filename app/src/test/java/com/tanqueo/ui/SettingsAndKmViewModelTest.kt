@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.tanqueo.domain.dayN
 import com.tanqueo.domain.full
 import com.tanqueo.domain.model.OdometerUpdate
+import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.ui.history.FillUpDetailViewModel
 import com.tanqueo.ui.odometer.UpdateKmViewModel
 import com.tanqueo.ui.settings.SettingsViewModel
@@ -82,5 +84,31 @@ class SettingsAndKmViewModelTest {
         assertNull(repo.items.value.firstOrNull { it.id == 10L })
         assertTrue(vm.isDeleted.value)
         assertEquals(1, refresher.count)
+    }
+
+    @Test fun `cambiar a moto en ajustes pone la capacidad de una moto`() = runTest {
+        val repo = FakeSettingsRepository(TankSettings(vehicleType = VehicleType.CARRO))
+        val vm = SettingsViewModel(repo, refresher)
+        vm.adjustVehicle(1)
+        assertEquals(VehicleType.MOTO, repo.settings.value.vehicleType)
+        assertEquals(3.0, repo.settings.value.tankCapacityGallons, 0.0)
+        assertEquals(repo.settings.value, vm.settings.value)
+
+        vm.adjustVehicle(1)
+        assertEquals(VehicleType.CARRO, repo.settings.value.vehicleType)
+        assertEquals(12.0, repo.settings.value.tankCapacityGallons, 0.0)
+    }
+
+    @Test fun `cada vehiculo conserva su propia capacidad`() = runTest {
+        val repo = FakeSettingsRepository(TankSettings(vehicleType = VehicleType.CARRO))
+        val vm = SettingsViewModel(repo, refresher)
+        vm.adjustCapacity(25) // carro: 14,5
+        vm.adjustVehicle(1)
+        vm.adjustCapacity(5) // moto: 3,5
+        vm.adjustVehicle(1)
+        assertEquals(VehicleType.CARRO, repo.settings.value.vehicleType)
+        assertEquals(14.5, repo.settings.value.tankCapacityGallons, 0.001)
+        vm.adjustVehicle(1)
+        assertEquals(3.5, repo.settings.value.tankCapacityGallons, 0.001)
     }
 }

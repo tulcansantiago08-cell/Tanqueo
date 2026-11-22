@@ -14,6 +14,7 @@ import com.tanqueo.ui.history.FillUpDetailViewModel
 import com.tanqueo.ui.history.HistoryScreen
 import com.tanqueo.ui.home.HomeActions
 import com.tanqueo.ui.home.HomeScreen
+import com.tanqueo.ui.stations.GasStationsScreen
 import com.tanqueo.ui.menu.MenuActions
 import com.tanqueo.ui.menu.MenuScreen
 import com.tanqueo.ui.odometer.UpdateKmScreen
@@ -37,6 +38,7 @@ object Routes {
     const val UPDATE_KM = "actualizar_km"
     const val SETTINGS = "ajustes"
     const val BUDGET = "cuanto_me_alcanza"
+    const val GAS_STATIONS = "gasolineras"
 
     /** Abre el asistente con la entrada ya lista: preguntar toma un solo toque. */
     fun askNow() = "preguntar?$ASK_ARG=true"
@@ -68,6 +70,7 @@ fun TanqueoNavHost(navController: NavHostController) {
                 MenuActions(
                     onAddFillUp = { go(Routes.REGISTER) },
                     onAsk = { go(Routes.askNow()) },
+                    onGasStations = { go(Routes.GAS_STATIONS) },
                     onUpdateKm = { go(Routes.UPDATE_KM) },
                     onHistory = { go(Routes.HISTORY) },
                     onSummary = { go(Routes.SUMMARY) },
@@ -102,6 +105,11 @@ fun TanqueoNavHost(navController: NavHostController) {
         ) { entry ->
             AskScreen(
                 listenOnOpen = entry.arguments?.getBoolean(Routes.ASK_ARG_NAME) == true,
+                onGasStations = {
+                    navController.navigate(Routes.GAS_STATIONS) {
+                        popUpTo(Routes.ASK_PATTERN) { inclusive = true }
+                    }
+                },
                 onLogFillUp = { text ->
                     navController.navigate(Routes.registerWith(text)) {
                         popUpTo(Routes.ASK_PATTERN) { inclusive = true }
@@ -124,5 +132,6 @@ fun TanqueoNavHost(navController: NavHostController) {
         }
         composable(Routes.SETTINGS) { SettingsScreen() }
         composable(Routes.BUDGET) { BudgetScreen() }
+        composable(Routes.GAS_STATIONS) { GasStationsScreen() }
     }
 }

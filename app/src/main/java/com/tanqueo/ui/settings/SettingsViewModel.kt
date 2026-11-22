@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tanqueo.domain.calc.FillUpInput
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,20 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch { _settings.value = repository.settings.first() }
+    }
+
+    /** Pasa de carro a moto o al revés. Las demás tarjetas muestran los ajustes propios del nuevo. */
+    fun adjustVehicle(steps: Int) {
+        val current = _settings.value ?: return
+        if (steps == 0) return
+        val all = VehicleType.entries
+        val vehicle = all[(current.vehicle.ordinal + steps).mod(all.size)]
+        if (vehicle == current.vehicle) return
+        _settings.value = current.copy(vehicleType = vehicle)
+        persist {
+            repository.setVehicleType(vehicle)
+            _settings.value = repository.settings.first()
+        }
     }
 
     fun adjustCapacity(steps: Int) {

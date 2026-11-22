@@ -1,16 +1,23 @@
 package com.tanqueo.domain.assistant
 
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.voice.LocalFillUpParser
 import com.tanqueo.domain.voice.SpanishNumbers
 
 /** Qué quiere saber la persona. No lleva ningún resultado: esos los calcula el reloj. */
 sealed interface AskIntent {
-    /** [daysUntil]: 0 hoy, 1 mañana. Los lugares van como se dijeron; se validan contra [RoadNetwork]. */
+    /**
+     * [daysUntil]: 0 hoy, 1 mañana. Los lugares van como se dijeron; se validan contra [RoadNetwork].
+     * [vehicle]: si dijo "en moto" o "en carro"; si no, se usa el activo. [asksTime]: preguntó cuánto
+     * se demora, así que el tiempo va primero.
+     */
     data class Trip(
         val origin: String? = null,
         val destination: String? = null,
         val distanceKm: Int? = null,
         val daysUntil: Int? = null,
+        val vehicle: VehicleType? = null,
+        val asksTime: Boolean = false,
     ) : AskIntent
 
     /** "Eché 5 galones" o "con 80 mil": cuántos km da esa gasolina. Trae uno de los dos datos. */
@@ -20,6 +27,9 @@ sealed interface AskIntent {
     data class Price(val place: String? = null) : AskIntent
     data object Efficiency : AskIntent
 
+    /** "¿Dónde hay una gasolinera?": se abren en Mapas las cercanas a donde esté. */
+    data object GasStations : AskIntent
+
     /** Está contando un tanqueo, no preguntando: se abre el registro con lo que dijo. */
     data object LogFillUp : AskIntent
     data object Unknown : AskIntent
@@ -27,7 +37,12 @@ sealed interface AskIntent {
 
 /** Entiende preguntas simples sin internet. Es el respaldo cuando la IA no responde. */
 object LocalQuestionParser {
-    private val tripWords = Regex("""\b(voy|vamos|viaje|viajo|viajar|viajamos|ir|irme|ruta|salgo|salimos|llegar|tanquear|manejar)\b""")
+    private val tripWords = Regex("""\b(voy|vamos|viaje|viajo|viajar|viajamos|ir|irme|ruta|salgo|salimos|llegar|tanquear|manejar|demoro|demora|demoraria|tardo|tarda|tardaria|tardar)\b""")
+    // "Tarde" (la de la tarde) no cuenta: solo "tardo", "tarda", "tardaría".
+    private val timeWords = Regex("""\b(demor\w*|tardo|tarda|tardaria|tardar|cuanto tiempo|cuantas horas)\b""")
+    private val motoWords = Regex("""\b(moto|motos|motocicleta|scooter|motoneta)\b""")
+    private val carWords = Regex("""\b(carro|auto|automovil|camioneta)\b""")
+    private val stationWords = Regex("""\b(gasolineras?|bombas? de gasolina|estacion(es)? de servicio|servitecas?)\b|\bdonde (tanqueo|tanquear|puedo tanquear|echo gasolina|hay gasolina)\b""")
     private val logWords = Regex("""\b(tanquee|eche|le puse|le meti|cargue|llene)\b""")
     private val asksHowFar = Regex("""\b(cuantos km|cuantos kilometros|hasta donde|alcanza|rinde|dura|recorrer|llego|llegar)\b""")
     private val asksSomethingElse = Regex("""\b(gast\w*|precio|cuesta|vale)\b""")
@@ -35,7 +50,27 @@ object LocalQuestionParser {
     private val origins = setOf("de", "desde")
     private val unknownRoute = Regex("""\b(?:de|desde) ([a-z ]{3,30}?) (?:a|hasta|para) ([a-z ]{3,30}?)(?:$|[,.?]| cuanto| manana| hoy| pasado)""")
 
-    fun parse(text: String): AskIntent {
+    /** "En moto" o "en carro" si lo dijo; si nombra los dos o ninguno, null. */
+    fun vehicleIn(text: String): VehicleType? {
+        val normalized = SpanishNumbers.normalize(text)
+        val moto = motoWords.containsMatchIn(normalized)
+        val car = carWords.containsMatchIn(normalized)
+        return when {
+            moto && !car -> VehicleType.MOTO
+            car && !moto -> VehicleType.CARRO
+            else -> null
+        }
+    }
+
+    /** Pregunta cuánto se demora: "¿cuánto me demoro?", "¿cuánto tiempo tardo?". */
+    fun asksTime(text: String): Boolean = timeWords.containsMatchIn(SpanishNumbers.normalize(text))
+
+    fun parse(text: String): AskIntent = when (val intent = parseIntent(text)) {
+        is AskIntent.Trip -> intent.copy(vehicle = vehicleIn(text), asksTime = asksTime(text))
+        else -> intent
+    }
+
+    private fun parseIntent(text: String): AskIntent {
         val normalized = SpanishNumbers.normalize(text)
         val fillUp = LocalFillUpParser.parse(text)
         val hasFillUpData = fillUp.gallons != null || fillUp.paidCop != null
@@ -53,6 +88,8 @@ object LocalQuestionParser {
         }
         val isTrip = tripWords.containsMatchIn(normalized)
         val isPrice = Regex("""\b(precio|cuesta|vale|barat[oa])\b""").containsMatchIn(normalized)
+        // "¿Cuál gasolinera es más barata?" es un precio; un viaje entre dos ciudades sigue siendo viaje.
+        if (stationWords.containsMatchIn(normalized) && !isPrice && places.size < 2) return AskIntent.GasStations
         if (places.size >= 2) return tripBetween(normalized, places, days)
         // "¿Cuánto cuesta ir a Cali?" es un viaje; "¿cuánto cuesta el galón en Cali?" es un precio.
         if (isPrice && !isTrip) return AskIntent.Price(places.firstOrNull()?.first)

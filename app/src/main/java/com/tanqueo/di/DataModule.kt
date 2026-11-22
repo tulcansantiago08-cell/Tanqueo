@@ -10,6 +10,11 @@ import com.tanqueo.data.local.FillUpDao
 import com.tanqueo.data.local.RoomFillUpRepository
 import com.tanqueo.data.local.TanqueoDatabase
 import com.tanqueo.data.settings.DataStoreSettingsRepository
+import com.tanqueo.data.stations.AndroidLocationSource
+import com.tanqueo.data.stations.FallbackStationDirectory
+import com.tanqueo.domain.stations.FindGasStations
+import com.tanqueo.domain.stations.LocationSource
+import com.tanqueo.domain.stations.StationDirectory
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.repository.SettingsRepository
@@ -42,11 +47,19 @@ abstract class DataModule {
     @Binds
     abstract fun bindSurfaceRefresher(impl: WatchSurfacesRefresher): SurfaceRefresher
 
+    @Binds
+    abstract fun bindLocationSource(impl: AndroidLocationSource): LocationSource
+
+    @Binds
+    abstract fun bindStationDirectory(impl: FallbackStationDirectory): StationDirectory
+
     companion object {
         @Provides
         @Singleton
         fun provideDatabase(@ApplicationContext context: Context): TanqueoDatabase =
-            Room.databaseBuilder(context, TanqueoDatabase::class.java, "tanqueo.db").build()
+            Room.databaseBuilder(context, TanqueoDatabase::class.java, "tanqueo.db")
+                .addMigrations(TanqueoDatabase.MIGRATION_1_2)
+                .build()
 
         @Provides
         fun provideFillUpDao(database: TanqueoDatabase): FillUpDao = database.fillUpDao()
@@ -58,5 +71,9 @@ abstract class DataModule {
 
         @Provides
         fun provideClock(): Clock = Clock.systemDefaultZone()
+
+        @Provides
+        fun provideFindGasStations(location: LocationSource, directory: StationDirectory) =
+            FindGasStations(location, directory)
     }
 }

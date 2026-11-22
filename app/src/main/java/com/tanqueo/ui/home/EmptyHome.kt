@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
 import com.tanqueo.R
+import com.tanqueo.domain.model.VehicleType
+import com.tanqueo.ui.components.VehicleIllustration
 import com.tanqueo.ui.components.rememberScreenSize
 import com.tanqueo.ui.theme.TanqueoColors
 
 @Composable
-fun EmptyHome(actions: HomeActions) {
+fun EmptyHome(vehicle: VehicleType, actions: HomeActions, onSwitchVehicle: () -> Unit) {
     val screen = rememberScreenSize()
     Column(
         modifier = Modifier
@@ -28,7 +30,9 @@ fun EmptyHome(actions: HomeActions) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        CarIllustration(screen.dp(0.24f), glow = false, modifier = Modifier.alpha(0.28f))
+        // También sin tanqueos se puede pasar al otro vehículo, que quizá sí tiene datos.
+        VehicleTitle(vehicle, screen, onSwitchVehicle)
+        VehicleIllustration(vehicle, screen.dp(0.2f), glow = false, modifier = Modifier.alpha(0.28f))
         Text(
             text = stringResource(R.string.home_empty),
             color = TanqueoColors.Secondary,

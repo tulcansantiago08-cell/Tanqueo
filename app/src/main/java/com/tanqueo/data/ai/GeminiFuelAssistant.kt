@@ -50,12 +50,13 @@ private val TIP_INSTRUCTIONS = """
 private val QUESTION_INSTRUCTIONS = """
     Clasificas una pregunta en español de Colombia para una app de gasolina en un reloj. Solo clasificas: no respondas ni calcules.
     intent:
-    TRIP: un viaje, cuánto tanquear o cuánto cuesta ir a algún lado ("mañana me voy de Pasto a Medellín", "cuánto gasto de Pasto a Cali").
+    TRIP: un viaje, cuánto tanquear, cuánto cuesta o cuánto se demora ir a algún lado ("mañana me voy de Pasto a Medellín", "cuánto gasto de Pasto a Cali", "cuánto me demoro en moto a Popayán").
     FUEL_RANGE: cuántos km da una cantidad de gasolina, en dinero o en galones ("hasta dónde llego con 80 mil", "eché 5 galones, ¿cuántos km puedo andar?").
     RANGE: cuánta gasolina queda, cuánto dura o cuándo tanquear.
     SPENDING: cuánto ha gastado.
     PRICE: cuánto cuesta el galón o dónde es más barato.
     EFFICIENCY: rendimiento o consumo del vehículo.
+    GAS_STATIONS: dónde hay una gasolinera, bomba o estación de servicio cerca ("dónde tanqueo por aquí").
     LOG_FILL_UP: solo cuenta un tanqueo que ya hizo, sin preguntar nada ("tanqueé 10 galones por 165 mil").
     UNKNOWN: cualquier otra cosa.
     Devuelve solo lo que la persona dijo; lo que no dijo, omítelo. Nunca adivines distancias ni precios.
@@ -65,6 +66,7 @@ private val QUESTION_INSTRUCTIONS = """
     moneyCop: pesos colombianos, entero ("80 mil" o "80 lucas" es 80000).
     gallons: galones que dijo.
     lastMonth: true si pregunta por el mes pasado.
+    asksTime: true si pregunta cuánto tiempo se demora o tarda en llegar.
 """.trimIndent()
 
 private val questionSchema = Schema.obj(
@@ -78,8 +80,9 @@ private val questionSchema = Schema.obj(
         "moneyCop" to Schema.long(),
         "gallons" to Schema.double(),
         "lastMonth" to Schema.boolean(),
+        "asksTime" to Schema.boolean(),
     ),
-    optionalProperties = listOf("origin", "destination", "place", "distanceKm", "daysUntilTrip", "moneyCop", "gallons", "lastMonth"),
+    optionalProperties = listOf("origin", "destination", "place", "distanceKm", "daysUntilTrip", "moneyCop", "gallons", "lastMonth", "asksTime"),
 )
 
 private val dictationSchema = Schema.obj(
@@ -123,21 +126,23 @@ internal data class QuestionDto(
     val moneyCop: Long? = null,
     val gallons: Double? = null,
     val lastMonth: Boolean? = null,
+    val asksTime: Boolean? = null,
 ) {
     /** Un viaje sin ningún dato o un valor sin cifra no sirven: se tratan como no entendidos. */
     fun toDomain(): AskIntent = when (intent) {
-        "TRIP" -> AskIntent.Trip(origin, destination, distanceKm, daysUntilTrip)
+        "TRIP" -> AskIntent.Trip(origin, destination, distanceKm, daysUntilTrip, asksTime = asksTime == true)
         "FUEL_RANGE" -> if (gallons == null && moneyCop == null) AskIntent.Unknown else AskIntent.FuelRange(gallons, moneyCop)
         "RANGE" -> AskIntent.Range
         "SPENDING" -> AskIntent.Spending(lastMonth == true)
         "PRICE" -> AskIntent.Price(place)
         "EFFICIENCY" -> AskIntent.Efficiency
+        "GAS_STATIONS" -> AskIntent.GasStations
         "LOG_FILL_UP" -> AskIntent.LogFillUp
         else -> AskIntent.Unknown
     }
 
     companion object {
-        val INTENTS = listOf("TRIP", "FUEL_RANGE", "RANGE", "SPENDING", "PRICE", "EFFICIENCY", "LOG_FILL_UP", "UNKNOWN")
+        val INTENTS = listOf("TRIP", "FUEL_RANGE", "RANGE", "SPENDING", "PRICE", "EFFICIENCY", "GAS_STATIONS", "LOG_FILL_UP", "UNKNOWN")
     }
 }
 

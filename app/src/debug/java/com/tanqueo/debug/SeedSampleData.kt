@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.tanqueo.StartupTask
+import com.tanqueo.domain.model.FillUp
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.FillUpRepository
 import java.time.Clock
 import javax.inject.Inject
@@ -17,14 +19,18 @@ class SeedSampleData @Inject constructor(
     private val clock: Clock,
 ) : StartupTask {
     override suspend fun run() {
-        if (dataStore.data.first()[SEEDED] == true) return
-        if (repository.observeAll().first().isEmpty()) {
-            SampleData.fillUps(clock.instant()).forEach { repository.add(it) }
-        }
-        dataStore.edit { it[SEEDED] = true }
+        seedOnce(SEEDED, VehicleType.CARRO) { SampleData.fillUps(clock.instant()) }
+        seedOnce(SEEDED_MOTO, VehicleType.MOTO) { SampleData.motoFillUps(clock.instant()) }
+    }
+
+    private suspend fun seedOnce(flag: Preferences.Key<Boolean>, vehicle: VehicleType, samples: () -> List<FillUp>) {
+        if (dataStore.data.first()[flag] == true) return
+        if (repository.observeAll(vehicle).first().isEmpty()) samples().forEach { repository.add(it) }
+        dataStore.edit { it[flag] = true }
     }
 
     private companion object {
         val SEEDED = booleanPreferencesKey("debug_sample_data_seeded")
+        val SEEDED_MOTO = booleanPreferencesKey("debug_sample_moto_seeded")
     }
 }

@@ -1,5 +1,6 @@
 package com.tanqueo.domain.assistant
 
+import com.tanqueo.domain.model.VehicleType
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,10 +34,11 @@ data class TripPlan(
  * Rendimiento para quien todavía no tiene historial. No hay una cifra oficial actual en Colombia: lo
  * publicado para un carro particular va de 25 a 40 km/galón (SENA en Semana, UPME 2009, notas de prensa
  * sobre motores 1.4), así que se usa un valor intermedio y la app siempre dice que es de referencia.
- * Apenas hay dos llenos con km, manda el consumo real del vehículo.
+ * Para una moto, ver [VehicleType.referenceKmPerGallon]. Apenas hay dos llenos con km, manda el consumo
+ * real del vehículo.
  */
 object ConsumptionReference {
-    const val KM_PER_GALLON = 35.0
+    fun kmPerGallon(vehicle: VehicleType): Double = vehicle.referenceKmPerGallon
 }
 
 object TripPlanner {

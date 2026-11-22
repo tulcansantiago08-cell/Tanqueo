@@ -1,5 +1,6 @@
 package com.tanqueo.ui
 
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.dayN
 import com.tanqueo.domain.full
 import com.tanqueo.domain.model.OdometerUpdate
@@ -52,5 +53,13 @@ class CheckRefuelReminderTest {
     @Test fun `el kilometraje real tambien dispara el aviso`() = runTest {
         val now = dayN(11.0)
         assertNotNull(check(now, update = OdometerUpdate(1840, now))()) // 480 − 440 = 40 km
+    }
+
+    @Test fun `cada vehiculo se revisa con sus propios datos`() = runTest {
+        // El carro está casi vacío; la moto acaba de tanquear.
+        val moto = listOf(full(0, 100, 3.0, id = 50), full(12, 1_300, 3.0, id = 51)).map { it.copy(vehicle = VehicleType.MOTO) }
+        val result = check(dayN(22.0), fillUps = history + moto).allVehicles()
+        assertNotNull(result[VehicleType.CARRO])
+        assertNull(result[VehicleType.MOTO])
     }
 }

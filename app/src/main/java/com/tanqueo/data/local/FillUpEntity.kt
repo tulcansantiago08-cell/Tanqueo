@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
+import com.tanqueo.domain.model.VehicleType
 import java.time.Instant
 
 @Entity(tableName = "fill_ups")
@@ -16,6 +17,8 @@ data class FillUpEntity(
     @ColumnInfo(name = "fuel_type") val fuelType: String,
     @ColumnInfo(name = "is_full") val isFull: Boolean,
     @ColumnInfo(name = "odometer_km") val odometerKm: Int?,
+    /** Los tanqueos anteriores a poder elegir vehículo eran de un carro. */
+    @ColumnInfo(name = "vehicle_type", index = true, defaultValue = "CARRO") val vehicleType: String = VehicleType.DEFAULT.name,
 )
 
 fun FillUpEntity.toDomain() = FillUp(
@@ -26,6 +29,7 @@ fun FillUpEntity.toDomain() = FillUp(
     fuelType = FuelType.entries.firstOrNull { it.name == fuelType } ?: FuelType.CORRIENTE,
     isFull = isFull,
     odometerKm = odometerKm,
+    vehicle = VehicleType.entries.firstOrNull { it.name == vehicleType } ?: VehicleType.DEFAULT,
 )
 
 fun FillUp.toEntity() = FillUpEntity(
@@ -36,4 +40,5 @@ fun FillUp.toEntity() = FillUpEntity(
     fuelType = fuelType.name,
     isFull = isFull,
     odometerKm = odometerKm,
+    vehicleType = vehicle.name,
 )

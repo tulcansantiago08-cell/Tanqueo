@@ -1,5 +1,6 @@
 package com.tanqueo.domain.assistant
 
+import com.tanqueo.domain.model.VehicleType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -88,5 +89,33 @@ class LocalQuestionParserTest {
 
     @Test fun `lo demas no lo entiende`() {
         assertEquals(AskIntent.Unknown, parse("¿va a llover?"))
+    }
+
+    @Test fun `entiende cuanto se demora y en que vehiculo`() {
+        assertEquals(
+            AskIntent.Trip("Pasto", "Cali", vehicle = VehicleType.MOTO, asksTime = true),
+            parse("¿Cuánto me demoro de Pasto a Cali en moto?"),
+        )
+        assertEquals(
+            AskIntent.Trip("Bogotá", "Tunja", vehicle = VehicleType.CARRO, asksTime = true),
+            parse("cuanto tiempo tardo en carro de Bogotá a Tunja"),
+        )
+    }
+
+    @Test fun `la tarde no es preguntar por el tiempo`() {
+        assertEquals(
+            AskIntent.Trip("Pasto", "Medellín", daysUntil = 1),
+            parse("Mañana en la tarde me voy de Pasto a Medellín"),
+        )
+    }
+
+    @Test fun `entiende cuando busca una gasolinera`() {
+        assertEquals(AskIntent.GasStations, parse("¿Dónde hay una gasolinera cerca?"))
+        assertEquals(AskIntent.GasStations, parse("donde tanqueo por aqui"))
+        assertEquals(AskIntent.GasStations, parse("busca estaciones de servicio"))
+    }
+
+    @Test fun `el precio en la gasolinera sigue siendo un precio`() {
+        assertEquals(AskIntent.Price("Pasto"), parse("¿Cuánto cuesta el galón en la gasolinera de Pasto?"))
     }
 }

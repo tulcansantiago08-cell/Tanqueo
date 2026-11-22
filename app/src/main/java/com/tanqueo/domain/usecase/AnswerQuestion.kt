@@ -15,6 +15,7 @@ import com.tanqueo.domain.calc.MonthSummaryCalculator
 import com.tanqueo.domain.calc.RangeEstimate
 import com.tanqueo.domain.calc.RangeEstimator
 import com.tanqueo.domain.model.FuelType
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.voice.SpanishNumbers
@@ -38,6 +39,12 @@ sealed interface AskAnswer {
         val efficiency: EfficiencyUsed,
         /** False sin historial: no se sabe cuánto hay en el tanque, solo cuánto cuesta el viaje. */
         val tankKnown: Boolean,
+        /** El vehículo del cálculo: el que nombró la pregunta o, si no, el activo. */
+        val vehicle: VehicleType,
+        /** Horas de manejo a la velocidad promedio del vehículo, sin paradas. */
+        val hours: Double,
+        /** Preguntó cuánto se demora: el tiempo va primero. */
+        val asksTime: Boolean,
     ) : AskAnswer
 
     data class Range(val km: Double, val days: Double?, val refuelOn: LocalDate?, val today: LocalDate) : AskAnswer
@@ -55,6 +62,9 @@ sealed interface AskAnswer {
     data class Price(val place: String?, val price: ReferencePrice?, val cheapest: ReferencePrice?, val average: ReferencePrice?) : AskAnswer
     data class Efficiency(val kmPerGallon: Double, val copPerKm: Double?) : AskAnswer
     data class LogFillUp(val text: String) : AskAnswer
+
+    /** La pantalla abre Mapas con las gasolineras cercanas; aquí no hay nada que calcular. */
+    data object GasStations : AskAnswer
 
     /** Sabe qué viaje es, pero le falta de dónde sale o a dónde va. */
     data class TripMissingPlace(val origin: String?, val destination: String?) : AskAnswer
@@ -88,10 +98,20 @@ class AnswerQuestion @Inject constructor(
             is AskIntent.Price -> price(intent.place)
             AskIntent.Efficiency -> efficiency()
             AskIntent.LogFillUp -> AskAnswer.LogFillUp(question)
+            AskIntent.GasStations -> AskAnswer.GasStations
             AskIntent.Unknown -> AskAnswer.NotUnderstood
         }
 
-    private suspend fun interpret(question: String): AskIntent {
+    private suspend fun interpret(question: String): AskIntent = when (val intent = understand(question)) {
+        // El vehículo sale solo de lo que dijo la persona, nunca de la IA.
+        is AskIntent.Trip -> intent.copy(
+            vehicle = LocalQuestionParser.vehicleIn(question),
+            asksTime = intent.asksTime || LocalQuestionParser.asksTime(question),
+        )
+        else -> intent
+    }
+
+    private suspend fun understand(question: String): AskIntent {
         val local = LocalQuestionParser.parse(question)
         val ai = assistant.interpretQuestion(question)?.withoutInventedNumbers(question)
         return when {
@@ -141,7 +161,9 @@ class AnswerQuestion @Inject constructor(
         val km = intent.distanceKm ?: route?.km ?: return AskAnswer.TripMissingPlace(origin, destination)
         val waypoints: List<Waypoint> = route?.waypoints.orEmpty()
 
-        val dashboard = observeDashboard.current()
+        // Con los datos de ese vehículo y no los del otro: lo que cabe y lo que rinde cambia mucho.
+        val vehicle = intent.vehicle ?: observeDashboard.current().settings.vehicle
+        val dashboard = observeDashboard.current(vehicle)
         val estimate = dashboard.estimate as? RangeEstimate.Available
         val efficiency = efficiencyOf(dashboard)
         val atDeparture = estimate?.let {
@@ -152,7 +174,7 @@ class AnswerQuestion @Inject constructor(
         val reference = origin?.takeIf { fuel != FuelType.EXTRA }?.let { place ->
             ReferencePrices.forFuel(fuel).firstOrNull { it.place == place }
         }
-        val ownPrice = FillUpInput.lastPricePerGallon(fillUps.current(), fuel)
+        val ownPrice = FillUpInput.lastPricePerGallon(fillUps.observeAll(vehicle).first(), fuel)
         val averagePrice = ReferencePrices.forFuel(fuel).firstOrNull { it.place == ReferencePrices.AVERAGE }?.pricePerGallon?.toDouble()
         return AskAnswer.Trip(
             origin = origin,
@@ -169,6 +191,9 @@ class AnswerQuestion @Inject constructor(
             priceReference = reference?.place ?: ReferencePrices.AVERAGE.takeIf { ownPrice == null },
             efficiency = efficiency,
             tankKnown = atDeparture != null,
+            vehicle = vehicle,
+            hours = km / vehicle.averageRoadSpeedKmh,
+            asksTime = intent.asksTime,
         )
     }
 
@@ -204,7 +229,7 @@ class AnswerQuestion @Inject constructor(
 
     private fun efficiencyOf(dashboard: Dashboard): EfficiencyUsed =
         dashboard.kmPerGallon?.let { EfficiencyUsed(it, isReference = false) }
-            ?: EfficiencyUsed(ConsumptionReference.KM_PER_GALLON, isReference = true)
+            ?: EfficiencyUsed(ConsumptionReference.kmPerGallon(dashboard.settings.vehicle), isReference = true)
 
     /** Último precio pagado por ese combustible; sin historia, el promedio de referencia. */
     private suspend fun priceFor(fuel: FuelType): Double? =

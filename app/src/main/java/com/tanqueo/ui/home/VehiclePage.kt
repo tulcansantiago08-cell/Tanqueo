@@ -1,8 +1,12 @@
 package com.tanqueo.ui.home
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Icon
@@ -34,12 +37,15 @@ import com.tanqueo.ui.components.fadeInOnAppear
 import com.tanqueo.ui.components.rememberAlertPulse
 import com.tanqueo.ui.components.rememberCountUp
 import com.tanqueo.ui.components.rememberScreenSize
-import com.tanqueo.ui.components.softGlow
+import com.tanqueo.domain.model.VehicleType
+import com.tanqueo.ui.components.MinTouchSize
+import com.tanqueo.ui.components.VehicleIllustration
+import com.tanqueo.ui.welcome.label
 import com.tanqueo.ui.theme.TanqueoColors
 import com.tanqueo.ui.theme.alertColor
 
 @Composable
-fun VehiclePage(dashboard: Dashboard, isCurrent: Boolean, actions: HomeActions) {
+fun VehiclePage(dashboard: Dashboard, isCurrent: Boolean, actions: HomeActions, onSwitchVehicle: () -> Unit) {
     val screen = rememberScreenSize()
     val estimate = dashboard.estimate as? RangeEstimate.Available
     val km = rememberCountUp(estimate?.kmRemaining?.toFloat() ?: 0f, isCurrent)
@@ -48,8 +54,16 @@ fun VehiclePage(dashboard: Dashboard, isCurrent: Boolean, actions: HomeActions) 
     val pulse = rememberAlertPulse(level)
 
     PageColumn(screen) {
-        PageTitle(stringResource(R.string.home_title_vehicle), screen)
-        CarIllustration(screen.dp(0.2f), glow = true)
+        VehicleTitle(dashboard.settings.vehicle, screen, onSwitchVehicle)
+        VehicleIllustration(
+            dashboard.settings.vehicle,
+            screen.dp(0.2f),
+            glow = true,
+            modifier = Modifier.clickable(
+                onClickLabel = stringResource(R.string.home_switch_to, stringResource(dashboard.settings.vehicle.other.label)),
+                onClick = onSwitchVehicle,
+            ),
+        )
         Row(
             modifier = Modifier.fadeInOnAppear(),
             horizontalArrangement = Arrangement.spacedBy(screen.dp(0.09f)),
@@ -102,16 +116,55 @@ internal fun PageTitle(title: String, screen: ScreenSize) {
     }
 }
 
+/**
+ * "Mi carro ⇄" o "Mi moto ⇄": tocarlo pasa al otro vehículo, con sus propios datos. Mide al menos
+ * [MinTouchSize] de alto aunque el texto sea pequeño.
+ */
 @Composable
-internal fun CarIllustration(height: Dp, glow: Boolean, modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(R.drawable.ic_car_top),
-        contentDescription = stringResource(R.string.car_illustration),
-        modifier = modifier
-            .then(if (glow) Modifier.softGlow() else Modifier)
-            .size(width = height * 1.8f, height = height),
-    )
+internal fun VehicleTitle(vehicle: VehicleType, screen: ScreenSize, onSwitch: () -> Unit) {
+    val switchLabel = stringResource(R.string.home_switch_to, stringResource(vehicle.other.label))
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .clickable(onClickLabel = switchLabel, role = Role.Button, onClick = onSwitch)
+            .heightIn(min = MinTouchSize)
+            .padding(horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(vehicle.homeTitle),
+                color = TanqueoColors.White,
+                fontSize = screen.sp(13f),
+                lineHeight = screen.sp(15f),
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+            )
+            Icon(
+                painter = painterResource(R.drawable.ic_swap),
+                contentDescription = null,
+                tint = TanqueoColors.Accent,
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(screen.dp(0.075f)),
+            )
+        }
+        Box(
+            Modifier
+                .padding(top = 3.dp)
+                .width(screen.dp(0.46f))
+                .height(1.dp)
+                .background(TanqueoColors.Accent),
+        )
+    }
 }
+
+private val VehicleType.homeTitle: Int
+    get() = when (this) {
+        VehicleType.CARRO -> R.string.home_title_car
+        VehicleType.MOTO -> R.string.home_title_moto
+    }
 
 @Composable
 private fun VehicleStat(

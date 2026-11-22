@@ -1,5 +1,6 @@
 package com.tanqueo.data
 
+import com.tanqueo.domain.model.VehicleType
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -7,6 +8,7 @@ import com.tanqueo.data.local.RoomFillUpRepository
 import com.tanqueo.data.local.TanqueoDatabase
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
+import com.tanqueo.ui.FakeSettingsRepository
 import java.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -24,6 +26,7 @@ import org.robolectric.annotation.Config
 class RoomFillUpRepositoryTest {
     private lateinit var database: TanqueoDatabase
     private lateinit var repository: RoomFillUpRepository
+    private val settings = FakeSettingsRepository()
 
     private fun fillUp(at: String, km: Int? = null, fuel: FuelType = FuelType.CORRIENTE) =
         FillUp(0, Instant.parse(at), 10.5, 170_000, fuel, true, km)
@@ -33,7 +36,7 @@ class RoomFillUpRepositoryTest {
             ApplicationProvider.getApplicationContext<Context>(),
             TanqueoDatabase::class.java,
         ).allowMainThreadQueries().build()
-        repository = RoomFillUpRepository(database.fillUpDao())
+        repository = RoomFillUpRepository(database.fillUpDao(), settings)
     }
 
     @After fun tearDown() = database.close()
@@ -60,5 +63,16 @@ class RoomFillUpRepositoryTest {
         repository.delete(a)
         assertNull(repository.observe(a).first())
         assertEquals(listOf(b), repository.observeAll().first().map { it.id })
+    }
+
+    @Test fun `los tanqueos del carro y de la moto no se mezclan`() = runTest {
+        repository.add(fillUp("2026-10-01T10:00:00Z"))
+        repository.add(fillUp("2026-10-02T10:00:00Z").copy(vehicle = VehicleType.MOTO, gallons = 2.5))
+        assertEquals(listOf(10.5), repository.observeAll(VehicleType.CARRO).first().map { it.gallons })
+        assertEquals(listOf(2.5), repository.observeAll(VehicleType.MOTO).first().map { it.gallons })
+        // Sin argumento: los del vehículo activo.
+        assertEquals(listOf(VehicleType.CARRO), repository.observeAll().first().map { it.vehicle })
+        settings.setVehicleType(VehicleType.MOTO)
+        assertEquals(listOf(VehicleType.MOTO), repository.observeAll().first().map { it.vehicle })
     }
 }

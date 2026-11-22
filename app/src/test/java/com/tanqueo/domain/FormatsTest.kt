@@ -50,4 +50,11 @@ class FormatsTest {
         assertEquals(DaysDisplay.About(1), Formats.days(1.2))
         assertEquals(DaysDisplay.About(9), Formats.days(8.6))
     }
+
+    @Test fun `el tiempo de viaje se redondea a 10 minutos`() {
+        assertEquals("8\u00A0h", Formats.duration(8.02))
+        assertEquals("8\u00A0h 30\u00A0min", Formats.duration(8.5))
+        assertEquals("40\u00A0min", Formats.duration(0.66))
+        assertEquals("10\u00A0min", Formats.duration(0.01))
+    }
 }

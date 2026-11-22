@@ -9,6 +9,7 @@ import com.tanqueo.domain.calc.RangeEstimator
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.FuelType
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.SettingsRepository
 import com.tanqueo.domain.repository.SurfaceRefresher
@@ -62,18 +63,21 @@ class RegisterViewModel @Inject constructor(
     val state: StateFlow<RegisterUiState> = _state.asStateFlow()
 
     private var history: List<FillUp> = emptyList()
+    private var vehicle: VehicleType = VehicleType.DEFAULT
     private var paidEdited = false
     private var isSaving = false
 
     init {
         viewModelScope.launch {
-            history = fillUps.observeAll().first()
+            // Todo del mismo vehículo: el que está activo al abrir el registro.
             val config = settings.settings.first()
-            val update = settings.odometerUpdate.first()
+            vehicle = config.vehicle
+            history = fillUps.observeAll(vehicle).first()
+            val update = settings.odometerUpdateFor(vehicle).first()
             val last = history.firstOrNull()
             val fuel = last?.fuelType ?: FuelType.CORRIENTE
             val lastFullGallons = history.firstOrNull { it.isFull }?.gallons
-            val gallons = lastFullGallons ?: FillUpInput.DEFAULT_GALLONS
+            val gallons = lastFullGallons ?: config.vehicle.defaultFillUpGallons
             val minKm = FillUpInput.minOdometer(history)
             val estimate = RangeEstimator.estimate(history, config.tankCapacityGallons, update, clock.instant())
             val driven = (estimate as? RangeEstimate.Available)?.kmSinceLastFillUp?.roundToInt() ?: 0
@@ -197,6 +201,7 @@ class RegisterViewModel @Inject constructor(
                         fuelType = current.fuelType,
                         isFull = current.isFull,
                         odometerKm = current.odometerKm,
+                        vehicle = vehicle,
                     ),
                 )
             } catch (e: CancellationException) {

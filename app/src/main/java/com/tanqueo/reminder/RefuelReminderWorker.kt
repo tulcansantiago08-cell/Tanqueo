@@ -27,13 +27,15 @@ class RefuelReminderWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val estimate = check()
-        if (inputData.getBoolean(KEY_ONLY_CLEAR, false)) {
-            if (estimate == null) notifier.cancel()
-            return Result.success()
+        val onlyClear = inputData.getBoolean(KEY_ONLY_CLEAR, false)
+        // Un aviso por vehículo: el del carro y el de la moto nunca se pisan.
+        check.allVehicles().forEach { (vehicle, estimate) ->
+            when {
+                estimate == null -> notifier.cancel(vehicle)
+                !onlyClear -> notifier.notify(vehicle, estimate)
+            }
         }
-        if (estimate != null) notifier.notify(estimate) else notifier.cancel()
-        surfaces.refresh()
+        if (!onlyClear) surfaces.refresh()
         return Result.success()
     }
 

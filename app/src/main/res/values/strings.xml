@@ -22,7 +22,9 @@
     <string name="action_next_page">Página siguiente</string>
     <string name="action_month_summary">Resumen del mes</string>
     <string name="action_history">Historial</string>
-    <string name="home_title_vehicle">Mi vehículo</string>
+    <string name="home_title_car">Mi carro</string>
+    <string name="home_title_moto">Mi moto</string>
+    <string name="home_switch_to">Cambiar a %1$s</string>
     <string name="home_title_range">Autonomía</string>
     <string name="home_title_month">Este mes</string>
     <string name="home_last_fill_up_date">Último · %1$s</string>
@@ -40,6 +42,14 @@
     <string name="action_update_km">Actualizar km</string>
     <string name="action_settings">Ajustes</string>
     <string name="car_illustration">Carro visto desde arriba</string>
+    <string name="moto_illustration">Moto tipo scooter vista de lado</string>
+
+    <!-- Bienvenida -->
+    <string name="welcome_title">Bienvenido a Tanqueo</string>
+    <string name="welcome_question">¿Qué vas a tanquear?</string>
+    <string name="welcome_hint">Cámbialo luego en Ajustes</string>
+    <string name="vehicle_car">Carro</string>
+    <string name="vehicle_moto">Moto</string>
 
     <!-- Registrar -->
     <string name="card_label_position">%1$s · %2$d/%3$d</string>
@@ -98,13 +108,15 @@
     <string name="update_km_title">Kilometraje actual</string>
 
     <!-- Ajustes -->
+    <string name="settings_vehicle">Vehículo</string>
     <string name="settings_capacity">Capacidad del tanque</string>
     <string name="settings_km_threshold">Avisar bajo</string>
     <string name="settings_days_threshold">Avisar con menos de</string>
 
     <!-- Aviso de tanquear -->
     <string name="reminder_channel">Aviso de tanquear</string>
-    <string name="reminder_title">Hora de tanquear</string>
+    <string name="reminder_title_car">Hora de tanquear el carro</string>
+    <string name="reminder_title_moto">Hora de tanquear la moto</string>
     <string name="settings_notifications">Notificaciones</string>
     <string name="settings_notifications_on">Activas</string>
     <string name="settings_notifications_off">Apagadas</string>
@@ -152,6 +164,10 @@
     <string name="ask_thinking">Pensando…</string>
     <string name="ask_quote">“%1$s”</string>
     <string name="ask_samples_title">O toca una:</string>
+    <string name="ask_sample_stations">¿Dónde hay gasolinera?</string>
+    <string name="ask_sample_stations_question">¿Dónde hay una gasolinera cerca?</string>
+    <string name="ask_sample_time">¿Cuánto me demoro a Cali?</string>
+    <string name="ask_sample_time_question">¿Cuánto me demoro de Pasto a Cali?</string>
     <string name="ask_sample_trip">De Pasto a Medellín</string>
     <string name="ask_sample_trip_question">Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?</string>
     <string name="ask_sample_range">¿Cuándo tanqueo?</string>
@@ -170,6 +186,10 @@
     <string name="ask_note_price_own">Tu galón: %1$s.</string>
     <string name="ask_note_price_average">Sin tu precio aún: galón promedio de referencia, %1$s.</string>
     <string name="ask_note_price_reference">Galón de referencia en %2$s: %1$s.</string>
+    <string name="ask_trip_time_car">Tiempo en carro</string>
+    <string name="ask_trip_time_moto">Tiempo en moto</string>
+    <string name="ask_trip_time_value">≈ %1$s</string>
+    <string name="ask_trip_time_detail">A unos %1$s km/h de promedio, sin paradas</string>
     <string name="ask_trip_cost">El viaje te cuesta</string>
     <string name="ask_trip_cost_gallons">≈ %1$s gal con reserva</string>
     <string name="ask_trip_in_tank">Tienes ≈ %1$s gal</string>
@@ -226,4 +246,28 @@
     <string name="tip_spending_down">Llevas %1$d %% menos gasto que el mes pasado a esta fecha.</string>
     <string name="tip_efficiency_drop">Tu rendimiento bajó %1$d %% en el último tramo. Revisa las llantas.</string>
     <string name="tip_keep_logging">Registra tus tanqueos con km para recibir consejos.</string>
+
+    <!-- Gasolineras en Mapas -->
+    <string name="action_gas_stations">Gasolineras cerca</string>
+    <string name="stations_title">Gasolineras cerca</string>
+    <string name="stations_open_maps">Ver en Mapas</string>
+    <string name="stations_searching">Buscando gasolineras cerca de ti…</string>
+    <string name="stations_permission">Para buscar gasolineras cerca necesito saber dónde estás. Solo se usa en esta pantalla y no se guarda.</string>
+    <string name="stations_allow">Dar permiso</string>
+    <string name="stations_retry">Reintentar</string>
+    <string name="stations_no_location">No sé dónde está el reloj. Revisa que la ubicación esté activa y vuelve a intentar.</string>
+    <string name="stations_offline">Sin internet no puedo buscar. Revisa la conexión o usa Ver en Mapas.</string>
+    <string name="stations_none">No encontré gasolineras a menos de %1$d km.</string>
+    <string name="stations_unnamed">Gasolinera</string>
+    <string name="stations_distance">≈ %1$s</string>
+    <string name="stations_source">Datos y mapa de OpenStreetMap. Distancia en línea recta. Toca una para verla en Google Maps.</string>
+    <string name="stations_source_no_maps">Datos y mapa de OpenStreetMap. Distancia en línea recta. Toca una para verla en el mapa.</string>
+    <string name="stations_zoom_in">Acercar el mapa</string>
+    <string name="stations_zoom_out">Alejar el mapa</string>
+    <string name="stations_map_attribution">© OpenStreetMap</string>
+    <plurals name="stations_map_description">
+        <item quantity="one">Mapa con tu ubicación y %1$d gasolinera cerca</item>
+        <item quantity="many">Mapa con tu ubicación y %1$d gasolineras cerca</item>
+        <item quantity="other">Mapa con tu ubicación y %1$d gasolineras cerca</item>
+    </plurals>
 </resources>

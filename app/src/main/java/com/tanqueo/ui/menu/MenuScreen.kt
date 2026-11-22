@@ -12,6 +12,7 @@ import com.tanqueo.ui.components.edgeAware
 data class MenuActions(
     val onAddFillUp: () -> Unit,
     val onAsk: () -> Unit,
+    val onGasStations: () -> Unit,
     val onUpdateKm: () -> Unit,
     val onHistory: () -> Unit,
     val onSummary: () -> Unit,
@@ -25,6 +26,7 @@ fun MenuScreen(actions: MenuActions) {
     val entries = listOf(
         Triple(R.string.action_register_fill_up, R.drawable.ic_add, actions.onAddFillUp),
         Triple(R.string.ask_action, R.drawable.ic_mic, actions.onAsk),
+        Triple(R.string.action_gas_stations, R.drawable.ic_map, actions.onGasStations),
         Triple(R.string.action_update_km, R.drawable.ic_speed, actions.onUpdateKm),
         Triple(R.string.action_history, R.drawable.ic_history, actions.onHistory),
         Triple(R.string.action_month_summary, R.drawable.ic_gas, actions.onSummary),

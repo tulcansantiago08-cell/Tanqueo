@@ -4,23 +4,36 @@ import com.tanqueo.domain.assistant.AskIntent
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.voice.DictatedFillUp
 import kotlinx.coroutines.flow.Flow
 
 interface FillUpRepository {
-    /** Tanqueos del más reciente al más antiguo. */
+    /** Tanqueos del vehículo activo, del más reciente al más antiguo. */
     fun observeAll(): Flow<List<FillUp>>
+
+    /** Tanqueos de un vehículo, del más reciente al más antiguo. Los del otro nunca aparecen. */
+    fun observeAll(vehicle: VehicleType): Flow<List<FillUp>>
     fun observe(id: Long): Flow<FillUp?>
     suspend fun add(fillUp: FillUp): Long
     suspend fun delete(id: Long)
 }
 
+/**
+ * Cada vehículo tiene sus propios ajustes y su propio "Actualizar km". [settings] y [odometerUpdate]
+ * son los del vehículo activo, y los `set…` cambian solo los del vehículo activo.
+ */
 interface SettingsRepository {
     val settings: Flow<TankSettings>
     val odometerUpdate: Flow<OdometerUpdate?>
+    fun settingsFor(vehicle: VehicleType): Flow<TankSettings>
+    fun odometerUpdateFor(vehicle: VehicleType): Flow<OdometerUpdate?>
     suspend fun setTankCapacity(gallons: Double)
     suspend fun setKmThreshold(km: Int)
     suspend fun setDaysThreshold(days: Int)
+
+    /** Cambia el vehículo activo. Los datos de cada uno se conservan aparte. */
+    suspend fun setVehicleType(type: VehicleType)
     suspend fun setOdometerUpdate(update: OdometerUpdate)
 
     /** Último consejo aceptado de la IA y la clave de los datos con que se generó. */

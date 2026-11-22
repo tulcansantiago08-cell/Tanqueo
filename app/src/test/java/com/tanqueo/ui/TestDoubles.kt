@@ -4,6 +4,7 @@ import com.tanqueo.domain.assistant.AskIntent
 import com.tanqueo.domain.model.FillUp
 import com.tanqueo.domain.model.OdometerUpdate
 import com.tanqueo.domain.model.TankSettings
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.repository.CachedTip
 import com.tanqueo.domain.repository.FillUpRepository
 import com.tanqueo.domain.repository.FuelAssistant
@@ -26,7 +27,13 @@ class FakeFillUpRepository(initial: List<FillUp> = emptyList()) : FillUpReposito
     val items = MutableStateFlow(initial.sortedByDescending { it.at })
     private var nextId = 1_000L
 
-    override fun observeAll(): Flow<List<FillUp>> = items
+    /** El vehículo "activo" para [observeAll] sin argumento. */
+    var activeVehicle: VehicleType = VehicleType.DEFAULT
+
+    override fun observeAll(): Flow<List<FillUp>> = observeAll(activeVehicle)
+
+    override fun observeAll(vehicle: VehicleType): Flow<List<FillUp>> =
+        items.map { list -> list.filter { it.vehicle == vehicle } }
 
     override fun observe(id: Long): Flow<FillUp?> = items.map { list -> list.firstOrNull { it.id == id } }
 
@@ -48,12 +55,31 @@ class FakeFillUpRepository(initial: List<FillUp> = emptyList()) : FillUpReposito
     }
 }
 
+/**
+ * Como el real: [settings] y [odometerUpdate] son los del vehículo activo y los `set…` cambian solo
+ * ese. Los del otro vehículo quedan guardados aparte.
+ */
 class FakeSettingsRepository(
     initial: TankSettings = TankSettings(),
     update: OdometerUpdate? = null,
 ) : SettingsRepository {
     override val settings = MutableStateFlow(initial)
     override val odometerUpdate = MutableStateFlow(update)
+    private val stored = MutableStateFlow<Map<VehicleType, TankSettings>>(emptyMap())
+    private val storedOdometer = MutableStateFlow<Map<VehicleType, OdometerUpdate?>>(emptyMap())
+
+    private fun defaultsFor(vehicle: VehicleType) =
+        TankSettings(tankCapacityGallons = vehicle.defaultCapacityGallons, vehicleType = vehicle)
+
+    override fun settingsFor(vehicle: VehicleType): Flow<TankSettings> =
+        kotlinx.coroutines.flow.combine(settings, stored) { active, others ->
+            if (active.vehicle == vehicle) active.copy(vehicleType = vehicle) else others[vehicle] ?: defaultsFor(vehicle)
+        }
+
+    override fun odometerUpdateFor(vehicle: VehicleType): Flow<OdometerUpdate?> =
+        kotlinx.coroutines.flow.combine(settings, odometerUpdate, storedOdometer) { active, update, others ->
+            if (active.vehicle == vehicle) update else others[vehicle]
+        }
 
     override suspend fun setTankCapacity(gallons: Double) {
         settings.value = settings.value.copy(tankCapacityGallons = gallons)
@@ -65,6 +91,18 @@ class FakeSettingsRepository(
 
     override suspend fun setDaysThreshold(days: Int) {
         settings.value = settings.value.copy(reminderDaysThreshold = days)
+    }
+
+    override suspend fun setVehicleType(type: VehicleType) {
+        val current = settings.value
+        if (current.vehicle == type) {
+            settings.value = current.copy(vehicleType = type)
+            return
+        }
+        stored.value = stored.value + (current.vehicle to current.copy(vehicleType = current.vehicle))
+        storedOdometer.value = storedOdometer.value + (current.vehicle to odometerUpdate.value)
+        odometerUpdate.value = storedOdometer.value[type]
+        settings.value = (stored.value[type] ?: defaultsFor(type)).copy(vehicleType = type)
     }
 
     override suspend fun setOdometerUpdate(update: OdometerUpdate) {
