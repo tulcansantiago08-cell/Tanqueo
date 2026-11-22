@@ -22,8 +22,11 @@ object SpanishNumbers {
     fun plain(text: String): String =
         Normalizer.normalize(text.lowercase(), Normalizer.Form.NFD).replace(Regex("""\p{Mn}+"""), "")
 
-    /** Además de [plain], deja los números en cifras y convierte "165 mil" en 165000. */
-    fun normalize(text: String): String = expandThousands(wordsToDigits(plain(text)))
+    /**
+     * Además de [plain], lleva frases en inglés al español ([EnglishPhrases]), deja los números en
+     * cifras y convierte "165 mil" en 165000.
+     */
+    fun normalize(text: String): String = expandThousands(wordsToDigits(EnglishPhrases.toSpanish(plain(text))))
 
     /** El único número de un texto escrito en un solo campo, o null si no hay exactamente uno. */
     fun parse(text: String): Double? {

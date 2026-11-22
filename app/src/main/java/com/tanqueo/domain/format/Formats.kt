@@ -14,16 +14,26 @@ sealed interface DaysDisplay {
     data class About(val days: Int) : DaysDisplay
 }
 
-/** Formatos en español de Colombia: miles con punto y decimales con coma. */
+/**
+ * Formatos según el idioma de la app ([AppLocale]). En español de Colombia: miles con punto y decimales
+ * con coma (10,5 · 41.580). En inglés: 10.5 · 41,580. Los pesos siempre llevan "$".
+ */
 object Formats {
-    private val spanish = Locale.forLanguageTag("es-CO")
-    private val symbols = DecimalFormatSymbols(spanish).apply {
-        groupingSeparator = '.'
-        decimalSeparator = ','
-    }
-    private val dateFormatter = DateTimeFormatter.ofPattern("EEE d MMM", spanish)
-    private val headerDateFormatter = DateTimeFormatter.ofPattern("EEE d", spanish)
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", spanish)
+    private val language get() = AppLocale.language
+    private val locale: Locale get() = AppLocale.current
+    private val symbols: DecimalFormatSymbols
+        get() = DecimalFormatSymbols(locale).apply {
+            if (language == AppLanguage.ES) {
+                groupingSeparator = '.'
+                decimalSeparator = ','
+            } else {
+                groupingSeparator = ','
+                decimalSeparator = '.'
+            }
+        }
+    private val dateFormatter get() = DateTimeFormatter.ofPattern(if (language == AppLanguage.ES) "EEE d MMM" else "EEE MMM d", locale)
+    private val headerDateFormatter get() = DateTimeFormatter.ofPattern(if (language == AppLanguage.ES) "EEE d" else "EEE d", locale)
+    private val timeFormatter get() = DateTimeFormatter.ofPattern("HH:mm", locale)
 
     /** Pesos colombianos sin decimales: $ 164.700, con espacio que no se parte de línea. */
     fun cop(value: Long): String = "$\u00A0" + DecimalFormat("#,##0", symbols).format(value)
@@ -52,7 +62,7 @@ object Formats {
         headerDateFormatter.format(date).replace(".", "").replace(",", "")
 
     /** Fecha del encabezado: MIÉ 4 */
-    fun headerDate(date: LocalDate): String = dayDate(date).uppercase(spanish)
+    fun headerDate(date: LocalDate): String = dayDate(date).uppercase(locale)
 
     /** Tiempo de viaje redondeado a 10 minutos: 45 min, 8 h, 8 h 30 min. Más precisión sería falsa. */
     fun duration(hours: Double): String {

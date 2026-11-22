@@ -9,6 +9,7 @@ import com.tanqueo.domain.assistant.TripPlan
 import com.tanqueo.domain.assistant.TripStop
 import com.tanqueo.domain.budget.ReferencePrice
 import com.tanqueo.domain.budget.ReferencePrices
+import com.tanqueo.domain.format.AppLocale
 import com.tanqueo.domain.format.Formats
 import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.usecase.AskAnswer
@@ -19,7 +20,6 @@ import com.tanqueo.ui.components.rangeKmText
 import com.tanqueo.ui.components.refuelDateText
 import com.tanqueo.ui.theme.TanqueoColors
 import java.time.format.TextStyle
-import java.util.Locale
 
 internal fun TransformingLazyColumnScope.answerItems(answer: AskAnswer) {
     when (answer) {
@@ -34,7 +34,7 @@ internal fun TransformingLazyColumnScope.answerItems(answer: AskAnswer) {
         }
         is AskAnswer.FuelRange -> fuelRangeItems(answer)
         is AskAnswer.Spending -> item {
-            val month = answer.month.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.forLanguageTag("es-CO"))
+            val month = answer.month.month.getDisplayName(TextStyle.FULL_STANDALONE, AppLocale.current)
             AnswerCard(
                 modifier = Modifier.edgeAware(this),
                 label = stringResource(R.string.ask_spending_label, month),

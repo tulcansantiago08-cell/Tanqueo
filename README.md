@@ -24,6 +24,7 @@ Proyecto académico.
 
 ## Funciones
 
+- **Español e inglés.** La app está en español aunque el reloj esté en otro idioma; en **Ajustes → Idioma** (o en el botón 🌐 de la bienvenida) se cambia a inglés al instante. En Android 13+ (Wear OS 4) usa el idioma por app del sistema, así que también cambian la tile, la complicación y los avisos, y aparece en los ajustes del reloj. Fechas y números siguen el idioma (10,5 · 41.580 en español; 10.5 · 41,580 en inglés). El asistente sin IA entiende preguntas y dictados en inglés comunes ("How long from Pasto to Cali by motorbike?", "10 gallons, 165 thousand, regular, full") y el consejo de la IA se redacta en el idioma elegido.
 - **Carro y moto, cada uno aparte.** La primera vez la app pregunta qué vas a tanquear. Después se cambia tocando **Mi carro ⇄ / Mi moto ⇄** en el inicio (o el dibujo), o en Ajustes. Cada vehículo tiene su propio historial, tanque, kilometraje, umbrales de aviso, rendimiento y autonomía: un tanqueo de la moto nunca entra en las cuentas del carro ni al revés.
 
   | | Carro | Moto (scooter) |

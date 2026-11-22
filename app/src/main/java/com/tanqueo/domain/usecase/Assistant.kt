@@ -1,5 +1,6 @@
 package com.tanqueo.domain.usecase
 
+import com.tanqueo.domain.format.AppLocale
 import com.tanqueo.domain.repository.CachedTip
 import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.repository.SettingsRepository
@@ -33,7 +34,8 @@ class WriteMonthTip @Inject constructor(
 ) {
     suspend operator fun invoke(facts: MonthFacts, today: LocalDate): String? {
         val prompt = facts.asPromptText()
-        val key = "$today|${prompt.hashCode()}"
+        // El idioma va en la clave: un consejo en español no sirve si la app pasó a inglés.
+        val key = "$today|${AppLocale.language.name}|${prompt.hashCode()}"
         settings.cachedTip()?.takeIf { it.key == key }?.let { return it.text }
         val text = assistant.writeTip(prompt)?.trim()?.takeIf { MonthTips.isTrustworthy(it, facts) } ?: return null
         settings.setCachedTip(CachedTip(key, text))

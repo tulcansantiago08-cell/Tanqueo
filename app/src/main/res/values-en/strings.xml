@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. Spanish (values/) is the default language. -->
+<resources>
+    <string name="app_name">Tanqueo</string>
+
+    <!-- Estimate -->
+    <string name="range_km">≈ %1$s km</string>
+    <string name="range_full">%1$s · %2$s</string>
+    <string name="range_insufficient">Log another fill-up with km to estimate</string>
+    <string name="range_days_less_than_one">less than 1 day</string>
+    <plurals name="range_days">
+        <item quantity="one">about %1$d day</item>
+        <item quantity="other">about %1$d days</item>
+    </plurals>
+
+    <!-- Home -->
+    <string name="action_add_fill_up">+ Fill-up</string>
+    <string name="action_register_fill_up">Log fill-up</string>
+    <string name="action_menu">Menu</string>
+    <string name="action_back">Back</string>
+    <string name="action_previous_page">Previous page</string>
+    <string name="action_next_page">Next page</string>
+    <string name="action_month_summary">Month summary</string>
+    <string name="action_history">History</string>
+    <string name="home_title_car">My car</string>
+    <string name="home_title_moto">My motorbike</string>
+    <string name="home_switch_to">Switch to %1$s</string>
+    <string name="home_title_range">Range</string>
+    <string name="home_title_month">This month</string>
+    <string name="home_last_fill_up_date">Last · %1$s</string>
+    <string name="home_last_fill_up_detail">%1$s gal · %2$s</string>
+    <string name="home_fuel_range">Fuel left</string>
+    <string name="home_odometer">Odometer</string>
+    <string name="home_empty">Log your first fill-up</string>
+    <string name="range_refuel_on">refuel ≈ %1$s</string>
+    <string name="range_refuel_today">refuel today</string>
+    <string name="budget_result_until">%1$s · until %2$s</string>
+    <string name="range_km_number">≈ %1$s</string>
+    <string name="saved_confirmation">Saved</string>
+    <string name="action_view_summary">See month summary</string>
+    <string name="action_view_history">See history</string>
+    <string name="action_update_km">Update km</string>
+    <string name="action_settings">Settings</string>
+    <string name="car_illustration">Car seen from above</string>
+    <string name="moto_illustration">Scooter seen from the side</string>
+
+    <!-- Welcome -->
+    <string name="welcome_title">Welcome to Tanqueo</string>
+    <string name="welcome_question">What will you fill up?</string>
+    <string name="welcome_hint">Change it later in Settings</string>
+    <string name="vehicle_car">Car</string>
+    <string name="vehicle_moto">Motorbike</string>
+
+    <!-- Log fill-up -->
+    <string name="card_label_position">%1$s · %2$d/%3$d</string>
+    <string name="card_gallons">Gallons</string>
+    <string name="card_paid">Amount paid</string>
+    <string name="card_fuel">Fuel</string>
+    <string name="card_fill_kind">Tank</string>
+    <string name="card_odometer">Odometer</string>
+    <string name="fuel_corriente">Regular</string>
+    <string name="fuel_extra">Premium</string>
+    <string name="fuel_diesel">Diesel</string>
+    <string name="fill_full">Full</string>
+    <string name="fill_partial">Partial</string>
+    <string name="value_empty">—</string>
+    <string name="hint_step">± %1$s</string>
+    <string name="hint_odometer_recommended">tap + or −</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_save">Save</string>
+    <string name="action_decrease">Decrease %1$s</string>
+    <string name="action_increase">Increase %1$s</string>
+
+    <!-- Units -->
+    <string name="unit_gal">gal</string>
+    <string name="unit_km">km</string>
+    <string name="unit_km_per_gallon">km/gal</string>
+    <string name="value_gallons">%1$s gal</string>
+    <string name="value_km">%1$s km</string>
+    <plurals name="value_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+
+    <!-- History -->
+    <string name="history_empty">No fill-ups yet</string>
+    <string name="history_row_detail">%1$s gal · %2$s</string>
+    <string name="detail_date">%1$s · %2$s</string>
+    <string name="detail_price_per_gallon">Price per gallon</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_confirm">Delete? Tap again</string>
+
+    <!-- Summary -->
+    <string name="summary_month_spend">Spent this month</string>
+    <string name="summary_efficiency">Efficiency</string>
+    <string name="summary_average_price">Average per gallon</string>
+    <string name="summary_count">Fill-ups this month</string>
+    <string name="summary_days_since">Last fill-up</string>
+    <string name="summary_today">today</string>
+    <plurals name="summary_days_ago">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
+
+    <!-- Update km -->
+    <string name="update_km_title">Current odometer</string>
+
+    <!-- Settings -->
+    <string name="settings_vehicle">Vehicle</string>
+    <string name="settings_capacity">Tank capacity</string>
+    <string name="settings_km_threshold">Alert below</string>
+    <string name="settings_days_threshold">Alert with less than</string>
+
+    <!-- Refuel reminder -->
+    <string name="reminder_channel">Refuel reminder</string>
+    <string name="reminder_title_car">Time to fill up the car</string>
+    <string name="reminder_title_moto">Time to fill up the motorbike</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_on">On</string>
+    <string name="settings_notifications_off">Off</string>
+    <string name="settings_notifications_enable">Turn on</string>
+
+    <!-- Tile -->
+    <string name="tile_month_spend">%1$s this month</string>
+
+    <!-- Complication -->
+    <string name="complication_label">Tanqueo range</string>
+    <string name="complication_description">Range: %1$s kilometers</string>
+    <string name="complication_no_data">No range data</string>
+
+    <!-- Voice dictation -->
+    <string name="action_dictate">Dictate the fill-up</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_complete">Complete</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_use_crown">Use crown</string>
+    <string name="dictation_prompt">Say the gallons, the amount and the fuel</string>
+    <string name="dictation_interpreting">Understanding…</string>
+    <string name="dictation_review">I understood this. Is it right?</string>
+    <string name="confirm_review">Check before saving</string>
+    <string name="dictation_review_detail">%1$s gal · %2$s · %3$s</string>
+    <string name="dictation_no_km">No odometer</string>
+    <string name="dictation_not_understood">I didn\'t get that. Try: 10 gallons, 165 thousand, regular, full.</string>
+    <string name="register_save_failed">The fill-up couldn\'t be saved. Your data is still here: try again.</string>
+    <string name="dictation_unavailable">This watch has no dictation. Log it with the crown.</string>
+
+    <!-- How far will it go? -->
+    <string name="action_budget">How far will it go?</string>
+    <string name="budget_money">Amount</string>
+    <string name="budget_type_prompt">Type the amount in pesos</string>
+    <string name="budget_reference_price">Gallon %1$s</string>
+    <string name="budget_own_price">Your gallon</string>
+    <string name="budget_own_place">Your last</string>
+    <string name="budget_tank_full">full tank</string>
+
+    <!-- Assistant -->
+    <string name="home_title_ask">Ask me</string>
+    <string name="home_ask_hint">Tomorrow I\'m driving from Pasto to Medellín, how much should I fill up?</string>
+    <string name="ask_prompt">What do you want to know?</string>
+    <string name="ask_action">Ask</string>
+    <string name="ask_again">Another question</string>
+    <string name="ask_thinking">Thinking…</string>
+    <string name="ask_quote">“%1$s”</string>
+    <string name="ask_samples_title">Or tap one:</string>
+    <string name="ask_sample_stations">Where\'s a gas station?</string>
+    <string name="ask_sample_time">How long to Cali?</string>
+    <string name="ask_sample_trip">From Pasto to Medellín</string>
+    <string name="ask_sample_range">When do I refuel?</string>
+    <string name="ask_sample_budget">How far with 80 thousand?</string>
+    <string name="ask_sample_gallons">I put in 5 gallons, how many km?</string>
+    <string name="ask_sample_spending">How much did I spend this month?</string>
+    <string name="ask_range_label">You have left</string>
+    <string name="ask_until">until %1$s</string>
+    <string name="ask_tank_limit">Not all of it fits in your tank: I only count what fits.</string>
+    <string name="ask_note_own">With your real consumption: %1$s km/gal.</string>
+    <string name="ask_note_reference">No history yet: I use a reference average of %1$s km/gal. Log two full tanks with km to use yours.</string>
+    <string name="ask_note_price_own">Your gallon: %1$s.</string>
+    <string name="ask_note_price_average">No price of yours yet: average reference gallon, %1$s.</string>
+    <string name="ask_note_price_reference">Reference gallon in %2$s: %1$s.</string>
+    <string name="ask_trip_time_car">Time by car</string>
+    <string name="ask_trip_time_moto">Time by motorbike</string>
+    <string name="ask_trip_time_value">≈ %1$s</string>
+    <string name="ask_trip_time_detail">At about %1$s km/h on average, no stops</string>
+    <string name="ask_trip_cost">The trip costs you</string>
+    <string name="ask_trip_cost_gallons">≈ %1$s gal with reserve</string>
+    <string name="ask_trip_in_tank">You have ≈ %1$s gal</string>
+    <string name="ask_spending_label">Spent in %1$s</string>
+    <string name="ask_spending_detail">Fill-ups: %1$d</string>
+    <string name="ask_cost_per_km">Each km costs you ≈ %1$s</string>
+    <string name="ask_trip_route">%1$s → %2$s</string>
+    <string name="ask_trip_distance">Your trip</string>
+    <string name="ask_leaving_today">Leaving today</string>
+    <string name="ask_leaving_tomorrow">Leaving tomorrow</string>
+    <string name="ask_leaving_day_after">Leaving the day after tomorrow</string>
+    <string name="ask_trip_before">Before leaving, put in</string>
+    <string name="ask_trip_enough">With what you have</string>
+    <string name="ask_trip_no_refuel">You\'ll make it</string>
+    <string name="ask_gallons">≈ %1$s gal</string>
+    <string name="ask_approx_cop">≈ %1$s</string>
+    <string name="ask_stop_in">Refuel again in %1$s</string>
+    <string name="ask_stop_at_km">Refuel again near km %1$s</string>
+    <string name="ask_stop_detail">%1$s km from the start</string>
+    <string name="ask_trip_total">To buy in total</string>
+    <string name="ask_trip_note" formatted="false">Approximate distance, with a 10 % reserve.</string>
+    <string name="ask_trip_missing">Tell me where you leave from and where you\'re going. For example: from Pasto to Cali.</string>
+    <string name="ask_unavailable">This watch has no keyboard or dictation. Tap one of the sample questions.</string>
+    <string name="ask_unknown_place">I don\'t have the route for “%1$s”. Try a nearby big city or tell me the km: I\'ll drive 200 km.</string>
+    <string name="ask_needs_data">I don\'t know your efficiency yet. Log two full tanks with odometer.</string>
+    <string name="ask_not_understood">I didn\'t get that. Try a trip, an amount or how much fuel you have left.</string>
+    <string name="ask_price_in">Gallon in %1$s</string>
+    <string name="ask_price_unknown">There\'s no published reference price for %1$s.</string>
+    <string name="ask_price_none">There are no published reference prices for your fuel.</string>
+    <string name="ask_price_cheapest">Cheapest: %1$s</string>
+    <string name="ask_price_average">Gallon %1$s</string>
+
+    <!-- Typing values -->
+    <string name="type_value">Type the value</string>
+    <string name="type_gallons_prompt">Type the gallons</string>
+    <string name="type_paid_prompt">Type the amount paid</string>
+    <string name="type_km_prompt">Type the odometer</string>
+    <string name="type_invalid">Not valid</string>
+
+    <!-- Review warnings -->
+    <string name="warning_over_capacity">Doesn\'t fit in your %1$s gal tank</string>
+    <string name="warning_odd_price">Sure? That\'s %1$s per gallon</string>
+
+    <!-- Chart -->
+    <string name="chart_title">6-month spending</string>
+    <string name="chart_highest">Highest month: %1$s</string>
+    <string name="chart_description">Spending per month: %1$s</string>
+    <string name="chart_item">%1$s, %2$s</string>
+
+    <!-- Tip -->
+    <string name="tip_title">Tip</string>
+    <string name="tip_premium">Premium costs you %1$s more per gallon than Regular.</string>
+    <string name="tip_spending_up">You\'re spending %1$d %% more than last month by this date.</string>
+    <string name="tip_spending_down">You\'re spending %1$d %% less than last month by this date.</string>
+    <string name="tip_efficiency_drop">Your efficiency dropped %1$d %% in the last stretch. Check the tires.</string>
+    <string name="tip_keep_logging">Log your fill-ups with km to get tips.</string>
+
+    <!-- Gas stations -->
+    <string name="action_gas_stations">Nearby gas stations</string>
+    <string name="stations_title">Nearby gas stations</string>
+    <string name="stations_open_maps">Open in Maps</string>
+    <string name="stations_searching">Looking for gas stations near you…</string>
+    <string name="stations_permission">To find nearby gas stations I need to know where you are. It\'s only used on this screen and isn\'t saved.</string>
+    <string name="stations_allow">Allow</string>
+    <string name="stations_retry">Retry</string>
+    <string name="stations_no_location">I don\'t know where the watch is. Check that location is on and try again.</string>
+    <string name="stations_offline">Without internet I can\'t search. Check the connection or use Open in Maps.</string>
+    <string name="stations_none">I found no gas stations within %1$d km.</string>
+    <string name="stations_unnamed">Gas station</string>
+    <string name="stations_distance">≈ %1$s</string>
+    <string name="stations_source">Data and map from OpenStreetMap. Straight-line distance. Tap one to see it in Google Maps.</string>
+    <string name="stations_source_no_maps">Data and map from OpenStreetMap. Straight-line distance. Tap one to see it on the map.</string>
+    <string name="stations_zoom_in">Zoom in</string>
+    <string name="stations_zoom_out">Zoom out</string>
+    <string name="stations_map_attribution">© OpenStreetMap</string>
+    <plurals name="stations_map_description">
+        <item quantity="one">Map with your location and %1$d nearby gas station</item>
+        <item quantity="other">Map with your location and %1$d nearby gas stations</item>
+    </plurals>
+
+    <!-- Language -->
+    <string name="settings_language">Language</string>
+    <string name="welcome_language">Español</string>
+</resources>

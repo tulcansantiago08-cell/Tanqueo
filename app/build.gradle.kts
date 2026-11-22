@@ -46,6 +46,12 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    // El idioma se cambia dentro de la app: el paquete debe traer los dos idiomas siempre.
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 // Room guarda el esquema de cada versión de la base de datos en app/schemas (se versiona en git).

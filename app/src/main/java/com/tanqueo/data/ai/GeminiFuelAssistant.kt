@@ -11,6 +11,8 @@ import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.content
 import com.google.firebase.ai.type.generationConfig
 import com.tanqueo.domain.assistant.AskIntent
+import com.tanqueo.domain.format.AppLanguage
+import com.tanqueo.domain.format.AppLocale
 import com.tanqueo.domain.model.FuelType
 import com.tanqueo.domain.repository.FuelAssistant
 import com.tanqueo.domain.tip.MonthTips
@@ -41,11 +43,15 @@ private val DICTATION_INSTRUCTIONS = """
     odometerKm: kilometraje del odómetro, entero.
 """.trimIndent()
 
-private val TIP_INSTRUCTIONS = """
-    Escribes un consejo breve y amable sobre el gasto en gasolina para la pantalla de un reloj.
-    Español de Colombia, una sola frase, máximo 110 caracteres, sin emojis.
-    Usa únicamente las cifras de los datos que recibes, escritas igual. No calcules ni inventes otras.
-""".trimIndent()
+/** El consejo se redacta en el idioma de la app; los datos siempre llegan en español. */
+private fun tipInstructions(language: AppLanguage): String {
+    val tongue = if (language == AppLanguage.EN) "Inglés (en inglés, aunque los datos estén en español)" else "Español de Colombia"
+    return """
+        Escribes un consejo breve y amable sobre el gasto en gasolina para la pantalla de un reloj.
+        $tongue, una sola frase, máximo 110 caracteres, sin emojis.
+        Usa únicamente las cifras de los datos que recibes, escritas igual. No calcules ni inventes otras.
+    """.trimIndent()
+}
 
 private val QUESTION_INSTRUCTIONS = """
     Clasificas una pregunta en español de Colombia para una app de gasolina en un reloj. Solo clasificas: no respondas ni calcules.
@@ -195,7 +201,7 @@ class GeminiFuelAssistant @Inject constructor(
                     temperature = 0.4f
                     maxOutputTokens = MonthTips.MAX_TIP_LENGTH
                 },
-                systemInstruction = content { text(TIP_INSTRUCTIONS) },
+                systemInstruction = content { text(tipInstructions(AppLocale.language)) },
             )
         }
 

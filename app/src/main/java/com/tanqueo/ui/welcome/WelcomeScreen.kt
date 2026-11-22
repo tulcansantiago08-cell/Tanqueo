@@ -13,6 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.wrapContentHeight
+import com.tanqueo.domain.format.AppLanguage
+import com.tanqueo.ui.language.LanguageManager
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +76,24 @@ fun WelcomeScreen(onChoose: (VehicleType) -> Unit) {
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 modifier = Modifier.padding(top = screen.dp(0.04f)),
+            )
+            // Cambiar de idioma antes de empezar: el botón muestra el otro idioma.
+            val activity = LocalActivity.current
+            Text(
+                text = "🌐 " + stringResource(R.string.welcome_language),
+                color = TanqueoColors.Accent,
+                fontSize = screen.sp(11f),
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(top = 2.dp)
+                    .heightIn(min = MinTouchSize)
+                    .clickable(role = Role.Button) {
+                        activity?.let {
+                            val other = if (LanguageManager.current(it) == AppLanguage.ES) AppLanguage.EN else AppLanguage.ES
+                            LanguageManager.set(it, other)
+                        }
+                    }
+                    .wrapContentHeight(),
             )
         }
     }

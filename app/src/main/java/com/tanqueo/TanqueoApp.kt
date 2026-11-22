@@ -1,6 +1,8 @@
 package com.tanqueo
 
 import android.app.Application
+import android.content.Context
+import com.tanqueo.ui.language.LanguageManager
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.tanqueo.reminder.RefuelReminderWorker
@@ -21,8 +23,13 @@ class TanqueoApp : Application(), Configuration.Provider {
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LanguageManager.wrap(base))
+    }
+
     override fun onCreate() {
         super.onCreate()
+        LanguageManager.applyAtStartup(this)
         installAppCheck(this)
         appScope.launch {
             startupTasks.forEach { it.run() }

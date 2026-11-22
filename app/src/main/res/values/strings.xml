@@ -165,19 +165,19 @@
     <string name="ask_quote">“%1$s”</string>
     <string name="ask_samples_title">O toca una:</string>
     <string name="ask_sample_stations">¿Dónde hay gasolinera?</string>
-    <string name="ask_sample_stations_question">¿Dónde hay una gasolinera cerca?</string>
+    <string name="ask_sample_stations_question" translatable="false">¿Dónde hay una gasolinera cerca?</string>
     <string name="ask_sample_time">¿Cuánto me demoro a Cali?</string>
-    <string name="ask_sample_time_question">¿Cuánto me demoro de Pasto a Cali?</string>
+    <string name="ask_sample_time_question" translatable="false">¿Cuánto me demoro de Pasto a Cali?</string>
     <string name="ask_sample_trip">De Pasto a Medellín</string>
-    <string name="ask_sample_trip_question">Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?</string>
+    <string name="ask_sample_trip_question" translatable="false">Mañana me voy de Pasto a Medellín, ¿cuánto debo tanquear?</string>
     <string name="ask_sample_range">¿Cuándo tanqueo?</string>
-    <string name="ask_sample_range_question">¿Cuándo me toca tanquear?</string>
+    <string name="ask_sample_range_question" translatable="false">¿Cuándo me toca tanquear?</string>
     <string name="ask_sample_budget">¿Hasta dónde con 80 mil?</string>
-    <string name="ask_sample_budget_question">¿Hasta dónde me alcanza con 80 mil pesos?</string>
+    <string name="ask_sample_budget_question" translatable="false">¿Hasta dónde me alcanza con 80 mil pesos?</string>
     <string name="ask_sample_gallons">Eché 5 galones, ¿cuántos km?</string>
-    <string name="ask_sample_gallons_question">Eché 5 galones, ¿cuántos kilómetros puedo recorrer?</string>
+    <string name="ask_sample_gallons_question" translatable="false">Eché 5 galones, ¿cuántos kilómetros puedo recorrer?</string>
     <string name="ask_sample_spending">¿Cuánto gasté este mes?</string>
-    <string name="ask_sample_spending_question">¿Cuánto he gastado este mes?</string>
+    <string name="ask_sample_spending_question" translatable="false">¿Cuánto he gastado este mes?</string>
     <string name="ask_range_label">Te queda</string>
     <string name="ask_until">hasta %1$s</string>
     <string name="ask_tank_limit">No todo cabe en tu tanque: cuento solo lo que cabe.</string>
@@ -270,4 +270,11 @@
         <item quantity="many">Mapa con tu ubicación y %1$d gasolineras cerca</item>
         <item quantity="other">Mapa con tu ubicación y %1$d gasolineras cerca</item>
     </plurals>
+
+    <!-- Idioma -->
+    <string name="settings_language">Idioma</string>
+    <!-- El botón muestra el otro idioma, escrito en ese idioma. -->
+    <string name="welcome_language">English</string>
+    <string name="language_es" translatable="false">Español</string>
+    <string name="language_en" translatable="false">English</string>
 </resources>

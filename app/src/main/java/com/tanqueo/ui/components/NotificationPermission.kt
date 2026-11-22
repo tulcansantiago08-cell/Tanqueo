@@ -1,5 +1,6 @@
 package com.tanqueo.ui.components
 
+import androidx.core.content.edit
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -36,7 +37,7 @@ fun RequestNotificationPermissionOnce() {
     LaunchedEffect(Unit) {
         val prefs = context.getSharedPreferences(PERMISSION_PREFS, Context.MODE_PRIVATE)
         if (!prefs.getBoolean(KEY_ASKED, false) && !context.notificationsEnabled()) {
-            prefs.edit().putBoolean(KEY_ASKED, true).apply()
+            prefs.edit { putBoolean(KEY_ASKED, true) }
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }

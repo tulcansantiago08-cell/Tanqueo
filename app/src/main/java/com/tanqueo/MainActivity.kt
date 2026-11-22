@@ -1,6 +1,9 @@
 package com.tanqueo
 
+import android.content.Context
 import android.content.Intent
+import com.tanqueo.domain.format.AppLocale
+import com.tanqueo.ui.language.LanguageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,8 +32,14 @@ class MainActivity : ComponentActivity() {
     /** Vehículo que trae un aviso: se deja activo antes de abrir nada. */
     private var pendingVehicle by mutableStateOf<VehicleType?>(null)
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageManager.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Al volver a crearse tras un cambio de idioma, fechas y números siguen al nuevo.
+        AppLocale.language = LanguageManager.current(this)
         if (savedInstanceState == null) readExtras(intent)
         setContent {
             TanqueoTheme {

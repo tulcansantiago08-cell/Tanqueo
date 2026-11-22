@@ -18,6 +18,10 @@ import com.tanqueo.ui.components.ValueCardModel
 import com.tanqueo.ui.components.ValueCardsScreen
 import com.tanqueo.ui.components.rememberNotificationAccess
 import com.tanqueo.ui.welcome.label
+import androidx.activity.compose.LocalActivity
+import com.tanqueo.domain.format.AppLanguage
+import com.tanqueo.ui.language.LanguageManager
+import com.tanqueo.ui.language.nameRes
 
 private val CAPACITY_STEPS = listOf(1, 10) // en décimas de galón
 private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
@@ -26,16 +30,29 @@ private val KM_THRESHOLD_STEPS = listOf(1, 10) // en múltiplos de 10 km
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val loaded by viewModel.settings.collectAsStateWithLifecycle()
     val settings = loaded ?: TankSettings()
-    val pagerState = rememberPagerState(pageCount = { 5 })
+    val pagerState = rememberPagerState(pageCount = { 6 })
     val notifications = rememberNotificationAccess()
     var capacityStep by rememberSaveable { mutableIntStateOf(1) }
     var kmStep by rememberSaveable { mutableIntStateOf(0) }
 
+    val activity = LocalActivity.current
+    val language = activity?.let { LanguageManager.current(it) } ?: AppLanguage.DEFAULT
     val cards = listOf(
         ValueCardModel(
             label = stringResource(R.string.settings_vehicle),
             value = stringResource(settings.vehicle.label),
             onSteps = viewModel::adjustVehicle,
+        ),
+        // Idioma: español o inglés; la corona o los botones cambian entre los dos.
+        ValueCardModel(
+            label = stringResource(R.string.settings_language),
+            value = stringResource(language.nameRes),
+            onSteps = { steps ->
+                if (steps != 0 && activity != null) {
+                    val all = AppLanguage.entries
+                    LanguageManager.set(activity, all[(language.ordinal + steps).mod(all.size)])
+                }
+            },
         ),
         ValueCardModel(
             label = stringResource(R.string.settings_capacity),

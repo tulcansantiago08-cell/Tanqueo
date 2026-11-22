@@ -28,9 +28,7 @@ import com.tanqueo.ui.components.GlassCard
 import com.tanqueo.ui.components.rememberScreenSize
 import com.tanqueo.ui.theme.TanqueoColors
 import java.time.format.TextStyle
-import java.util.Locale
-
-private val spanish = Locale.forLanguageTag("es-CO")
+import com.tanqueo.domain.format.AppLocale
 
 /**
  * Gasto por mes en barras. Una sola serie sobre un solo eje: el mes actual lleva el acento y los demás
@@ -43,7 +41,7 @@ fun SpendChart(months: List<MonthSpend>, modifier: Modifier = Modifier) {
     val highest = months.maxOfOrNull { it.totalCop } ?: 0L
     val resources = LocalResources.current
     val description = months.joinToString(", ") { spend ->
-        val name = spend.month.month.getDisplayName(TextStyle.FULL_STANDALONE, spanish)
+        val name = spend.month.month.getDisplayName(TextStyle.FULL_STANDALONE, AppLocale.current)
         resources.getString(R.string.chart_item, name, Formats.cop(spend.totalCop))
     }
     val chartDescription = stringResource(R.string.chart_description, description)
@@ -98,7 +96,7 @@ fun SpendChart(months: List<MonthSpend>, modifier: Modifier = Modifier) {
             Row(Modifier.fillMaxWidth().padding(top = 2.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                 months.forEach { spend ->
                     Text(
-                        text = spend.month.month.getDisplayName(TextStyle.NARROW_STANDALONE, spanish).uppercase(spanish),
+                        text = spend.month.month.getDisplayName(TextStyle.NARROW_STANDALONE, AppLocale.current).uppercase(AppLocale.current),
                         color = TanqueoColors.Secondary,
                         fontSize = screen.sp(9f),
                         lineHeight = screen.sp(11f),
