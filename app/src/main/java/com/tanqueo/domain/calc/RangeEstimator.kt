@@ -36,16 +36,16 @@ object RangeEstimator {
     /** Menos de un día de historia daría promedios diarios absurdos: mejor no estimar. */
     private const val MIN_DAYS_FOR_DAILY_AVERAGE = 1.0
 
+    /** Qué día se acabaría: los días completos que alcanza contados desde hoy. */
+    fun refuelDate(today: LocalDate, daysRemaining: Double): LocalDate =
+        today.plusDays(floor(daysRemaining).toLong())
+
     /**
      * Rendimiento por el método de tanque lleno. Un tramo va de un lleno con km al siguiente lleno
      * con km; los galones son todos los cargados después del primero y hasta el segundo inclusive,
      * porque los parciales intermedios también se consumieron en ese recorrido.
      * Devuelve el promedio de los km/galón de los últimos [MAX_SEGMENTS] tramos.
      */
-    /** Qué día se acabaría: los días completos que alcanza contados desde hoy. */
-    fun refuelDate(today: LocalDate, daysRemaining: Double): LocalDate =
-        today.plusDays(floor(daysRemaining).toLong())
-
     fun kmPerGallon(fillUps: List<FillUp>): Double? {
         val sorted = fillUps.chronological()
         val anchors = sorted.indices.filter { sorted[it].isFull && sorted[it].odometerKm != null }
