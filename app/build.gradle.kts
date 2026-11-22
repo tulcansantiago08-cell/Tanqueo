@@ -46,6 +46,10 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    // Solo español e inglés: las librerías traen textos en ~80 idiomas que la app no usa.
+    androidResources {
+        localeFilters += listOf("es", "en")
+    }
     // El idioma se cambia dentro de la app: el paquete debe traer los dos idiomas siempre.
     bundle {
         language {
