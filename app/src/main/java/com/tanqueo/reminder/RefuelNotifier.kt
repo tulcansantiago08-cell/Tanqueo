@@ -39,6 +39,8 @@ class RefuelNotifier @Inject constructor(@param:ApplicationContext private val c
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            // Se revisa cada 12 h: si el aviso sigue a la vista, solo se actualiza el texto sin volver a vibrar.
+            .setOnlyAlertOnce(true)
             .setContentIntent(openApp(register = false))
             .addAction(R.drawable.ic_add, context.getString(R.string.action_add_fill_up), openApp(register = true))
             .build()
