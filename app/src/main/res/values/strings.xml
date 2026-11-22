@@ -197,6 +197,7 @@
     <string name="ask_not_understood">No entendí. Prueba con un viaje, un valor o cuánta gasolina te queda.</string>
     <string name="ask_price_in">Galón en %1$s</string>
     <string name="ask_price_unknown">No hay precio de referencia publicado para %1$s.</string>
+    <string name="ask_price_none">No hay precios de referencia publicados para tu combustible.</string>
     <string name="ask_price_cheapest">Más barato: %1$s</string>
     <string name="ask_price_average">Galón %1$s</string>
 

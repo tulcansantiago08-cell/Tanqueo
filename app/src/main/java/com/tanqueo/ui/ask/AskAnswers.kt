@@ -202,6 +202,11 @@ private fun efficiencyNote(efficiency: EfficiencyUsed): String {
 }
 
 private fun TransformingLazyColumnScope.priceItems(answer: AskAnswer.Price) {
+    // La Extra no tiene precios publicados: sin este mensaje la respuesta quedaría vacía.
+    if (answer.price == null && answer.cheapest == null && answer.average == null && answer.place == null) {
+        item { AnswerMessage(modifier = Modifier.edgeAware(this), text = stringResource(R.string.ask_price_none)) }
+        return
+    }
     answer.price?.let { price ->
         item {
             AnswerCard(

@@ -66,7 +66,7 @@ class FuelBudgetTest {
     @Test fun `los precios de referencia corresponden al combustible`() {
         assertTrue(ReferencePrices.forFuel(FuelType.DIESEL).all { it.fuelType == FuelType.DIESEL })
         assertTrue(ReferencePrices.forFuel(FuelType.CORRIENTE).all { it.fuelType == FuelType.CORRIENTE })
-        assertTrue(ReferencePrices.forFuel(FuelType.EXTRA).all { it.fuelType == FuelType.CORRIENTE })
+        assertTrue(ReferencePrices.forFuel(FuelType.EXTRA).isEmpty())
         assertEquals(13_920L, ReferencePrices.forFuel(FuelType.CORRIENTE).first { it.place == "Pasto" }.pricePerGallon)
     }
 }

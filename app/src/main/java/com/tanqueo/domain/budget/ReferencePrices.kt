@@ -28,9 +28,9 @@ object ReferencePrices {
         ReferencePrice("Pasto", FuelType.DIESEL, 10_529),
     )
 
-    /** Para Extra se ofrecen los de Corriente, que es lo más cercano con precio publicado. */
-    fun forFuel(fuelType: FuelType): List<ReferencePrice> {
-        val wanted = if (fuelType == FuelType.DIESEL) FuelType.DIESEL else FuelType.CORRIENTE
-        return all.filter { it.fuelType == wanted }
-    }
+    /**
+     * Solo los precios publicados para ese combustible. Para la Extra no hay ninguno: se usa el último
+     * precio que pagó el usuario, porque los de Corriente son más baratos e inflarían los km.
+     */
+    fun forFuel(fuelType: FuelType): List<ReferencePrice> = all.filter { it.fuelType == fuelType }
 }
