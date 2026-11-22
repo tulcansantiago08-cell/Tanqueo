@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** Qué se muestra encima de las tarjetas: el dictado en curso o el resumen antes de guardar. */
-enum class RegisterPanel { NONE, INTERPRETING, REVIEW, CONFIRM, NOT_UNDERSTOOD, UNAVAILABLE }
+/** [SAVE_FAILED]: la base de datos no aceptó el tanqueo; los datos siguen en las tarjetas para reintentar. */
+enum class RegisterPanel { NONE, INTERPRETING, REVIEW, CONFIRM, NOT_UNDERSTOOD, UNAVAILABLE, SAVE_FAILED }
 
 data class RegisterUiState(
     val isLoading: Boolean = true,
@@ -186,17 +188,28 @@ class RegisterViewModel @Inject constructor(
         if (!current.canSave || isSaving) return
         isSaving = true
         viewModelScope.launch {
-            fillUps.add(
-                FillUp(
-                    at = clock.instant(),
-                    gallons = current.gallons,
-                    paidCop = current.paidCop,
-                    fuelType = current.fuelType,
-                    isFull = current.isFull,
-                    odometerKm = current.odometerKm,
-                ),
-            )
-            surfaces.refresh()
+            try {
+                fillUps.add(
+                    FillUp(
+                        at = clock.instant(),
+                        gallons = current.gallons,
+                        paidCop = current.paidCop,
+                        fuelType = current.fuelType,
+                        isFull = current.isFull,
+                        odometerKm = current.odometerKm,
+                    ),
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Sin esto el botón quedaría bloqueado y el tanqueo se perdería sin aviso.
+                isSaving = false
+                _state.update { it.copy(panel = RegisterPanel.SAVE_FAILED) }
+                return@launch
+            }
+            // El tanqueo ya quedó guardado: si falla refrescar la tile, no se trata como error.
+            runCatching { surfaces.refresh() }
+                .onFailure { if (it is CancellationException) throw it }
             _state.update { it.copy(isSaved = true) }
         }
     }

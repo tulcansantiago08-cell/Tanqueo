@@ -208,4 +208,18 @@ class RegisterViewModelTest {
         assertEquals(3, repo.items.value.size)
         assertEquals(START, repo.items.value.last().at)
     }
+
+    @Test fun `si guardar falla se avisa y se puede reintentar`() = runTest {
+        val repo = FakeFillUpRepository(history)
+        repo.failNextAdd = true
+        val vm = viewModel(repo)
+        vm.save()
+        assertEquals(RegisterPanel.SAVE_FAILED, vm.state.value.panel)
+        assertFalse(vm.state.value.isSaved)
+        assertEquals(2, repo.items.value.size)
+
+        vm.save()
+        assertTrue(vm.state.value.isSaved)
+        assertEquals(3, repo.items.value.size)
+    }
 }

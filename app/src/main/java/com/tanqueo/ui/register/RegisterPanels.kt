@@ -91,10 +91,10 @@ fun RegisterPanels(
                     RegisterPanel.REVIEW, RegisterPanel.CONFIRM -> ReviewContent(state)
                     else -> Message(
                         stringResource(
-                            if (state.panel == RegisterPanel.UNAVAILABLE) {
-                                R.string.dictation_unavailable
-                            } else {
-                                R.string.dictation_not_understood
+                            when (state.panel) {
+                                RegisterPanel.UNAVAILABLE -> R.string.dictation_unavailable
+                                RegisterPanel.SAVE_FAILED -> R.string.register_save_failed
+                                else -> R.string.dictation_not_understood
                             },
                         ),
                     )
@@ -108,7 +108,7 @@ fun RegisterPanels(
             ) {
                 when (state.panel) {
                     RegisterPanel.INTERPRETING -> Unit
-                    RegisterPanel.REVIEW, RegisterPanel.CONFIRM -> ActionRow(
+                    RegisterPanel.REVIEW, RegisterPanel.CONFIRM, RegisterPanel.SAVE_FAILED -> ActionRow(
                         secondaryIcon = R.drawable.ic_edit,
                         secondaryDescription = stringResource(R.string.action_edit),
                         onSecondary = onEdit,

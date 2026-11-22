@@ -30,7 +30,14 @@ class FakeFillUpRepository(initial: List<FillUp> = emptyList()) : FillUpReposito
 
     override fun observe(id: Long): Flow<FillUp?> = items.map { list -> list.firstOrNull { it.id == id } }
 
+    /** Simula que la base de datos rechaza el siguiente [add]. */
+    var failNextAdd = false
+
     override suspend fun add(fillUp: FillUp): Long {
+        if (failNextAdd) {
+            failNextAdd = false
+            throw IllegalStateException("base de datos no disponible")
+        }
         val id = nextId++
         items.value = (items.value + fillUp.copy(id = id)).sortedByDescending { it.at }
         return id
