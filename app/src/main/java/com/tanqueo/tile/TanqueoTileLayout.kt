@@ -27,6 +27,7 @@ import com.tanqueo.R
 import com.tanqueo.domain.calc.RangeEstimate
 import com.tanqueo.domain.calc.RangeLevel
 import com.tanqueo.domain.format.Formats
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.usecase.Dashboard
 import com.tanqueo.ui.components.rangeDays
 import com.tanqueo.ui.components.rangeKm
@@ -64,9 +65,16 @@ fun tanqueoTileLayout(
     val estimate = dashboard.estimate as? RangeEstimate.Available
     val level = estimate?.let { RangeLevel.of(it.kmRemaining) } ?: RangeLevel.NORMAL
     val month = context.getString(R.string.tile_month_spend, Formats.cop(dashboard.month.totalSpentCop))
+    // El título dice de qué vehículo son las cifras: la tile muestra el que está activo.
+    val title = context.getString(
+        when (dashboard.settings.vehicle) {
+            VehicleType.CARRO -> R.string.home_title_car
+            VehicleType.MOTO -> R.string.home_title_moto
+        },
+    )
     val layout = primaryLayout(
-        titleSlot = { text(month.layoutString, typography = Typography.BODY_SMALL, color = Secondary) },
-        mainSlot = { mainContent(context, estimate, level) },
+        titleSlot = { text(title.layoutString, typography = Typography.BODY_SMALL, color = Secondary) },
+        mainSlot = { mainContent(context, estimate, level, month) },
         bottomSlot = {
             textEdgeButton(
                 onClick = clickable(
@@ -104,14 +112,19 @@ private fun MaterialScope.mainContent(
     context: Context,
     estimate: RangeEstimate.Available?,
     level: RangeLevel,
+    month: String,
 ): LayoutElement {
     val res = context.resources
+    val spend = text(month.layoutString, typography = Typography.BODY_SMALL, color = Secondary)
     if (estimate == null) {
-        return text(
-            res.getString(R.string.range_insufficient).layoutString,
-            typography = Typography.BODY_MEDIUM,
-            color = White,
-            maxLines = 3,
+        return column(
+            text(
+                res.getString(R.string.range_insufficient).layoutString,
+                typography = Typography.BODY_MEDIUM,
+                color = White,
+                maxLines = 3,
+            ),
+            spend,
         )
     }
     val km = text(
@@ -119,9 +132,10 @@ private fun MaterialScope.mainContent(
         typography = Typography.DISPLAY_SMALL,
         color = if (level == RangeLevel.NORMAL) White else level.arcColor(),
     )
-    val days = estimate.daysRemaining ?: return km
+    val days = estimate.daysRemaining ?: return column(km, spend)
     return column(
         km,
         text(res.rangeDays(days).layoutString, typography = Typography.BODY_MEDIUM, color = Secondary),
+        spend,
     )
 }

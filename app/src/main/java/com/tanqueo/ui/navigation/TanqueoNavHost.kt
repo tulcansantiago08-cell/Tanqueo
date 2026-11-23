@@ -19,6 +19,7 @@ import com.tanqueo.ui.menu.MenuActions
 import com.tanqueo.ui.menu.MenuScreen
 import com.tanqueo.ui.odometer.UpdateKmScreen
 import com.tanqueo.ui.register.RegisterScreen
+import com.tanqueo.ui.register.RegisterViewModel
 import com.tanqueo.ui.settings.SettingsScreen
 import com.tanqueo.ui.summary.SummaryScreen
 
@@ -39,11 +40,15 @@ object Routes {
     const val SETTINGS = "ajustes"
     const val BUDGET = "cuanto_me_alcanza"
     const val GAS_STATIONS = "gasolineras"
+    const val EDIT_PATTERN = "corregir/{${RegisterViewModel.ARG_EDIT_ID}}"
 
     /** Abre el asistente con la entrada ya lista: preguntar toma un solo toque. */
     fun askNow() = "preguntar?$ASK_ARG=true"
 
     fun detail(id: Long) = "historial/$id"
+
+    /** Abre el registro con un tanqueo ya guardado, para corregirlo. */
+    fun edit(id: Long) = "corregir/$id"
 
     /** Abre el registro con una frase ya dicha, para que el usuario solo revise. */
     fun registerWith(text: String) = "registrar?$REGISTER_ARG=${Uri.encode(text)}"
@@ -124,7 +129,17 @@ fun TanqueoNavHost(navController: NavHostController) {
             route = Routes.DETAIL,
             arguments = listOf(navArgument(FillUpDetailViewModel.ARG_ID) { type = NavType.LongType }),
         ) {
-            FillUpDetailScreen(onDeleted = { navController.popBackStack() })
+            FillUpDetailScreen(
+                onDeleted = { navController.popBackStack() },
+                onEdit = { go(Routes.edit(it)) },
+            )
+        }
+        composable(
+            route = Routes.EDIT_PATTERN,
+            arguments = listOf(navArgument(RegisterViewModel.ARG_EDIT_ID) { type = NavType.LongType }),
+        ) {
+            // Vuelve al detalle, que ya muestra los valores corregidos.
+            RegisterScreen(onSaved = { navController.popBackStack() })
         }
         composable(Routes.SUMMARY) { SummaryScreen() }
         composable(Routes.UPDATE_KM) {

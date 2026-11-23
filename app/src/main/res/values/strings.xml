@@ -127,7 +127,9 @@
 
     <!-- Complicación -->
     <string name="complication_label">Autonomía de Tanqueo</string>
-    <string name="complication_description">Autonomía: %1$s kilómetros</string>
+    <string name="complication_description_vehicle">Autonomía de %1$s: %2$s kilómetros</string>
+    <string name="vehicle_car_lower">tu carro</string>
+    <string name="vehicle_moto_lower">tu moto</string>
     <string name="complication_no_data">Sin datos de autonomía</string>
 
     <!-- Dictado por voz -->
@@ -257,6 +259,7 @@
     <string name="stations_retry">Reintentar</string>
     <string name="stations_no_location">No sé dónde está el reloj. Revisa que la ubicación esté activa y vuelve a intentar.</string>
     <string name="stations_offline">Sin internet no puedo buscar. Revisa la conexión o usa Ver en Mapas.</string>
+    <string name="stations_offline_saved">Sin internet. Estas son las que encontré el %1$s.</string>
     <string name="stations_none">No encontré gasolineras a menos de %1$d km.</string>
     <string name="stations_unnamed">Gasolinera</string>
     <string name="stations_distance">≈ %1$s</string>

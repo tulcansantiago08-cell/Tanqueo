@@ -15,6 +15,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,6 +56,22 @@ class RoomFillUpRepositoryTest {
         val id = repository.add(fillUp("2026-10-01T10:00:00Z", km = null, fuel = FuelType.DIESEL))
         val saved = repository.observe(id).first()!!
         assertEquals(fillUp("2026-10-01T10:00:00Z", km = null, fuel = FuelType.DIESEL).copy(id = id), saved)
+    }
+
+    @Test fun `corregir cambia solo ese tanqueo y conserva su fecha`() = runTest {
+        val a = repository.add(fillUp("2026-10-01T10:00:00Z", km = 1000))
+        val b = repository.add(fillUp("2026-10-02T10:00:00Z", km = 1300))
+        val original = repository.observe(a).first()!!
+        repository.update(original.copy(gallons = 9.0, paidCop = 150_000, odometerKm = 1100))
+        assertEquals(original.copy(gallons = 9.0, paidCop = 150_000, odometerKm = 1100), repository.observe(a).first())
+        assertEquals(1300, repository.observe(b).first()!!.odometerKm)
+    }
+
+    @Test fun `corregir un tanqueo borrado falla en vez de pasar en silencio`() = runTest {
+        val a = repository.add(fillUp("2026-10-01T10:00:00Z"))
+        val original = repository.observe(a).first()!!
+        repository.delete(a)
+        assertTrue(runCatching { repository.update(original) }.isFailure)
     }
 
     @Test fun `borrar quita solo ese tanqueo`() = runTest {

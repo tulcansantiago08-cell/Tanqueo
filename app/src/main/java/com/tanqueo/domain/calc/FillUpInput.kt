@@ -44,8 +44,8 @@ object FillUpInput {
     fun adjustCop(cop: Long, steps: Int): Long =
         (cop + steps * COP_STEP).coerceIn(COP_STEP, MAX_COP)
 
-    fun adjustOdometer(km: Int, steps: Int, minKm: Int): Int =
-        (km.toLong() + steps).coerceIn(minKm.toLong(), MAX_ODOMETER_KM.toLong()).toInt()
+    fun adjustOdometer(km: Int, steps: Int, minKm: Int, maxKm: Int = MAX_ODOMETER_KM): Int =
+        (km.toLong() + steps).coerceIn(minKm.toLong(), maxOf(minKm, maxKm).toLong()).toInt()
 
     fun adjustKmThreshold(km: Int, steps: Int): Int =
         (km + steps * MIN_KM_THRESHOLD).coerceIn(MIN_KM_THRESHOLD, MAX_KM_THRESHOLD)
@@ -67,4 +67,16 @@ object FillUpInput {
     /** El odómetro nunca retrocede: el mínimo es el mayor kilometraje ya registrado. */
     fun minOdometer(fillUps: List<FillUp>, extraKm: Int? = null): Int =
         maxOf(fillUps.mapNotNull { it.odometerKm }.maxOrNull() ?: 0, extraKm ?: 0)
+
+    /**
+     * Límites del odómetro al corregir [editing]: no puede quedar por debajo de los tanqueos anteriores
+     * ni por encima de los posteriores. Los demás tanqueos son del mismo vehículo.
+     */
+    fun odometerBoundsForEdit(fillUps: List<FillUp>, editing: FillUp): IntRange {
+        val others = fillUps.filter { it.id != editing.id }
+        fun isBefore(it: FillUp) = it.at < editing.at || (it.at == editing.at && it.id < editing.id)
+        val min = others.filter(::isBefore).mapNotNull { it.odometerKm }.maxOrNull() ?: 0
+        val max = others.filterNot(::isBefore).mapNotNull { it.odometerKm }.minOrNull() ?: MAX_ODOMETER_KM
+        return min..maxOf(min, max)
+    }
 }

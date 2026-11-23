@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
+import java.time.ZoneId
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,6 +137,19 @@ fun GasStationsScreen(viewModel: GasStationsViewModel = hiltViewModel()) {
                             )
                         }
                     }
+                    val savedAt = search.savedAt
+                    if (savedAt != null) {
+                        // Sin internet: se dice de cuándo es la lista y se puede buscar de nuevo.
+                        retryItems(
+                            message = {
+                                stringResource(
+                                    R.string.stations_offline_saved,
+                                    Formats.shortDate(savedAt.atZone(ZoneId.systemDefault()).toLocalDate()),
+                                )
+                            },
+                            onRetry = viewModel::search,
+                        )
+                    }
                     item {
                         Text(
                             text = stringResource(if (mapsAvailable) R.string.stations_source else R.string.stations_source_no_maps),
@@ -158,8 +172,14 @@ fun GasStationsScreen(viewModel: GasStationsViewModel = hiltViewModel()) {
     }
 }
 
-private fun androidx.wear.compose.foundation.lazy.TransformingLazyColumnScope.retryItems(message: Int, onRetry: () -> Unit) {
-    item { StationMessage(stringResource(message), Modifier.edgeAware(this)) }
+private fun androidx.wear.compose.foundation.lazy.TransformingLazyColumnScope.retryItems(message: Int, onRetry: () -> Unit) =
+    retryItems({ stringResource(message) }, onRetry)
+
+private fun androidx.wear.compose.foundation.lazy.TransformingLazyColumnScope.retryItems(
+    message: @Composable () -> String,
+    onRetry: () -> Unit,
+) {
+    item { StationMessage(message(), Modifier.edgeAware(this)) }
     item {
         PrimaryPillButton(
             text = stringResource(R.string.stations_retry),

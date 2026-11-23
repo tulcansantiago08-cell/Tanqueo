@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lo mismo que data_extraction_rules.xml, para Android 11 (Wear OS 3). -->
+<full-backup-content>
+    <include domain="database" path="." />
+    <include domain="file" path="datastore/ajustes.preferences_pb" />
+    <include domain="sharedpref" path="idioma.xml" />
+</full-backup-content>

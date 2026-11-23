@@ -83,6 +83,10 @@ fun RegisterScreen(
         if (!state.isLoading && !state.hasOdometerHistory) kmStep = 3
     }
 
+    // El tanqueo a corregir ya no existe: no hay nada que mostrar.
+    LaunchedEffect(state.isMissing) {
+        if (state.isMissing) onSaved()
+    }
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
     }

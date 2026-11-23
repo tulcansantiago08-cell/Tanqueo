@@ -14,6 +14,7 @@ import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.tanqueo.MainActivity
 import com.tanqueo.R
+import com.tanqueo.domain.model.VehicleType
 import com.tanqueo.domain.usecase.ObserveDashboard
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -24,16 +25,20 @@ class RangeComplicationService : SuspendingComplicationDataSourceService() {
     @Inject lateinit var observeDashboard: ObserveDashboard
 
     override suspend fun onComplicationRequest(request: ComplicationRequest): ComplicationData? =
-        build(request.complicationType, RangeComplicationContent.from(observeDashboard.current().estimate))
+        observeDashboard.current().let { dashboard ->
+            build(request.complicationType, RangeComplicationContent.from(dashboard.estimate), dashboard.settings.vehicle)
+        }
 
     /** Solo se ve en el selector de complicaciones de la carátula, como ejemplo. */
     override fun getPreviewData(type: ComplicationType): ComplicationData? =
-        build(type, RangeComplicationContent(text = "385", tankPercent = 76f, hasData = true))
+        build(type, RangeComplicationContent(text = "385", tankPercent = 76f, hasData = true), VehicleType.DEFAULT)
 
-    private fun build(type: ComplicationType, content: RangeComplicationContent): ComplicationData? {
+    /** El ícono y la descripción dicen de qué vehículo es la cifra: carro y moto no se confunden. */
+    private fun build(type: ComplicationType, content: RangeComplicationContent, vehicle: VehicleType): ComplicationData? {
+        val icon = MonochromaticImage.Builder(Icon.createWithResource(this, vehicle.complicationIcon)).build()
         val description = plain(
             if (content.hasData) {
-                getString(R.string.complication_description, content.text)
+                getString(R.string.complication_description_vehicle, getString(vehicle.ownerLabel), content.text)
             } else {
                 getString(R.string.complication_no_data)
             },
@@ -45,14 +50,13 @@ class RangeComplicationService : SuspendingComplicationDataSourceService() {
                     .setText(plain(content.text))
                     .setTitle(unit)
                     .setColorRamp(ColorRamp(intArrayOf(VIOLET, BLUE), interpolated = true))
+                    .setMonochromaticImage(icon)
                     .setTapAction(openApp())
                     .build()
             ComplicationType.SHORT_TEXT ->
                 ShortTextComplicationData.Builder(plain(content.text), description)
                     .setTitle(unit)
-                    .setMonochromaticImage(
-                        MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_gas)).build(),
-                    )
+                    .setMonochromaticImage(icon)
                     .setTapAction(openApp())
                     .build()
             else -> null
@@ -73,3 +77,15 @@ class RangeComplicationService : SuspendingComplicationDataSourceService() {
         const val BLUE = 0xFF4AC0FC.toInt()
     }
 }
+
+private val VehicleType.complicationIcon: Int
+    get() = when (this) {
+        VehicleType.CARRO -> R.drawable.ic_vehicle_car
+        VehicleType.MOTO -> R.drawable.ic_vehicle_moto
+    }
+
+private val VehicleType.ownerLabel: Int
+    get() = when (this) {
+        VehicleType.CARRO -> R.string.vehicle_car_lower
+        VehicleType.MOTO -> R.string.vehicle_moto_lower
+    }

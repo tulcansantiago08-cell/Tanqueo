@@ -1,0 +1,16 @@
+<!-- Scooter de una sola tinta, para la complicación (las carátulas la tiñen). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Ruedas: anillos. -->
+  <path
+      android:fillColor="@android:color/white"
+      android:fillType="evenOdd"
+      android:pathData="M5,14a3,3 0,1 0,0.001 0zM5,15.5a1.5,1.5 0,1 0,0.001 0zM19,14a3,3 0,1 0,0.001 0zM19,15.5a1.5,1.5 0,1 0,0.001 0z"/>
+  <!-- Cuerpo, columna y manubrio. -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M4,13.2C4.9,11.9 6.4,11 8.2,11H12l2.6,-5.2H13V4.3h3.1c0.4,0 0.7,0.2 0.9,0.6l3,7.1c-0.3,-0.05 -0.6,-0.1 -1,-0.1c-0.4,0 -0.7,0.04 -1,0.1l-1.4,-3.3l-3.2,6.4c-0.2,0.4 -0.6,0.6 -1,0.6H8.9c-0.3,-1.5 -1.7,-2.6 -3.3,-2.6C5,13.1 4.5,13.1 4,13.2z"/>
+</vector>

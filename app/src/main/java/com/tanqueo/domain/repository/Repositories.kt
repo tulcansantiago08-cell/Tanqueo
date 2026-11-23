@@ -16,6 +16,9 @@ interface FillUpRepository {
     fun observeAll(vehicle: VehicleType): Flow<List<FillUp>>
     fun observe(id: Long): Flow<FillUp?>
     suspend fun add(fillUp: FillUp): Long
+
+    /** Corrige un tanqueo ya guardado (mismo [FillUp.id]). Falla si ya no existe. */
+    suspend fun update(fillUp: FillUp)
     suspend fun delete(id: Long)
 }
 

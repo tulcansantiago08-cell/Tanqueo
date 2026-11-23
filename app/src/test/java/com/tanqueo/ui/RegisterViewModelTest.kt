@@ -11,6 +11,7 @@ import com.tanqueo.domain.partial
 import com.tanqueo.domain.usecase.InterpretDictation
 import com.tanqueo.ui.register.RegisterPanel
 import com.tanqueo.ui.register.RegisterViewModel
+import androidx.lifecycle.SavedStateHandle
 import java.time.Clock
 import java.time.ZoneOffset
 import kotlinx.coroutines.test.runTest
@@ -30,7 +31,12 @@ class RegisterViewModelTest {
     private val assistant = FakeFuelAssistant()
 
     private fun viewModel(fillUps: FakeFillUpRepository, settings: TankSettings = TankSettings()) =
-        RegisterViewModel(fillUps, FakeSettingsRepository(settings), refresher, clock, InterpretDictation(assistant))
+        RegisterViewModel(fillUps, FakeSettingsRepository(settings), refresher, clock, InterpretDictation(assistant), SavedStateHandle())
+
+    private fun editing(fillUps: FakeFillUpRepository, id: Long) = RegisterViewModel(
+        fillUps, FakeSettingsRepository(), refresher, clock, InterpretDictation(assistant),
+        SavedStateHandle(mapOf(RegisterViewModel.ARG_EDIT_ID to id)),
+    )
 
     private val history = listOf(full(0, 1000, 10.0), full(10, 1400, 10.0)) // $16.000/galón
 
@@ -241,5 +247,56 @@ class RegisterViewModelTest {
         vm.adjustPaid(100)
         vm.save()
         assertEquals(VehicleType.MOTO, repo.items.value.first { it.at == now }.vehicle)
+    }
+
+    private val threeFillUps = listOf(full(0, 1000, 10.0), full(5, 1200, 8.0), full(10, 1400, 10.0))
+
+    @Test fun `corregir parte de los valores guardados, no de sugerencias`() = runTest {
+        val vm = editing(FakeFillUpRepository(threeFillUps), id = 5)
+        val state = vm.state.value
+        assertTrue(state.isEditing)
+        assertEquals(8.0, state.gallons, 0.0)
+        assertEquals(128_000L, state.paidCop)
+        assertEquals(1200, state.odometerKm)
+    }
+
+    @Test fun `al corregir el valor no se recalcula al cambiar los galones`() = runTest {
+        val vm = editing(FakeFillUpRepository(threeFillUps), id = 5)
+        vm.adjustGallons(10)
+        assertEquals(128_000L, vm.state.value.paidCop)
+    }
+
+    @Test fun `corregir guarda sobre el mismo tanqueo, con su fecha original`() = runTest {
+        val repo = FakeFillUpRepository(threeFillUps)
+        val vm = editing(repo, id = 5)
+        vm.adjustPaid(10)
+        vm.save()
+        assertTrue(vm.state.value.isSaved)
+        assertEquals(3, repo.items.value.size)
+        val fixed = repo.items.value.first { it.id == 5L }
+        assertEquals(129_000L, fixed.paidCop)
+        assertEquals(threeFillUps[1].at, fixed.at)
+        assertEquals(1, refresher.count)
+    }
+
+    @Test fun `al corregir el odometro queda entre el tanqueo anterior y el siguiente`() = runTest {
+        val vm = editing(FakeFillUpRepository(threeFillUps), id = 5)
+        assertEquals(1000, vm.state.value.minOdometerKm)
+        assertEquals(1400, vm.state.value.maxOdometerKm)
+        vm.adjustOdometer(10_000)
+        assertEquals(1400, vm.state.value.odometerKm)
+        vm.adjustOdometer(-10_000)
+        assertEquals(1000, vm.state.value.odometerKm)
+        assertFalse(vm.typeOdometer("1500"))
+        assertTrue(vm.typeOdometer("1300"))
+        assertEquals(1300, vm.state.value.odometerKm)
+    }
+
+    @Test fun `si el tanqueo ya no existe la pantalla se cierra`() = runTest {
+        val repo = FakeFillUpRepository(threeFillUps)
+        val vm = editing(repo, id = 99)
+        assertTrue(vm.state.value.isMissing)
+        vm.save()
+        assertEquals(threeFillUps.toSet(), repo.items.value.toSet()) // nada nuevo ni cambiado
     }
 }

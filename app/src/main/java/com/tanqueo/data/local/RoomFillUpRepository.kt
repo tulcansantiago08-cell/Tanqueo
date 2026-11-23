@@ -26,5 +26,9 @@ class RoomFillUpRepository @Inject constructor(
 
     override suspend fun add(fillUp: FillUp): Long = dao.insert(fillUp.toEntity())
 
+    override suspend fun update(fillUp: FillUp) {
+        check(dao.update(fillUp.toEntity()) == 1) { "El tanqueo ${fillUp.id} ya no existe" }
+    }
+
     override suspend fun delete(id: Long) = dao.delete(id)
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Qué viaja en la copia en la nube y al pasar a otro reloj (Android 12+):
+  los tanqueos, los ajustes de cada vehículo y el idioma. No viaja si ya se pidió el
+  permiso de notificaciones: el reloj nuevo tiene que preguntarlo otra vez.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="." />
+        <include domain="file" path="datastore/ajustes.preferences_pb" />
+        <include domain="sharedpref" path="idioma.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="." />
+        <include domain="file" path="datastore/ajustes.preferences_pb" />
+        <include domain="sharedpref" path="idioma.xml" />
+    </device-transfer>
+</data-extraction-rules>

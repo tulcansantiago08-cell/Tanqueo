@@ -1,5 +1,6 @@
 package com.tanqueo.ui.register
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tanqueo.domain.calc.FillUpInput
@@ -41,13 +42,19 @@ data class RegisterUiState(
     /** Null hasta que el usuario lo toque: nunca se guarda un kilometraje que no eligió. */
     val odometerKm: Int? = null,
     val minOdometerKm: Int = 0,
+    /** Solo al corregir un tanqueo: no puede pasar el de los tanqueos posteriores. */
+    val maxOdometerKm: Int = FillUpInput.MAX_ODOMETER_KM,
     val suggestedOdometerKm: Int = 0,
     val hasOdometerHistory: Boolean = false,
     val isSaved: Boolean = false,
     val panel: RegisterPanel = RegisterPanel.NONE,
     val capacityGallons: Double = TankSettings.DEFAULT_CAPACITY_GALLONS,
+    /** Corrigiendo un tanqueo ya guardado en vez de registrar uno nuevo. */
+    val isEditing: Boolean = false,
+    /** El tanqueo a corregir ya no existe (lo borraron): la pantalla se cierra. */
+    val isMissing: Boolean = false,
 ) {
-    val canSave: Boolean get() = !isLoading && gallons > 0 && paidCop > 0
+    val canSave: Boolean get() = !isLoading && !isMissing && gallons > 0 && paidCop > 0
     val warning: FillUpWarning? get() = FillUpInput.warning(gallons, paidCop, capacityGallons)
 }
 
@@ -58,7 +65,12 @@ class RegisterViewModel @Inject constructor(
     private val surfaces: SurfaceRefresher,
     private val clock: Clock,
     private val interpretDictation: InterpretDictation,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    /** Id del tanqueo a corregir; null al registrar uno nuevo. */
+    private val editingId: Long? = savedStateHandle.get<Long>(ARG_EDIT_ID)?.takeIf { it > 0 }
+    private var editing: FillUp? = null
+
     private val _state = MutableStateFlow(RegisterUiState())
     val state: StateFlow<RegisterUiState> = _state.asStateFlow()
 
@@ -69,30 +81,67 @@ class RegisterViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // Todo del mismo vehículo: el que está activo al abrir el registro.
-            val config = settings.settings.first()
-            vehicle = config.vehicle
-            history = fillUps.observeAll(vehicle).first()
-            val update = settings.odometerUpdateFor(vehicle).first()
-            val last = history.firstOrNull()
-            val fuel = last?.fuelType ?: FuelType.CORRIENTE
-            val lastFullGallons = history.firstOrNull { it.isFull }?.gallons
-            val gallons = lastFullGallons ?: config.vehicle.defaultFillUpGallons
-            val minKm = FillUpInput.minOdometer(history)
-            val estimate = RangeEstimator.estimate(history, config.tankCapacityGallons, update, clock.instant())
-            val driven = (estimate as? RangeEstimate.Available)?.kmSinceLastFillUp?.roundToInt() ?: 0
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    gallons = gallons,
-                    fuelType = fuel,
-                    paidCop = suggestedPaid(gallons, fuel),
-                    minOdometerKm = minKm,
-                    capacityGallons = config.tankCapacityGallons,
-                    suggestedOdometerKm = (minKm + driven).coerceAtMost(FillUpInput.MAX_ODOMETER_KM),
-                    hasOdometerHistory = minKm > 0,
-                )
-            }
+            val id = editingId
+            if (id != null) loadForEdit(id) else loadNew()
+        }
+    }
+
+    /** Llena las tarjetas con el tanqueo guardado. Sus fechas y su vehículo no cambian. */
+    private suspend fun loadForEdit(id: Long) {
+        val original = fillUps.observe(id).first() ?: run {
+            // Lo borraron mientras tanto: no hay nada que corregir.
+            _state.update { it.copy(isLoading = false, isMissing = true) }
+            return
+        }
+        editing = original
+        vehicle = original.vehicle
+        val all = fillUps.observeAll(vehicle).first()
+        history = all.filter { it.id != original.id }
+        val bounds = FillUpInput.odometerBoundsForEdit(all, original)
+        val config = settings.settingsFor(vehicle).first()
+        paidEdited = true // el valor ya es el que pagó: no se recalcula solo
+        _state.update {
+            it.copy(
+                isLoading = false,
+                gallons = original.gallons,
+                paidCop = original.paidCop,
+                fuelType = original.fuelType,
+                isFull = original.isFull,
+                odometerKm = original.odometerKm,
+                minOdometerKm = bounds.first,
+                maxOdometerKm = bounds.last,
+                suggestedOdometerKm = original.odometerKm ?: bounds.first,
+                hasOdometerHistory = bounds.first > 0,
+                capacityGallons = config.tankCapacityGallons,
+                isEditing = true,
+            )
+        }
+    }
+
+    private suspend fun loadNew() {
+        // Todo del mismo vehículo: el que está activo al abrir el registro.
+        val config = settings.settings.first()
+        vehicle = config.vehicle
+        history = fillUps.observeAll(vehicle).first()
+        val update = settings.odometerUpdateFor(vehicle).first()
+        val last = history.firstOrNull()
+        val fuel = last?.fuelType ?: FuelType.CORRIENTE
+        val lastFullGallons = history.firstOrNull { it.isFull }?.gallons
+        val gallons = lastFullGallons ?: config.vehicle.defaultFillUpGallons
+        val minKm = FillUpInput.minOdometer(history)
+        val estimate = RangeEstimator.estimate(history, config.tankCapacityGallons, update, clock.instant())
+        val driven = (estimate as? RangeEstimate.Available)?.kmSinceLastFillUp?.roundToInt() ?: 0
+        _state.update {
+            it.copy(
+                isLoading = false,
+                gallons = gallons,
+                fuelType = fuel,
+                paidCop = suggestedPaid(gallons, fuel),
+                minOdometerKm = minKm,
+                capacityGallons = config.tankCapacityGallons,
+                suggestedOdometerKm = (minKm + driven).coerceAtMost(FillUpInput.MAX_ODOMETER_KM),
+                hasOdometerHistory = minKm > 0,
+            )
         }
     }
 
@@ -115,7 +164,8 @@ class RegisterViewModel @Inject constructor(
 
     fun typeOdometer(text: String): Boolean {
         val minKm = _state.value.minOdometerKm
-        val km = SpanishNumbers.parse(text)?.toInt()?.takeIf { it in maxOf(minKm, 1)..FillUpInput.MAX_ODOMETER_KM } ?: return false
+        val maxKm = _state.value.maxOdometerKm
+        val km = SpanishNumbers.parse(text)?.toInt()?.takeIf { it in maxOf(minKm, 1)..maxKm } ?: return false
         _state.update { it.copy(odometerKm = km) }
         return true
     }
@@ -145,7 +195,7 @@ class RegisterViewModel @Inject constructor(
             odometerKm = if (km == null) {
                 current.suggestedOdometerKm
             } else {
-                FillUpInput.adjustOdometer(km, steps, current.minOdometerKm)
+                FillUpInput.adjustOdometer(km, steps, current.minOdometerKm, current.maxOdometerKm)
             },
         )
     }
@@ -171,7 +221,7 @@ class RegisterViewModel @Inject constructor(
                     fuelType = fuel,
                     paidCop = dictated.paidCop ?: paidFor(gallons, fuel, current.paidCop),
                     isFull = dictated.isFull ?: current.isFull,
-                    odometerKm = dictated.odometerKm ?: current.odometerKm,
+                    odometerKm = dictated.odometerKm?.takeIf { it <= current.maxOdometerKm } ?: current.odometerKm,
                     panel = RegisterPanel.REVIEW,
                 )
             }
@@ -193,7 +243,18 @@ class RegisterViewModel @Inject constructor(
         isSaving = true
         viewModelScope.launch {
             try {
-                fillUps.add(
+                val original = editing
+                if (original != null) {
+                    fillUps.update(
+                        original.copy(
+                            gallons = current.gallons,
+                            paidCop = current.paidCop,
+                            fuelType = current.fuelType,
+                            isFull = current.isFull,
+                            odometerKm = current.odometerKm,
+                        ),
+                    )
+                } else fillUps.add(
                     FillUp(
                         at = clock.instant(),
                         gallons = current.gallons,
@@ -226,4 +287,9 @@ class RegisterViewModel @Inject constructor(
         FillUpInput.lastPricePerGallon(history, fuel)
             ?.let { FillUpInput.suggestedPaid(gallons, it) }
             ?: 0L
+
+    companion object {
+        /** Argumento de navegación con el id del tanqueo a corregir. */
+        const val ARG_EDIT_ID = "editar"
+    }
 }

@@ -50,6 +50,11 @@ class FakeFillUpRepository(initial: List<FillUp> = emptyList()) : FillUpReposito
         return id
     }
 
+    override suspend fun update(fillUp: FillUp) {
+        check(items.value.any { it.id == fillUp.id }) { "no existe" }
+        items.value = items.value.map { if (it.id == fillUp.id) fillUp else it }.sortedByDescending { it.at }
+    }
+
     override suspend fun delete(id: Long) {
         items.value = items.value.filterNot { it.id == id }
     }

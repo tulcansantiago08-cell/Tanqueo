@@ -125,7 +125,9 @@
 
     <!-- Complication -->
     <string name="complication_label">Tanqueo range</string>
-    <string name="complication_description">Range: %1$s kilometers</string>
+    <string name="complication_description_vehicle">Range of %1$s: %2$s kilometers</string>
+    <string name="vehicle_car_lower">your car</string>
+    <string name="vehicle_moto_lower">your motorcycle</string>
     <string name="complication_no_data">No range data</string>
 
     <!-- Voice dictation -->
@@ -248,6 +250,7 @@
     <string name="stations_retry">Retry</string>
     <string name="stations_no_location">I don\'t know where the watch is. Check that location is on and try again.</string>
     <string name="stations_offline">Without internet I can\'t search. Check the connection or use Open in Maps.</string>
+    <string name="stations_offline_saved">No internet. These are the ones I found on %1$s.</string>
     <string name="stations_none">I found no gas stations within %1$d km.</string>
     <string name="stations_unnamed">Gas station</string>
     <string name="stations_distance">≈ %1$s</string>

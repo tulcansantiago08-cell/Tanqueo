@@ -103,7 +103,10 @@ private fun FillUpRow(fillUp: FillUp, modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel = hiltViewModel()) {
+fun FillUpDetailScreen(
+    onDeleted: () -> Unit,
+    onEdit: (Long) -> Unit,
+    viewModel: FillUpDetailViewModel = hiltViewModel()) {
     val fillUp by viewModel.fillUp.collectAsStateWithLifecycle()
     val isDeleted by viewModel.isDeleted.collectAsStateWithLifecycle()
     var confirming by rememberSaveable { mutableStateOf(false) }
@@ -161,6 +164,14 @@ fun FillUpDetailScreen(onDeleted: () -> Unit, viewModel: FillUpDetailViewModel =
                 label = stringResource(R.string.card_odometer),
                 value = item.odometerKm?.let { Formats.integer(it) } ?: stringResource(R.string.value_empty),
                 unit = item.odometerKm?.let { stringResource(R.string.unit_km) },
+            )
+        }
+        item {
+            GlassPillButton(
+                modifier = Modifier.edgeAware(this).fillMaxWidth(),
+                text = stringResource(R.string.action_edit),
+                icon = R.drawable.ic_edit,
+                onClick = { onEdit(item.id) },
             )
         }
         item {

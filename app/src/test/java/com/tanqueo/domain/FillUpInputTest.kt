@@ -71,4 +71,13 @@ class FillUpInputTest {
         assertEquals(1500, FillUpInput.minOdometer(listOf(full(0, 1500), full(1, 1200), full(2, null))))
         assertEquals(1800, FillUpInput.minOdometer(listOf(full(0, 1500)), extraKm = 1800))
     }
+
+    @Test fun `al corregir, el odometro queda entre sus vecinos`() {
+        val list = listOf(full(0, 1000), full(5, 1200), full(10, 1400), full(12, null))
+        assertEquals(1000..1400, FillUpInput.odometerBoundsForEdit(list, list[1]))
+        assertEquals(0..1200, FillUpInput.odometerBoundsForEdit(list, list[0]))
+        assertEquals(1400..FillUpInput.MAX_ODOMETER_KM, FillUpInput.odometerBoundsForEdit(list, list[3]))
+        assertEquals(1050, FillUpInput.adjustOdometer(1000, 50, minKm = 1000, maxKm = 1050))
+        assertEquals(1050, FillUpInput.adjustOdometer(1040, 50, minKm = 1000, maxKm = 1050))
+    }
 }
