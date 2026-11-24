@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tanqueo · Demo | Santiago Rivas</title>
+<meta name="description" content="Registra cada tanqueo de tu carro o tu moto desde el reloj, mira cuánto te dura la gasolina y recibe un aviso antes de quedarte sin combustible.">
+<meta property="og:title" content="Tanqueo · Demo"><meta property="og:description" content="Registra cada tanqueo de tu carro o tu moto desde el reloj, mira cuánto te dura la gasolina y recibe un aviso antes de quedarte sin combustible."><meta property="og:image" content="assets/og.jpg">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{--accent:#2dd4bf;--accent2:#6366f1}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0c;--fg:#f4f1ea;--muted:#9a978f;--line:rgba(244,241,234,.12);--card:#121215}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1120px,92vw);margin:0 auto}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(10,10,12,.7);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:700;letter-spacing:-.02em}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}
+.navlinks{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+.navlinks a:hover{color:var(--fg)}
+.hero{position:relative;padding:90px 0 70px;overflow:hidden}
+.glow{position:absolute;inset:-20% -10% auto auto;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.28;filter:blur(40px);pointer-events:none}
+.glow.two{inset:auto auto -40% -20%;background:radial-gradient(circle,var(--accent2) 0%,transparent 60%);opacity:.18}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;border-radius:99px}
+h1{font-size:clamp(52px,8vw,104px);line-height:.95;letter-spacing:-.055em;margin:22px 0 18px}
+.lead{font-size:clamp(18px,2vw,21px);color:#cfcbc2;max-width:520px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:99px;padding:14px 22px;font-weight:600;font-size:15px;transition:transform .15s,background .15s,border-color .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--fg);color:var(--bg)}
+.btn.ghost{border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--fg)}
+.btn svg{width:18px;height:18px}
+.meta{display:flex;gap:26px;margin-top:34px;color:var(--muted);font-size:13px}
+.meta b{display:block;color:var(--fg);font-size:22px;letter-spacing:-.02em}
+section{padding:80px 0;border-top:1px solid var(--line)}
+.kicker{font:600 12px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h2{font-size:clamp(34px,4.6vw,56px);letter-spacing:-.045em;line-height:1.02;margin:12px 0 14px}
+.sub{color:var(--muted);max-width:620px;margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 55%,transparent);transform:translateY(-3px)}
+.card .ic{font-size:26px;margin-bottom:14px}
+.card h3{font-size:18px;letter-spacing:-.02em;margin-bottom:6px}
+.card p{color:var(--muted);font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:9px 16px;font-size:14px}
+.chip:hover{background:var(--fg);color:var(--bg)}
+.gallery{display:flex;gap:26px;overflow-x:auto;padding:10px 4px 30px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.gallery figure{flex:none;scroll-snap-align:center;text-align:center}
+.gallery figcaption{margin-top:14px;font-size:14px;color:var(--muted)}
+.phone{width:230px;border-radius:38px;padding:9px;background:#151518;border:2px solid #34343c;box-shadow:0 30px 60px -20px rgba(0,0,0,.8)}
+.phone img{display:block;width:100%;border-radius:30px}
+.watch{width:220px;height:220px;border-radius:50%;padding:12px;background:#111;border:6px solid #5a5d66;box-shadow:0 0 0 2px #222,0 30px 60px -20px rgba(0,0,0,.8)}
+.watch img{width:100%;height:100%;border-radius:50%;display:block}
+.download{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,#0f0f12),#0f0f12 60%);border:1px solid var(--line);border-radius:26px;padding:44px}
+.steps{counter-reset:s;list-style:none;display:grid;gap:12px}
+.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;color:#d6d2c9;font-size:15px}
+.steps code{background:#0a0a0c;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px}.steps li:before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#0a0a0c;font-weight:700;font-size:13px}
+footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{color:var(--fg)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+@media (max-width:860px){.hero .wrap,.download{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.navlinks{display:none}.download{padding:28px}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}*{transition:none!important;animation:none!important}}
+.hw{position:relative;height:460px}.hw .w1{position:absolute;left:0;top:190px;transform:rotate(-10deg)}.hw .w2{position:absolute;right:6%;top:30px;width:300px;height:300px}#rot{transition:opacity .4s}
+.calc{display:grid;grid-template-columns:1fr auto;gap:50px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:40px}
+.cform{display:grid;gap:18px}.cform label{display:grid;gap:8px;font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.cform input{background:#0a0a0c;border:1px solid var(--line);border-radius:14px;padding:14px 16px;color:var(--fg);font:600 20px Inter,sans-serif}
+.cform input:focus{outline:2px solid var(--accent);border-color:transparent}
+.seg{display:flex;gap:8px}.seg button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0a0a0c;color:var(--fg);font:600 15px Inter,sans-serif;cursor:pointer}.seg button.on{background:var(--accent);color:#0a0a0c;border-color:var(--accent)}
+.watch.big{width:300px;height:300px}.face{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 30%,#1b1b2b,#050507);display:grid;place-content:center;text-align:center;gap:4px}
+.face small{color:var(--accent);font-weight:700;letter-spacing:.1em}.face b{font-size:46px;letter-spacing:-.04em}.face span{color:#cfcbc2}.face em{color:var(--muted);font-size:13px;font-style:normal}
+@media(max-width:860px){.hw{height:360px}.hw .w1{display:none}.hw .w2{left:50%;right:auto;transform:translateX(-50%)}.calc{grid-template-columns:1fr;justify-items:center}}</style></head>
+<body>
+<nav><div class="wrap"><a class="brand" href="#"><span class="dot"></span>Tanqueo</a>
+<div class="navlinks"><a href="#demo">Demo</a><a href="#funciones">Funciones</a><a href="#tecnologias">Tecnologías</a><a href="#descargar">Descargar</a></div>
+<a class="btn ghost" style="padding:9px 16px;font-size:13px" href="https://santiago-rivas-portafolio.vercel.app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>Portafolio</a></div></nav>
+<header class="hero"><div class="glow"></div><div class="glow two"></div><div class="wrap">
+<div><span class="pill">Wear OS · Kotlin · Compose</span><h1>Tanqueo</h1><p class="lead">Registra cada tanqueo de tu carro o tu moto desde el reloj, mira cuánto te dura la gasolina y recibe un aviso antes de quedarte sin combustible.</p>
+<div class="ctas"><a class="btn primary" href="https://github.com/tulcansantiago08-cell/Tanqueo/releases/download/v0.1.0/Tanqueo-reloj.apk" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Descargar APK del reloj</a><a class="btn ghost" href="https://github.com/tulcansantiago08-cell/Tanqueo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Ver código</a></div>
+<div class="meta"><div><b>Reloj</b>sin app de celular</div><div><b>Carro · Moto</b>historial aparte</div><div><b>Voz</b>registro por dictado</div></div></div>
+<div><div class="hw"><div class="watch w1"><img src="assets/redondo-2-autonomia.png" alt="Autonomía"></div><div class="watch w2"><img id="rot" src="assets/redondo-1-vehiculo.png" alt="Mi vehículo"></div></div></div></div></header>
+<section id="demo"><div class="wrap"><div class="kicker">Demo interactiva</div><h2>¿Cuánto me alcanza?</h2><p class="sub">Así funciona la calculadora del reloj: escribe cuánto vas a tanquear y mira cuántos kilómetros y días te dura. Esta versión web usa los valores de referencia de la app.</p>
+<div class="calc reveal"><div class="cform">
+<label>Vehículo<div class="seg"><button data-v="carro" class="on">🚗 Carro</button><button data-v="moto">🛵 Moto</button></div></label>
+<label>Valor a tanquear (COP)<input id="val" type="number" min="0" step="5000" value="80000"></label>
+<label>Precio del galón (COP)<input id="pre" type="number" min="1000" step="100" value="16500"></label>
+<label>Km que manejas al día<input id="dia" type="number" min="1" step="1" value="40"></label></div>
+<div class="watch big"><div class="face"><small id="vh">MI CARRO</small><b id="km">0 km</b><span id="gal">0 gal</span><span id="dias">0 días</span><em id="fecha"></em></div></div></div></div></section>
+<section id="pantallas"><div class="wrap"><div class="kicker">Pantallas</div><h2>Recorre la app</h2><p class="sub">Capturas reales en un reloj redondo con Wear OS. Desliza para ver todas.</p>
+<div class="gallery"><figure><div class="watch"><img src="assets/redondo-1-vehiculo.png" alt="Mi vehículo" loading="lazy"></div><figcaption>Mi vehículo</figcaption></figure><figure><div class="watch"><img src="assets/redondo-2-autonomia.png" alt="Autonomía" loading="lazy"></div><figcaption>Autonomía</figcaption></figure><figure><div class="watch"><img src="assets/redondo-3-este-mes.png" alt="Este mes" loading="lazy"></div><figcaption>Este mes</figcaption></figure><figure><div class="watch"><img src="assets/redondo-registrar.png" alt="Registrar tanqueo" loading="lazy"></div><figcaption>Registrar tanqueo</figcaption></figure><figure><div class="watch"><img src="assets/redondo-dictado.png" alt="Registro por voz" loading="lazy"></div><figcaption>Registro por voz</figcaption></figure><figure><div class="watch"><img src="assets/redondo-calculadora.png" alt="¿Cuánto me alcanza?" loading="lazy"></div><figcaption>¿Cuánto me alcanza?</figcaption></figure><figure><div class="watch"><img src="assets/redondo-consejo.png" alt="Consejo del mes" loading="lazy"></div><figcaption>Consejo del mes</figcaption></figure><figure><div class="watch"><img src="assets/redondo-alerta.png" alt="Poca autonomía" loading="lazy"></div><figcaption>Poca autonomía</figcaption></figure><figure><div class="watch"><img src="assets/redondo-tile.png" alt="Tile" loading="lazy"></div><figcaption>Tile</figcaption></figure><figure><div class="watch"><img src="assets/redondo-complicacion.png" alt="Complicación" loading="lazy"></div><figcaption>Complicación</figcaption></figure><figure><div class="watch"><img src="assets/redondo-caratula.png" alt="Carátula propia" loading="lazy"></div><figcaption>Carátula propia</figcaption></figure><figure><div class="watch"><img src="assets/redondo-guardado.png" alt="Al guardar" loading="lazy"></div><figcaption>Al guardar</figcaption></figure></div></div></section>
+<section id="funciones"><div class="wrap"><div class="kicker">Funciones</div><h2>Todo desde la muñeca</h2><p class="sub">Funciona solo en el reloj, sin app de celular y sin cuenta. La IA es opcional: sin ella, la app calcula todo en el reloj.</p><div class="grid"><div class="card reveal"><div class="ic">⛽</div><h3>Registrar tanqueos</h3><p>Galones, valor, combustible, tanque lleno o parcial y kilometraje, con la corona o el bisel.</p></div><div class="card reveal"><div class="ic">🎙️</div><h3>Por voz</h3><p>Dices “10 galones, 165 mil, corriente, lleno” y la app llena las tarjetas para que revises.</p></div><div class="card reveal"><div class="ic">📈</div><h3>Autonomía</h3><p>Un anillo tipo medidor con los km, los días y la fecha para volver a tanquear.</p></div><div class="card reveal"><div class="ic">🔔</div><h3>Aviso de tanquear</h3><p>Te avisa cuando quedan menos de 50 km o menos de 1 día, revisando cada 12 horas.</p></div><div class="card reveal"><div class="ic">🚗</div><h3>Carro y moto</h3><p>Cada vehículo con su propio historial, tanque, rendimiento y autonomía.</p></div><div class="card reveal"><div class="ic">🧮</div><h3>¿Cuánto me alcanza?</h3><p>Escribes un valor y ves los km, días y galones que te rinde.</p></div><div class="card reveal"><div class="ic">⛽</div><h3>Gasolineras cerca</h3><p>Lista y mapa propio con las gasolineras a menos de 5 km, sin Google Maps.</p></div><div class="card reveal"><div class="ic">🤖</div><h3>Asistente</h3><p>Pregúntale “¿cuánto me demoro de Pasto a Cali en moto?” y responde con tiempo y gasolina.</p></div><div class="card reveal"><div class="ic">⌚</div><h3>Tile y complicación</h3><p>Los km restantes en la tile y en cualquier carátula del reloj.</p></div></div></div></section>
+<section id="tecnologias"><div class="wrap"><div class="kicker">Tecnologías</div><h2>Cómo está construida</h2><p class="sub">App nativa para Wear OS, con datos locales en Room, tareas en segundo plano con WorkManager e IA opcional con Gemini.</p><div class="chips"><span class="chip">Kotlin</span><span class="chip">Compose para Wear OS</span><span class="chip">Material 3</span><span class="chip">Hilt</span><span class="chip">Room</span><span class="chip">DataStore</span><span class="chip">WorkManager</span><span class="chip">Tiles · ProtoLayout</span><span class="chip">Complications</span><span class="chip">Watch Face Format</span><span class="chip">Firebase AI Logic (Gemini)</span><span class="chip">OpenStreetMap</span></div></div></section>
+<section id="descargar"><div class="wrap"><div class="download reveal"><div><div class="kicker">Descargar</div><h2>Instálala en tu reloj</h2><p class="sub" style="margin-bottom:24px">Versión 0.1.0 para relojes con Wear OS 4 o superior.</p><div class="ctas" style="margin-top:0"><a class="btn primary" href="https://github.com/tulcansantiago08-cell/Tanqueo/releases/download/v0.1.0/Tanqueo-reloj.apk" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Descargar APK del reloj</a></div></div>
+<ol class="steps"><li><span>Descarga el APK en tu computador.</span></li><li><span>Activa la depuración por Wi-Fi en el reloj (Ajustes → Opciones de desarrollador).</span></li><li><span>Instálala con <code>adb install Tanqueo-reloj.apk</code> y ábrela desde el reloj.</span></li></ol></div></div></section>
+<footer><div class="wrap"><span>Tanqueo · Proyecto de <a href="https://santiago-rivas-portafolio.vercel.app">Santiago Rivas</a>, Ingeniería de Software · UCC</span><span><a href="https://github.com/tulcansantiago08-cell/Tanqueo" target="_blank" rel="noopener">GitHub</a></span></div></footer>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script><script>const r=document.getElementById('rot'),L=['redondo-1-vehiculo','redondo-3-este-mes','redondo-registrar','redondo-tile'];let i=0;setInterval(()=>{i=(i+1)%L.length;r.style.opacity=0;setTimeout(()=>{r.src='assets/'+L[i]+'.png';r.style.opacity=1},400)},2600);
+const KPG={carro:35,moto:100},TANK={carro:12,moto:3};let v='carro';const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('es-CO',{maximumFractionDigits:1});
+function calc(){const val=+$('val').value||0,pre=+$('pre').value||1,dia=+$('dia').value||1;let gal=val/pre;const cab=Math.min(gal,TANK[v]);const km=cab*KPG[v],d=km/dia;const f=new Date(Date.now()+d*864e5);
+$('vh').textContent=v==='carro'?'MI CARRO':'MI MOTO';$('km').textContent=fmt(Math.round(km))+' km';$('gal').textContent=fmt(gal)+' gal'+(gal>TANK[v]?' (no cabe todo)':'');$('dias').textContent=fmt(d)+' días';$('fecha').textContent='hasta el '+f.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'})}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');v=b.dataset.v;calc()});
+['val','pre','dia'].forEach(id=>$(id).oninput=calc);calc();</script>
+</body></html>
